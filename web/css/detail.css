@@ -1,0 +1,53 @@
+.tm-main-content {
+  position: relative;
+}
+
+main {
+  /* min-height: 720px; */
+  padding-top: 70px;
+}
+
+.tm-top-bar a {
+  color: black;
+}
+
+.tm-top-bar.active {
+  background: white;
+  height: 70px;
+  padding: 5px;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  color: black;
+}
+
+.nav-link.active span,
+.nav-link:hover span {
+  border-bottom: 3px solid #FFAB2E;
+}
+
+.tm-banner-bg {
+  min-height: 330px;
+}
+
+.banner-outer {
+  display: table;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+}
+
+.banner-middle {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.banner-inner {
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+}
