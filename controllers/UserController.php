@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\User;
+use app\models\UserProfile;
 use app\models\UserRole;
 use app\models\UserRolePermission;
 use app\models\UserRoleSearch;
@@ -67,9 +68,7 @@ class UserController extends Controller
   public function actionCreateUser()
   {
     $model = new User();
-    $model->scenario = "profile";
-    $master = Yii::$app->master;
-
+    $modelUserProfield = new UserProfile();
     if ($this->request->isPost && $model->load($this->request->post())) {
 
       $transaction_exception = Yii::$app->db->beginTransaction();
@@ -81,7 +80,7 @@ class UserController extends Controller
           $model->generateAuthKey($model->auth_key);
         }
 
-        if (!$model->save()) throw new Exception($master->errToString($model->getErrors()));
+        if (!$model->save()) throw new Exception();
 
         $transaction_exception->commit();
         Yii::$app->session->setFlash('success', "User saved successfully");
@@ -95,6 +94,7 @@ class UserController extends Controller
 
     return $this->render('form_user', [
       'model' => $model,
+      'modelUserProfield' => $modelUserProfield,
     ]);
   }
 

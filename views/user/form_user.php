@@ -13,18 +13,10 @@ $this->params['pageTitle'] = $this->title;
 
 
   <?php
-
-  $validationUrl = ['vendor/validation-user'];
-  if (!$model->isNewRecord) {
-    $validationUrl['id'] = $model->id;
-  }
-
   $form = ActiveForm::begin([
     'id' => $model->formName(),
     'enableAjaxValidation' => true,
     'enableClientValidation' => true,
-    // 'options' => ['autocomplete' => 'off'],
-    'validationUrl' => $validationUrl
   ]);
   ?>
 
@@ -37,10 +29,10 @@ $this->params['pageTitle'] = $this->title;
 
           <div class="row">
             <div class="col-md-6">
-              <?= $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
+              <?= $form->field($modelUserProfield, 'first_name')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-md-6">
-              <?= $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
+              <?= $form->field($modelUserProfield, 'last_name')->textInput(['maxlength' => true]) ?>
             </div>
           </div>
 
@@ -75,7 +67,6 @@ $this->params['pageTitle'] = $this->title;
         <div class="card-body">
           <div class="card-title"><?= Yii::t('app', 'Restriction Area') ?></div>
           <?= $form->field($model, 'role_id')->dropDownList(ArrayHelper::map(UserRole::find()->all(), 'id', 'name'), ['class' => 'custom-select'])->label("User Role") ?>
-          <?= $form->field($model, 'type_id')->dropDownList([1 => 'All Function', 2 => 'Service form & POS'], ['class' => 'custom-select'])->label("User Strict") ?>
           <span class="font-weight-bold">Status</span>
           <?= $form->field($model, 'status')->hiddenInput(['value' => $model->isNewRecord ? 2 : $model->status])->label(false); ?>
           <label class="switcher-control switcher-control-danger switcher-control-lg">

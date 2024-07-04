@@ -17,7 +17,7 @@ $formater = Yii::$app->formater;
                 </span>
             </button>
             <a class="navbar-brand" href="<?= Yii::$app->homeUrl ?>">
-                <img alt="dernham logo" src="<?= Yii::getAlias("@web/img/prointix_logo.png"); ?>" width="110px" />
+                <img alt="dernham logo" src="<?= Yii::getAlias("@web/img/LMS-Logo-2.png"); ?>" width="100%" />
                 <!-- DERNHAM -->
             </a>
         </div>

@@ -19,7 +19,7 @@ AppAsset::register($this);
 <html lang="<?= Yii::$app->language ?>">
 
 <head>
-    <link rel="icon" type="image/png" href="<?= Yii::getAlias('@web') ?>/img/fav.png" />
+    <link rel="icon" type="image/png" href="<?= Yii::getAlias('@web') ?>/img/LMS-Logo-2.png" />
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -37,7 +37,7 @@ AppAsset::register($this);
     <style>
         .auth {
             background-size: cover;
-            background-image: linear-gradient(rgba(0, 0, 0, .1), rgba(0, 0, 0, .1)), url("<?= Yii::getAlias('@web') ?>/img/login_background.webp");
+            background-image: linear-gradient(rgba(0, 0, 0, .1), rgba(0, 0, 0, .1)), url("<?= Yii::getAlias('@web') ?>/img/background_login.jpg");
         }
     </style>
 </head>
@@ -48,7 +48,6 @@ AppAsset::register($this);
     <main class="auth">
         <header id="auth-header" class="auth-header bg-transparent">
             <h1>
-                <img src="<?= Yii::getAlias("@web/img/prointix_logo.png"); ?>" width="300px" />
                 <span class="sr-only">Sign In</span>
                 <div class="py-3"></div>
             </h1>

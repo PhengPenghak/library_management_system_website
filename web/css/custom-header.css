@@ -1,47 +1,58 @@
 .nav-item .bi {
-    position: relative;
-    top: .125rem;
+  position: relative;
+  top: 0.125rem;
 }
 .app-header.app-header-dark {
-    background: #f6f7f9 !important;
-    color: #141414;
+  background: #346cb0 !important;
+  color: #141414;
 }
-.top-bar-brand.bg-primary{
-    background: #f6f7f9 !important;
+.top-bar-brand.bg-primary {
+  background: #f6f7f9 !important;
 }
-.app-header-dark .top-bar-brand>a, .app-header-dark .top-bar-brand>a:focus, .app-header-dark .top-bar-brand>a:hover {
-    color: #141414;
+.app-header-dark .top-bar-brand > a,
+.app-header-dark .top-bar-brand > a:focus,
+.app-header-dark .top-bar-brand > a:hover {
+  color: #141414;
 }
-.stacked-menu>.menu>.menu-item.has-active>.menu-link {
-    color: #141414;
+.stacked-menu > .menu > .menu-item.has-active > .menu-link {
+  color: #141414;
 }
-.stacked-menu .menu-item.has-active>.menu-link .menu-icon {
-    color: #141414;
+.stacked-menu .menu-item.has-active > .menu-link .menu-icon {
+  color: #141414;
 }
-.hamburger-inner, .hamburger-inner:after, .hamburger-inner:before {
-    background-color: #141414;
+.hamburger-inner,
+.hamburger-inner:after,
+.hamburger-inner:before {
+  background-color: #141414;
 }
 .app-header-dark .header-nav .nav-link {
-    color: #141414;
+  color: #141414;
 }
 .app-header-dark .header-nav .nav-link:hover {
-    color: #141414;
+  color: #141414;
 }
-.app-header-dark .header-nav .active>.nav-link, .app-header-dark .header-nav .nav-link.active, .app-header-dark .header-nav .nav-link.show, .app-header-dark .header-nav .show>.nav-link {
-    color: #141414;
+.app-header-dark .header-nav .active > .nav-link,
+.app-header-dark .header-nav .nav-link.active,
+.app-header-dark .header-nav .nav-link.show,
+.app-header-dark .header-nav .show > .nav-link {
+  color: #141414;
 }
 .app-header-dark .btn-account {
-    color: #141414;
+  color: #141414;
 }
 /* Navigation No Hovering*/
-.header-nav .nav-link.no-hover, .header-nav .nav-link.no-hover{
-	color: #888c9b !important;
+.header-nav .nav-link.no-hover,
+.header-nav .nav-link.no-hover {
+  color: #888c9b !important;
 }
-.header-nav .nav-link.no-hover:focus, .header-nav .nav-link.no-hover:hover{
-	color: #888c9b !important;
-	background: transparent !important;
+.header-nav .nav-link.no-hover:focus,
+.header-nav .nav-link.no-hover:hover {
+  color: #888c9b !important;
+  background: transparent !important;
 }
-.header-nav .nav-link.no-hover span:focus, .header-nav .nav-link.no-hover span:hover,
-.header-nav .nav-link.no-hover span.active, .header-nav .nav-link.no-hover span.active{
-	color: #141414 !important;
+.header-nav .nav-link.no-hover span:focus,
+.header-nav .nav-link.no-hover span:hover,
+.header-nav .nav-link.no-hover span.active,
+.header-nav .nav-link.no-hover span.active {
+  color: #141414 !important;
 }

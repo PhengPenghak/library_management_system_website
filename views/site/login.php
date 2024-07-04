@@ -11,12 +11,23 @@ $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
+
+<style>
+    img.centered-image {
+        width: 250px;
+        padding-bottom: 60px;
+    }
+</style>
+
 <?php $form = ActiveForm::begin([
     'id' => 'login-form',
     'options' => [
         'class' => 'auth-form',
     ]
 ]); ?>
+<div class="image-background-login text-center">
+    <img src="<?= Yii::getAlias("@web/img/logo_login.png"); ?>" class="centered-image" />
+</div>
 
 <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 

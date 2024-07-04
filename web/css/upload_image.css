@@ -1,10 +1,7 @@
 .form-upload-image {
   width: 100%;
   padding: 20px;
-  background: #fff;
   border-radius: 5px;
-  box-shadow: -3px -3px 7px rgba(94, 104, 121, 0.377),
-      3px 3px 7px rgba(94, 104, 121, 0.377);
   margin-bottom: 15px;
   text-align: center;
 }
@@ -20,9 +17,8 @@
   margin-left: 10%;
   line-height: 35px;
   text-align: center;
-  background: #1172c2;
-
-  color: #fff;
+  background: #fff;
+  color: #000;
   font-size: 13px;
   text-transform: Uppercase;
   font-weight: 600;

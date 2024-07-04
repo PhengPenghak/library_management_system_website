@@ -13,11 +13,12 @@ AppAsset::register($this);
 SweetAlert2Asset::register($this);
 ?>
 <?php $this->beginPage() ?>
+
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 
 <head>
-    <link rel="icon" type="image/png" href="<?= Yii::getAlias('@web') ?>/img/fav.png" />
+    <link rel="icon" type="image/png" href="<?= Yii::getAlias('@web') ?>/img/LMS-Logo-2.png" />
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -35,6 +36,7 @@ SweetAlert2Asset::register($this);
         // add flag class to html immediately
         if (isCompact == true) document.querySelector('html').classList.add('preparing-compact-menu');
     </script>
+
 </head>
 
 <body>

@@ -1,7 +1,12 @@
 {
     "name": "yiisoft/yii2-app-basic",
     "description": "Dernham Vendor",
-    "keywords": ["yii2", "framework", "basic", "project template"],
+    "keywords": [
+        "yii2",
+        "framework",
+        "basic",
+        "project template"
+    ],
     "homepage": "http://www.yiiframework.com/",
     "type": "project",
     "license": "BSD-4-Clause",
@@ -21,8 +26,10 @@
         "aws/aws-sdk-php": "^3.168",
         "kornrunner/blurhash": "^1.2",
         "yii2tech/csv-grid": "^1.0",
-        "kartik-v/yii2-widget-select2": "@dev"
-
+        "kartik-v/yii2-widget-select2": "@dev",
+        "edofre/yii2-fullcalendar": "*",
+        "phpoffice/phpspreadsheet": "^2.1",
+        "mpdf/mpdf": "^8.2"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
