@@ -50,10 +50,10 @@ class CategoryBook extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'sponse' => 'Sponse',
-            'quantity' => 'Quantity',
-            'status' => 'Status',
+            'title' => 'ចំណងជើង',
+            'sponse' => 'ប្រភព',
+            'quantity' => 'ចំនួនប្រើប្រាស់',
+            'status' => 'ស្ថានភាព',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',
@@ -81,9 +81,13 @@ class CategoryBook extends \yii\db\ActiveRecord
     public function getStatusTemp()
     {
         if ($this->status == 1) {
-            return '<span class="badge badge-info">Publish</span>';
+            return '<span class="badge badge-subtle badge-success">នៅទំនេរ</span>';
         } else {
-            return '<span class="badge badge-danger">Inactive</span>';
+            return '<span class="badge badge-subtle badge-danger">មិនទំនេរ</span>';
         }
+    }
+    public function getBookCount()
+    {
+        return Book::find()->where(['category_book_id' => $this->id])->count();
     }
 }

@@ -45,8 +45,8 @@ class LocationBook extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'status' => 'Status',
+            'title' => 'ចំណងជើង',
+            'status' => 'ស្ថានភាព',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',
@@ -73,9 +73,13 @@ class LocationBook extends \yii\db\ActiveRecord
     public function getStatusTemp()
     {
         if ($this->status == 1) {
-            return '<span class="badge badge-info">Publish</span>';
+            return '<span class="badge badge-subtle badge-success">នៅទំនេរ</span>';
         } else {
-            return '<span class="badge badge-danger">Inactive</span>';
+            return '<span class="badge badge-subtle badge-danger">មិនទំនេរ</span>';
         }
+    }
+    public function getBookCount()
+    {
+        return Book::find()->where(['location_id' => $this->id])->count();
     }
 }

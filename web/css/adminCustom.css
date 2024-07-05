@@ -1,0 +1,13 @@
+.table tr td {
+    vertical-align: middle;
+}
+
+.select2-container .select2-selection--single {
+    height: 2.75rem;
+    font-size: 1rem;
+    padding-top: 10px;
+}
+
+.card-bg-default {
+    background-color: #fffefb !important;
+}
