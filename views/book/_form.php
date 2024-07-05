@@ -67,7 +67,6 @@ EditorAsset::register($this);
                                 'min' => 1,
                                 'max' => 100,
                                 'step' => 1,
-                                'value' => 1,
                                 'class' => 'form-control form-control-lg limitNumber'
                             ])->label('ចំនួនសៀវភៅ') ?>
                         </div>

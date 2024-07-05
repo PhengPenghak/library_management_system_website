@@ -82,4 +82,11 @@ class LocationBook extends \yii\db\ActiveRecord
     {
         return Book::find()->where(['location_id' => $this->id])->count();
     }
+    public function isUsed()
+    {
+        $itinerary = Book::find()
+            ->where(['location_id' => $this->id])
+            ->count();
+        return $itinerary > 0 ? true : false;
+    }
 }

@@ -65,9 +65,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return Html::button('<i class="fas fa-pen"></i>', ['data-title' => 'កែប្រែប្រភេទសៀវភៅ', 'value' => $url, 'class' => 'btn btn-sm btn-icon btn-secondary modalButton']);
                             },
                             'delete' => function ($url, $model) {
+                                $disabled = $model->isUsed() ? 'disabled' : '';
                                 return Html::button('<i class="bi bi-trash2"></i>', [
-                                    'class' => 'btn btn-sm btn-icon btn-secondary button-delete',
-                                    'title' => 'លុបរឿង',
+                                    'class' => 'btn btn-sm btn-icon btn-secondary button-delete {$disabled}', 'disabled' => $model->isUsed(),
+                                    'title' => 'លុបទីតាំងដាក់សៀវភៅ',
                                     'method' => 'post',
                                     'data' => [
                                         'confirm' => 'តើអ្នកប្រាដកទេ?',
@@ -98,6 +99,28 @@ $script = <<<JS
   $('#modalScrollable').on('hidden.bs.modal', function(e) {
     $("#modalContent").html("");
   });
+
+  yii.confirm = function (message, okCallback, cancelCallback) {
+        var val = $(this).data('value');
+        console.log(val);
+        
+        if($(this).hasClass('button-delete')){
+            Swal.fire({
+                title: "ការព្រមាន!",
+                text: "តើអ្នកចង់លុបសៀវភៅនេះឬ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'យល់ព្រម',
+                cancelButtonText: 'បោះបង់'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post(val);
+                }
+            });
+        }
+
+    };
 
 JS;
 $this->registerJs($script);

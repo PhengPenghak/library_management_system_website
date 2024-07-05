@@ -90,4 +90,11 @@ class CategoryBook extends \yii\db\ActiveRecord
     {
         return Book::find()->where(['category_book_id' => $this->id])->count();
     }
+    public function isUsed()
+    {
+        $itinerary = Book::find()
+            ->where(['category_book_id' => $this->id])
+            ->count();
+        return $itinerary > 0 ? true : false;
+    }
 }
