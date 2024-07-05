@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%location_book}}`.
  */
-class m240629_1610311_create_location_book_table extends Migration
+class m240704_060042_create_location_book_table extends Migration
 {
     /**
      * {@inheritdoc}

@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Book;
 use app\models\BookSearch;
+use app\models\CategoryBook;
 use Yii;
 use Exception;
 use Mpdf\Mpdf;
@@ -43,10 +44,14 @@ class BookController extends Controller
         $searchModel = new BookSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
         $dataProvider->pagination->pageSize = Yii::$app->setupdata->pageSize();
-
+        $totalCount = $dataProvider->getTotalCount();
+        $categories = CategoryBook::find()->all();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'totalCount' => $totalCount,
+            'categories' => $categories,
+
         ]);
     }
 
@@ -74,11 +79,9 @@ class BookController extends Controller
         $model = new Book();
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-
             $transaction_exception = Yii::$app->db->beginTransaction();
 
             try {
-
                 $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
                 if (!empty($model->imageFile) && $model->upload()) $model->imageFile = null;
 
@@ -177,70 +180,70 @@ class BookController extends Controller
     }
 
 
-    public function actionExportExcel()
-    {
-        $books = Book::find()->all();
+    // public function actionExportExcel()
+    // {
+    //     $books = Book::find()->all();
 
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+    //     $spreadsheet = new Spreadsheet();
+    //     $sheet = $spreadsheet->getActiveSheet();
 
-        // Set document properties
-        $spreadsheet->getProperties()->setCreator('Your Name')
-            ->setLastModifiedBy('Your Name')
-            ->setTitle('Books List')
-            ->setSubject('Books List')
-            ->setDescription('List of books exported to Excel.')
-            ->setKeywords('books excel')
-            ->setCategory('Export');
+    //     // Set document properties
+    //     $spreadsheet->getProperties()->setCreator('Your Name')
+    //         ->setLastModifiedBy('Your Name')
+    //         ->setTitle('Books List')
+    //         ->setSubject('Books List')
+    //         ->setDescription('List of books exported to Excel.')
+    //         ->setKeywords('books excel')
+    //         ->setCategory('Export');
 
-        // Add header row
-        $sheet->setCellValue('A1', 'ID')
-            ->setCellValue('B1', 'Title')
-            ->setCellValue('C1', 'Author')
-            ->setCellValue('D1', 'Published Date');
+    //     // Add header row
+    //     $sheet->setCellValue('A1', 'ID')
+    //         ->setCellValue('B1', 'Title')
+    //         ->setCellValue('C1', 'Author')
+    //         ->setCellValue('D1', 'Published Date');
 
-        // Add data rows
-        $row = 2;
-        foreach ($books as $book) {
-            $sheet->setCellValue('A' . $row, $book->id)
-                ->setCellValue('B' . $row, $book->title);
+    //     // Add data rows
+    //     $row = 2;
+    //     foreach ($books as $book) {
+    //         $sheet->setCellValue('A' . $row, $book->id)
+    //             ->setCellValue('B' . $row, $book->title);
 
-            $row++;
-        }
+    //         $row++;
+    //     }
 
-        // Rename worksheet
-        $sheet->setTitle('Books');
+    //     // Rename worksheet
+    //     $sheet->setTitle('Books');
 
-        // Set active sheet index to the first sheet
-        $spreadsheet->setActiveSheetIndex(0);
+    //     // Set active sheet index to the first sheet
+    //     $spreadsheet->setActiveSheetIndex(0);
 
-        // Redirect output to a client’s web browser (Xlsx)
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="books.xlsx"');
-        header('Cache-Control: max-age=0');
+    //     // Redirect output to a client’s web browser (Xlsx)
+    //     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    //     header('Content-Disposition: attachment;filename="books.xlsx"');
+    //     header('Cache-Control: max-age=0');
 
-        $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
-        Yii::$app->end();
-    }
+    //     $writer = new Xlsx($spreadsheet);
+    //     $writer->save('php://output');
+    //     Yii::$app->end();
+    // }
 
-    public function actionExportPdf()
-    {
-        // Fetch data
-        $books = Book::find()->all();
+    // public function actionExportPdf()
+    // {
+    //     // Fetch data
+    //     $books = Book::find()->all();
 
-        // Initialize mPDF
-        $mpdf = new Mpdf([
-            'default_font' => 'KhmerOS'
-        ]);
+    //     // Initialize mPDF
+    //     $mpdf = new Mpdf([
+    //         'default_font' => 'KhmerOS'
+    //     ]);
 
-        // Add custom font configuration
-        $mpdf->AddFontDirectory('@webroot/fonts');
-        $mpdf->AddFont('KhmerOS', '', 'KhmerOS.ttf', true);
-        $html = $this->renderPartial('pdf-template', ['books' => $books]);
+    //     // Add custom font configuration
+    //     $mpdf->AddFontDirectory('@webroot/fonts');
+    //     $mpdf->AddFont('KhmerOS', '', 'KhmerOS.ttf', true);
+    //     $html = $this->renderPartial('pdf-template', ['books' => $books]);
 
-        $mpdf->WriteHTML($html);
+    //     $mpdf->WriteHTML($html);
 
-        $mpdf->Output('Books.pdf', 'D');
-    }
+    //     $mpdf->Output('Books.pdf', 'D');
+    // }
 }

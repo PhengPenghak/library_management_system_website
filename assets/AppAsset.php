@@ -33,6 +33,7 @@ class AppAsset extends AssetBundle
         'css/upload_image.css',
         'css/custom-header.css',
         'css/frontend.css',
+        'css/adminCustom.css',
         'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css'
 
     ];

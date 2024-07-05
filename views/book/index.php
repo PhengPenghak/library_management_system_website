@@ -5,14 +5,34 @@ use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
-$this->title = 'Book';
-$this->params['pageTitle'] = $this->title;
+$this->title = 'សៀវភៅ';
+// $this->params['pageTitle'] = $this->title;
 ?>
-<div class="blog-index">
-    <?php Pjax::begin(['id' => 'book']); ?>
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+<style>
+    .active {
+        border-color: #346cb0 !important;
+    }
 
-    <div class="card">
+    .badge-secondary-color {
+        background-color: #346cb0;
+    }
+</style>
+<div class="blog-index">
+    <nav class="page-navs mb-5" style="background: none;">
+        <!-- .nav-scroller -->
+        <div class="nav-scroller">
+            <!-- .nav -->
+            <div class="nav nav-tabs">
+                <a class="nav-link active" href="<?= Url::to(['book/index']) ?>">សៀវភៅទាំងអស់ <span class="badge badge-pill ml-2 badge-secondary-color text-light"><?= !empty($totalCount) ? $totalCount : '' ?></span></a>
+                <a class="nav-link" href="user-activities.html">Activities <span class="badge">16</span></a>
+            </div><!-- /.nav -->
+        </div><!-- /.nav-scroller -->
+    </nav>
+    <?php Pjax::begin(['id' => 'book']); ?>
+    <?= $this->render('_search', ['model' => $searchModel, 'categories' => $categories]); ?>
+    <hr class="border-0">
+
+    <div class="card card-bg-default">
         <div class="card-body">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
@@ -45,21 +65,17 @@ $this->params['pageTitle'] = $this->title;
                         }
                     ],
                     'title',
-                    'quantity',
                     [
-                        'attribute' => 'category_book_id',
-                        'label' => 'Category Book',
+                        'attribute' => 'quantity',
                         'value' => function ($model) {
-                            return $model->categoryBook ? $model->categoryBook->title : 'N/A';
+                            return $model->quantity . ' ក្បាល';
                         },
                     ],
-
-
                     [
-                        'attribute' => 'location_id',
-                        'label' => 'Location Book',
+                        'attribute' => 'category_book_id',
+                        'label' => 'បង្កើត​ឡើង​ដោយ',
                         'value' => function ($model) {
-                            return $model->locationBook ? $model->locationBook->title : 'N/A';
+                            return $model->createdBy ? $model->createdBy->username : 'N/A';
                         },
                     ],
 
@@ -72,8 +88,8 @@ $this->params['pageTitle'] = $this->title;
                     ],
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'header' => Yii::t('app', 'Actions'),
-                        'headerOptions' => ['class' => 'text-center'],
+                        'header' => Yii::t('app', 'កែប្រែ'),
+                        'headerOptions' => ['class' => 'text-center text-primary'],
                         'contentOptions' => ['class' => 'text-center'],
                         'template' => '{update} {delete}',
                         'buttons' => [
@@ -81,7 +97,7 @@ $this->params['pageTitle'] = $this->title;
                             'update' => function ($url, $model) {
                                 return Html::a('<i class="fas fa-pen"></i>', $url, [
                                     'class' => 'btn btn-sm btn-icon btn-secondary',
-                                    'title' => 'Update this item',
+                                    'title' => 'កែប្រែរឿង',
                                     'data' => [
                                         'pjax' => 0,
                                         'toggle' => 'tooltip',
@@ -89,18 +105,17 @@ $this->params['pageTitle'] = $this->title;
                                 ]);
                             },
                             'delete' => function ($url, $model) {
-                                return Html::a('<i class="fas fa-trash"></i>', Yii::getAlias("@web/book/"), [
+                                return Html::button('<i class="bi bi-trash2"></i>', [
                                     'class' => 'btn btn-sm btn-icon btn-secondary button-delete',
-                                    'title' => 'Delete this item',
+                                    'title' => 'លុបរឿង',
+                                    'method' => 'post',
                                     'data' => [
-                                        'pjax' => 0,
-                                        'confirm' => 'Are you sure?',
-                                        'value' => Url::toRoute(['book/delete', 'id' => $model->id]),
-                                        'method' => 'post',
+                                        'confirm' => 'តើអ្នកប្រាដកទេ?',
+                                        'value' => Url::to(['delete', 'id' => $model->id]),
                                         'toggle' => 'tooltip',
-                                    ],
+                                    ]
                                 ]);
-                            },
+                            }
                         ],
 
                     ],
@@ -111,3 +126,41 @@ $this->params['pageTitle'] = $this->title;
 
     <?php Pjax::end(); ?>
 </div>
+
+<?php
+$script = <<<JS
+
+    $(document).on("click",".modalButton",function () {
+        $("#modalDrawerRight").modal("show")
+            .find("#modalContent")
+            .load($(this).attr("value"));
+        $("#modalDrawerRight").find("#modalDrawerRightLabel").text($(this).data("title"));
+    });
+
+    yii.confirm = function (message, okCallback, cancelCallback) {
+        var val = $(this).data('value');
+        console.log(val);
+        
+        if($(this).hasClass('button-delete')){
+            Swal.fire({
+                title: "ការព្រមាន!",
+                text: "តើអ្នកចង់លុបសៀវភៅនេះឬ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'យល់ព្រម',
+                cancelButtonText: 'បោះបង់'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post(val);
+                }
+            });
+        }
+
+    };
+
+JS;
+
+$this->registerJs($script);
+
+?>

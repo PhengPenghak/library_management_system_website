@@ -57,18 +57,18 @@ class Book extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'category_book_id' => 'Category Book',
-            'location_id' => 'Location Book',
-            'title' => 'Title',
-            'sponse' => 'Sponse',
-            'img_url' => 'Img Url',
-            'quantity' => 'Quantity',
-            'status' => 'Status',
+            'category_book_id' => 'ប្រភេទសៀវភៅ',
+            'location_id' => 'ទីតាំងដាក់សៀវភៅ',
+            'title' => 'ចំណងជើង',
+            'sponse' => 'ប្រភព',
+            'img_url' => 'ក្របសៀវភៅ',
+            'quantity' => 'ចំនួនសរុប',
+            'status' => 'ស្ថានភាព',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
-            'author' => 'Author'
+            'author' => 'អ្នកនិពន្ធ'
         ];
     }
 
@@ -114,9 +114,9 @@ class Book extends \yii\db\ActiveRecord
     public function getStatusTemp()
     {
         if ($this->status == 1) {
-            return '<span class="badge badge-pill badge-info">Publish</span>';
+            return '<span class="badge badge-subtle badge-success">នៅទំនេរ</span>';
         } else {
-            return '<span class="badge badge-pill badge-danger">Inactive</span>';
+            return '<span class="badge badge-subtle badge-danger">មិនទំនេរ</span>';
         }
     }
 
@@ -129,5 +129,9 @@ class Book extends \yii\db\ActiveRecord
     public function getLocationBook()
     {
         return $this->hasOne(LocationBook::class, ['id' => 'location_id']);
+    }
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
     }
 }

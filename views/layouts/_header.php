@@ -8,10 +8,17 @@ use yii\helpers\Url;
 /** @var \app\components\Formater $formater */
 $formater = Yii::$app->formater;
 ?>
+<style>
+    .hamburger-inner,
+    .hamburger-inner:after,
+    .hamburger-inner:before {
+        background-color: #fff;
+    }
+</style>
 <header class="app-header app-header-dark">
     <div class="top-bar">
         <div class="top-bar-brand bg-transparent">
-            <button class="hamburger hamburger-squeeze mr-2" type="button" data-toggle="aside-menu" aria-label="toggle aside menu">
+            <button class="hamburger hamburger-squeeze mr-2" style="color: white !important;" type="button" data-toggle="aside-menu" aria-label="toggle aside menu">
                 <span class="hamburger-box">
                     <span class="hamburger-inner"></span>
                 </span>
@@ -25,7 +32,7 @@ $formater = Yii::$app->formater;
             <div class="top-bar-item px-2 d-md-none d-lg-none d-xl-none">
                 <button class="hamburger hamburger-squeeze" type="button" data-toggle="aside" aria-label="Menu">
                     <span class="hamburger-box">
-                        <span class="hamburger-inner"></span>
+                        <span class="hamburger-inner bg-light"></span>
                     </span>
                 </button>
             </div>
@@ -38,7 +45,7 @@ $formater = Yii::$app->formater;
                         <span class="user-avatar user-avatar-md">
                             <img src="<?= Yii::getAlias("@web"); ?>/img/profile_holder.jpeg" alt="">
                         </span>
-                        <span class="account-summary pr-lg-4 d-none d-lg-block">
+                        <span class="account-summary pr-lg-4 d-none d-lg-block text-white">
                             <span class="account-name"><?= Yii::$app->user->identity->name ?></span>
                             <span class="account-description"><?= Yii::$app->user->identity->role ?></span>
                         </span>
