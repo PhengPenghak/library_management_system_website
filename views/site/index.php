@@ -23,15 +23,27 @@ $this->title = 'Library - Management System Dashboard';
 
 <style>
     .bg-card-warning {
-        background-color: #fffdf8;
+        background-color: #FFC122;
+    }
+
+    .bg-card-warning * {
+        color: #fff !important;
     }
 
     .bg-card-danger {
-        background-color: #fffafa;
+        background-color: #FC5F55;
+    }
+
+    .bg-card-danger * {
+        color: #fff !important;
     }
 
     .bg-card-info {
-        background-color: #f9fcfa;
+        background-color: #34A853;
+    }
+
+    .bg-card-info * {
+        color: #fff !important;
     }
 
     .border-icon-cus {
@@ -44,7 +56,7 @@ $this->title = 'Library - Management System Dashboard';
         vertical-align: middle;
         position: absolute;
         border-radius: 50%;
-        border: 1px solid #333;
+        border: 1px solid #fff;
 
     }
 
@@ -52,6 +64,10 @@ $this->title = 'Library - Management System Dashboard';
         border: none;
         border-left: 1px solid hsl(0deg 0% 88.35%);
         width: 1px;
+    }
+
+    .border-icon-cus svg path {
+        fill: #ffffff;
     }
 </style>
 <div class="row">
@@ -73,7 +89,7 @@ $this->title = 'Library - Management System Dashboard';
                         </div>
                         <hr>
                         <div class="d-flex mt-auto">
-                            <div class="d-flex flex-column ">
+                            <div class="d-flex flex-column">
                                 <h6 class="text-muted">ប្រចាំសប្តាហ៍</h6>
                                 <span class="text-muted"> + 250</span>
                             </div>

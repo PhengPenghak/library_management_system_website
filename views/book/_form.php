@@ -24,11 +24,6 @@ EditorAsset::register($this);
         height: 200px !important;
         object-fit: cover;
     }
-
-    .select2-container .select2-selection--single {
-        height: 2.75rem;
-        font-size: 1rem;
-    }
 </style>
 <div class="blog-form pt-5">
 
@@ -39,89 +34,92 @@ EditorAsset::register($this);
         ],
     ]); ?>
 
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="form-upload-image">
-                <div class="preview">
-                    <?= Html::img($model->isNewRecord ? Yii::getAlias("@web/img/not_found_sq.png") : $model->getThumb(), ['class' => 'img-thumbnail-banner', 'id' => 'image_book_upload-preview', 'onerror' => "this.onerror=null;this.src='" . Yii::getAlias('@web/img/not_found_sq.png') . "';"]) ?>
-                </div>
-                <label for="image_book_upload"><i class="fas fa-plus"></i> Upload Image</label>
-                <?= $form->field($model, 'imageFile')->fileInput(['accept' => 'image/*', 'id' => 'image_book_upload'])->label(false) ?>
-            </div>
-
-        </div>
-        <div class="col-lg-9">
+    <div class="card card-bg-default">
+        <div class="card-body text-dark">
             <div class="row">
-                <div class="col-lg-5">
-                    <?= $form->field($model, 'title')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'Enter your Title'])->label() ?>
+                <div class="col-lg-3">
+                    <div class="form-upload-image">
+                        <div class="preview">
+                            <?= Html::img($model->isNewRecord ? Yii::getAlias("@web/img/not_found_sq.png") : $model->getThumb(), ['class' => 'img-thumbnail-banner', 'id' => 'image_book_upload-preview', 'onerror' => "this.onerror=null;this.src='" . Yii::getAlias('@web/img/not_found_sq.png') . "';"]) ?>
+                        </div>
+                        <label for="image_book_upload"><i class="fas fa-plus"></i> ជ្រើសរើសរូបភាព</label>
+                        <?= $form->field($model, 'imageFile')->fileInput(['accept' => 'image/*', 'id' => 'image_book_upload'])->label(false) ?>
+                    </div>
 
                 </div>
-                <div class="col-lg-3">
-                    <?= $form->field($model, 'category_book_id')->widget(Select2::class, [
-                        'data' => ArrayHelper::map(CategoryBook::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title'),
-                        'options' => ['placeholder' => 'Select a category book...', 'class' => 'custom-select'],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ]); ?>
-                </div>
-                <div class="col-lg-3">
-                    <?= $form->field($model, 'quantity')->input('number', [
-                        'min' => 1,
-                        'max' => 100,
-                        'step' => 1,
-                        'value' => 1,
-                        'class' => 'form-control form-control-lg'
-                    ]) ?>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4">
-                    <?= $form->field($model, 'author')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'Enter your Author'])->label() ?>
-                </div>
-                <div class="col-lg-4">
-                    <?= $form->field($model, 'location_id',)->widget(Select2::class, [
-                        'data' => ArrayHelper::map(LocationBook::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title'),
-                        'options' => ['placeholder' => 'Select a Location book...', 'class' => 'custom-select'],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ]); ?>
-                </div>
-                <div class="col-lg-4">
-                    <?= $form->field($model, 'sponse')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'Enter your sponse'])->label() ?>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="">
-                                <span class="font-weight-bold">Publish Post</span>
-                                <?= $form->field($model, 'status')->hiddenInput()->label(false); ?>
-                                <label class="switcher-control switcher-control-danger switcher-control-lg">
-                                    <input type="checkbox" value="<?= $model->status ?>" id="book" class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
-                                    <span class="switcher-indicator"></span>
-                                    <span class="switcher-label-on"><i class="fas fa-check"></i></span>
-                                    <span class="switcher-label-off"><i class="fas fa-times"></i></span>
-                                </label>
+                <div class="col-lg-9">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <?= $form->field($model, 'title')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងជើងរឿង'])->label() ?>
+
+                        </div>
+                        <div class="col-lg-3">
+                            <?= $form->field($model, 'category_book_id')->widget(Select2::class, [
+                                'data' => ArrayHelper::map(CategoryBook::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title'),
+                                'options' => ['placeholder' => 'ជ្រើសរើសប្រភេទសៀវភៅ', 'class' => 'custom-select'],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ]); ?>
+                        </div>
+                        <div class="col-lg-3">
+                            <?= $form->field($model, 'quantity')->input('number', [
+                                'min' => 1,
+                                'max' => 100,
+                                'step' => 1,
+                                'value' => 1,
+                                'class' => 'form-control form-control-lg limitNumber'
+                            ])->label('ចំនួនសៀវភៅ') ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <?= $form->field($model, 'author')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងឈ្មោះអ្នកនិពន្ធ'])->label() ?>
+                        </div>
+                        <div class="col-lg-4">
+                            <?= $form->field($model, 'location_id',)->widget(Select2::class, [
+                                'data' => ArrayHelper::map(LocationBook::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title'),
+                                'options' => ['placeholder' => 'ជ្រើសរើសទីតាំងដាក់សៀវភៅ', 'class' => 'custom-select'],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ]); ?>
+                        </div>
+                        <div class="col-lg-4">
+                            <?= $form->field($model, 'sponse')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងប្រភពសៀវភៅ'])->label() ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="">
+                                        <span class="font-weight-bold">ស្ថានភាព</span>
+                                        <?= $form->field($model, 'status')->hiddenInput(['value' => !empty($model->status) ? $model->status : 0])->label(false); ?>
+                                        <label class="switcher-control switcher-control-danger switcher-control-lg">
+                                            <input type="checkbox" value="<?= $model->status ?>" id="book" class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
+                                            <span class="switcher-indicator"></span>
+                                            <span class="switcher-label-on"><i class="fas fa-check"></i></span>
+                                            <span class="switcher-label-off"><i class="fas fa-times"></i></span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="row d-flex justify-content-end">
+                        <div class="col-lg-3">
+                            <?= Html::submitButton('<i class="fas fa-save mr-2"></i>រក្សាទុក', ['class' => 'btn btn-lg btn-block btn-primary']) ?>
+                        </div>
+                    </div>
+
+
                 </div>
+
             </div>
-
-            <div class="row d-flex justify-content-end">
-                <div class="col-lg-3">
-                    <?= Html::submitButton('<i class="fas fa-save mr-2"></i>Save', ['class' => 'btn btn-lg btn-block btn-primary']) ?>
-                </div>
-            </div>
-
-
         </div>
-
     </div>
-
     <?php ActiveForm::end(); ?>
 
 </div>
@@ -149,6 +147,12 @@ $script = <<<JS
             
         }
     });
+    $(".limitNumber").on("change", function(){
+        var value = $(this).val();
+        if (value < 1 || value.startsWith('0')) {
+            $(this).val(1);
+        }
+    })
 JS;
 
 $this->registerJs($script);

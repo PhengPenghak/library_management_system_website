@@ -3,16 +3,17 @@
 use yii\helpers\Html;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
-
-$this->title = 'Location Book';
+$this->title = 'ប្រភេទសៀវភៅ';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div>
 
     <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <hr class="border-0">
 
-    <div class="card">
+    <div class="card card-bg-default">
         <div class="card-body">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
@@ -47,13 +48,34 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     ],
                     [
+                        'attribute' => 'category_book_id',
+                        'label' => 'ចំនួនប្រើប្រាស់',
+                        'value' => function ($model) {
+                            return $model->bookCount ? $model->bookCount  : 'មិនមានប្រើប្រាស់';
+                        },
+                    ],
+                    [
                         'class' => ActionColumn::class,
-                        'header' => 'Action',
-                        'template' => '{update}',
+                        'header' => 'កែប្រែ',
+                        'headerOptions' => ['class' => 'text-center text-primary'],
+                        'contentOptions' => ['class' => 'text-center'],
+                        'template' => '{update} {delete}',
                         'buttons' => [
                             'update' => function ($url, $model) {
-                                return Html::button('<i class="bi bi-pencil-square"></i>', ['data-title' => 'Update Location Book', 'value' => $url, 'class' => 'btn btn-xs btn-warning modalButton']);
+                                return Html::button('<i class="fas fa-pen"></i>', ['data-title' => 'កែប្រែប្រភេទសៀវភៅ', 'value' => $url, 'class' => 'btn btn-sm btn-icon btn-secondary modalButton']);
                             },
+                            'delete' => function ($url, $model) {
+                                return Html::button('<i class="bi bi-trash2"></i>', [
+                                    'class' => 'btn btn-sm btn-icon btn-secondary button-delete',
+                                    'title' => 'លុបរឿង',
+                                    'method' => 'post',
+                                    'data' => [
+                                        'confirm' => 'តើអ្នកប្រាដកទេ?',
+                                        'value' => Url::to(['delete', 'id' => $model->id]),
+                                        'toggle' => 'tooltip',
+                                    ]
+                                ]);
+                            }
                         ],
                     ],
                 ],

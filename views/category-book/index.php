@@ -3,16 +3,17 @@
 use yii\helpers\Html;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
-
-$this->title = 'Category Book';
+$this->title = 'ប្រភេទសៀវភៅ';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div>
 
     <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <hr class="border-0">
 
-    <div class="card">
+    <div class="card card-bg-default">
         <div class="card-body">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
@@ -35,10 +36,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
         ",
+
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
 
                     'title',
+                    [
+                        'attribute' => 'category_book_id',
+                        'label' => 'ចំនួនប្រើប្រាស់',
+                        'headerOptions' => ['class' => 'text-primary'],
+                        'value' => function ($model) {
+                            return $model->bookCount ? $model->bookCount  : 'មិនមានប្រើប្រាស់';
+                        },
+
+                    ],
                     [
                         'attribute' => 'status',
                         'format' => 'raw',
@@ -48,12 +59,26 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'class' => ActionColumn::class,
-                        'header' => 'Action',
-                        'template' => '{update}',
+                        'header' => 'កែប្រែ',
+                        'headerOptions' => ['class' => 'text-center text-primary'],
+                        'contentOptions' => ['class' => 'text-center'],
+                        'template' => '{update} {delete}',
                         'buttons' => [
                             'update' => function ($url, $model) {
-                                return Html::button('<i class="bi bi-pencil-square"></i>', ['data-title' => 'Update Cateogry Book', 'value' => $url, 'class' => 'btn btn-xs btn-warning modalButton']);
+                                return Html::button('<i class="fas fa-pen"></i>', ['data-title' => 'កែប្រែប្រភេទសៀវភៅ', 'value' => $url, 'class' => 'btn btn-sm btn-icon btn-secondary modalButton']);
                             },
+                            'delete' => function ($url, $model) {
+                                return Html::button('<i class="bi bi-trash2"></i>', [
+                                    'class' => 'btn btn-sm btn-icon btn-secondary button-delete',
+                                    'title' => 'លុបរឿង',
+                                    'method' => 'post',
+                                    'data' => [
+                                        'confirm' => 'តើអ្នកប្រាដកទេ?',
+                                        'value' => Url::to(['delete', 'id' => $model->id]),
+                                        'toggle' => 'tooltip',
+                                    ]
+                                ]);
+                            }
                         ],
                     ],
                 ],
@@ -76,6 +101,27 @@ $script = <<<JS
   $('#modalScrollable').on('hidden.bs.modal', function(e) {
     $("#modalContent").html("");
   });
+    yii.confirm = function (message, okCallback, cancelCallback) {
+        var val = $(this).data('value');
+        console.log(val);
+        
+        if($(this).hasClass('button-delete')){
+            Swal.fire({
+                title: "ការព្រមាន!",
+                text: "តើអ្នកចង់លុបសៀវភៅនេះឬ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'យល់ព្រម',
+                cancelButtonText: 'បោះបង់'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post(val);
+                }
+            });
+        }
+
+    };
 
 JS;
 $this->registerJs($script);

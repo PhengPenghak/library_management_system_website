@@ -14,13 +14,13 @@ class BookSearch extends Book
     /**
      * {@inheritdoc}
      */
-    public $globalSearch;
+    public $globalSearch, $categorySearch;
     public function rules()
     {
         return [
             [['id', 'category_book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
             [['title', 'sponse', 'img_url', 'created_at', 'updated_at'], 'safe'],
-            [['globalSearch'], 'safe']
+            [['globalSearch', 'categorySearch'], 'safe']
 
         ];
     }
@@ -57,7 +57,10 @@ class BookSearch extends Book
             return $dataProvider;
         }
 
-        $query->orFilterWhere(['like', 'title', $this->globalSearch]);
+        $query->andFilterWhere(['like', 'title', $this->globalSearch])
+            ->andFilterWhere(['like', 'category_book_id', $this->categorySearch])
+            ->andFilterWhere(['like', 'status', $this->status]);
+
 
         return $dataProvider;
     }
