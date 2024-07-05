@@ -67,20 +67,22 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                             <div class="tab-pane active show" id="<?= $key ?>">
                                 <div class="row form-group" id="original-row">
                                     <div class="col-lg-4">
-                                        <?= Html::dropDownlist('book_id[]', $value['book_id'], $socialItems, ['class' => 'custom-select mb-3', 'id' => "book_id_{$key}", 'required' => true]) ?>
+                                        <input type="text" hidden id="information_borrower_book_id<?= $key ?>" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="<?= $id ?>" placeholder="" aria-invalid="false">
+
+                                        <?= Html::dropDownlist('BorrowBook[book_id][]', $value->book_id, $socialItems, ['class' => 'custom-select mb-3', 'id' => "book_id_{$key}", 'required' => true]) ?>
                                     </div>
                                     <div class="col-lg-4">
-                                        <?= Html::textInput('code[]', $value['code'], ['class' => 'form-control mb-3', 'id' => "code_{$key}", 'required' => true]) ?>
+                                        <?= Html::textInput('BorrowBook[code][]', $value->code, ['class' => 'form-control mb-3', 'id' => "code_{$key}", 'required' => true]) ?>
 
                                     </div>
                                     <div class="col-lg-4">
-                                        <?= Html::textInput('quantity[]', $value['quantity'], [
+                                        <?= Html::textInput('BorrowBook[quantity][]', $value->quantity, [
                                             'class' => 'form-control mb-3',
                                             'id' => "quantity_{$key}",
                                             'required' => true,
                                             'type' => 'number',
                                             'step' => 'any',
-                                            'min' => 0,
+                                            'min' => 1,
                                             'max' => 3,
                                         ]) ?>
                                     </div>
@@ -88,25 +90,25 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
 
                                     <div class="col-lg-4">
                                         <div class="form-group field-model-end">
-                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value['start'] ?>" name="BorrowBook[start][]">
+                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->start ?>" name="BorrowBook[start][]">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group field-model-end">
-                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value['end'] ?>" name="BorrowBook[end][]">
+                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->end ?>" name="BorrowBook[end][]">
                                         </div>
                                     </div>
 
-                                    <div class="col-lg-4">
-                                        <div class="list-group-item d-flex justify-content-between align-items-center px-1"> Switch me!
-                                            <label class="switcher-control switcher-control-success">
-                                                <input type="checkbox" name="onoffswitch" class="switcher-input" checked="">
-                                                <span class="switcher-indicator"></span>
-                                            </label>
+                                    <div class="col-lg-2">
+                                        <div class="custom-control custom-checkbox mb-3">
+                                            <input type="checkbox" value="<?= $value->status ?>" class="custom-control-input" id="checkbox-value<?= $key ?>">
+                                            <label class="custom-control-label" for="status<?= $key ?>">Agree</label>
+                                            <input type="hidden" id="checkbox-value<?= $key ?>" name="BorrowBook[status][]" value="<?= $value->status ?>">
+                                            <div class=" invalid-tooltip">
+                                                Agree
+                                            </div>
                                         </div>
                                     </div>
-
-
                                 </div>
 
                             </div>
@@ -145,103 +147,188 @@ $this->registerJsVar('id', $id);
 
 $js = <<< JS
 
-var rowCount = 0;
-$('#add-form-btn').click(function() {
-    rowCount++;
-    if (rowCount >= 4) {
-        $('#add-form-btn').prop('disabled', true).text('Maximum rows reached');
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sweet Alert!',
-            text: 'Maximum rows reached',
-            confirmButtonText: 'OK'
+$(document).ready(function() {
+    var rowLimit = 3; 
+    var rowCount = 0;
+
+    function canAddRow() {
+        var quantities = [];
+        $('input[name="BorrowBook[quantity][]"]').each(function() {
+            quantities.push(parseInt($(this).val()));
         });
 
-        $('input[id^="borrowbook-quantity"]').prop('disabled', true);
-        return;
-    }
-
-    
-
-    var exceededMaxQuantity = false;
-    $('.row.form-group').each(function() {
-        var quantity1 = parseInt($(this).find('input[name="BorrowBook[quantity][]"]').eq(0).val());
-        var quantity2 = parseInt($(this).find('input[name="BorrowBook[quantity][]"]').eq(1).val());
-        var quantity3 = parseInt($(this).find('input[name="BorrowBook[quantity][]"]').eq(2).val());
-
-        if ((quantity1 === 3) || (quantity1 + quantity2 === 3) || (quantity1 + quantity2 + quantity3 === 3)) {
-            exceededMaxQuantity = true;
-            return false; 
+        if (quantities.length === 0) {
+            return true;
         }
-    });
 
-    if (exceededMaxQuantity) {
-        $('#add-form-btn').prop('disabled', true).text('Maximum rows reached');
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sweet Alert!',
-            text: 'Maximum rows reached based on quantity conditions',
-            confirmButtonText: 'OK'
-        });
-        return;
+        if (quantities.length === 1) {
+            return quantities[0] !== 3;
+        }
+
+        if (quantities.length === 2) {
+            var first = quantities[0];
+            var second = quantities[1];
+            return (first + second !== 3 && first !== 3 && second !== 3);
+        }
+
+        if (quantities.length >= 3) {
+            var first = quantities[0];
+            var second = quantities[1];
+            var third = quantities[2];
+            return (first + second + third !== 3 && third === 1);
+        }
+
+        return true;
     }
 
-    $('input[id^="borrowbook-quantity"]').on('input', function() {
-        if (rowCount >= 4) {
-            $(this).val($(this).data('oldValue')); // Revert to old value if row count >= 4
+    function validateQuantities() {
+        var quantities = [];
+        $('input[name="BorrowBook[quantity][]"]').each(function() {
+            quantities.push(parseInt($(this).val()));
+        });
+
+        if (quantities.length >= 2) {
+            var first = quantities[0];
+            var second = quantities[1];
+            if (first + second === 3) {
+                $('input[name="BorrowBook[quantity][]"]').each(function() {
+                    $(this).attr('min', 1);
+                    $(this).attr('max', 1);
+                });
+                return; // Disable adding new rows if the sum of first and second quantities is 3
+            } else {
+                $('input[name="BorrowBook[quantity][]"]').each(function() {
+                    $(this).attr('min', 1);
+                    $(this).attr('max', 3);
+                });
+            }
+        }
+
+        if (quantities.length >= 3) {
+            var first = quantities[0];
+            var second = quantities[1];
+            var third = quantities[2];
+            if (first + second + third === 3) {
+                $('input[name="BorrowBook[quantity][]"]').each(function() {
+                    $(this).prop('disabled', true);
+                });
+                return; // Disable inputs if the sum of first, second, and third quantities is 3
+            } else {
+                $('input[name="BorrowBook[quantity][]"]').each(function() {
+                    $(this).prop('disabled', false);
+                });
+            }
         } else {
-            $(this).data('oldValue', $(this).val()); // Store current value as old value
+            $('input[name="BorrowBook[quantity][]"]').each(function() {
+                $(this).prop('disabled', false);
+            });
         }
-        return;
-    });
+    }
 
+    $('#add-form-btn').click(function() {
+        if (!canAddRow()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Cannot Add Row',
+                text: 'The quantity constraints prevent adding a new row.',
+            });
+            return; // Prevent adding more rows if constraints are not met
+        }
 
-    var key = new Date().valueOf();
-    $("#notfoundcontact").hide();
-    var options = '';
-    $.each(socialItems,function(k,v){
-      options += `<option value="\${k}">\${v}</option>`;
-    });
+        var key = new Date().valueOf();
+        $("#notfoundcontact").hide();
+        var options = '';
+        $.each(socialItems, function(k, v) {
+            options += `<option value="\${k}">\${v}</option>`;
+        });
 
-    $('#form-container').append(
-        `<div class="tab-pane active show" id="\${key}">
-            <div id="form-container">
-                <div class="row form-group" id="original-row">
-                    <input type="text" hidden id="information_borrower_book_id\${key}" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="\${id}" placeholder="" aria-invalid="false">
+        $('#form-container').append(
+            `<div class="tab-pane active show" id="\${key}">
+                <div id="form-container">
+                    <div class="row form-group" id="original-row">
+                        <input type="text" hidden id="information_borrower_book_id\${key}" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="${id}" placeholder="" aria-invalid="false">
 
-                    <div class="col-lg-4">
-                        <select type="text" name="BorrowBook[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}" />
-                        \${options}
-                        </select>
+                        <div class="col-lg-4">
+                            <select type="text" name="BorrowBook[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}">
+                            \${options}
+                            </select>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group field-borrowbook-code\${key} has-success">
+                                <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg" name="BorrowBook[code][]" autofocus="" placeholder="" aria-invalid="false">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group field-borrowbook-quantity has-success">
+                                <input type="number" id="borrowbook-quantity\${key}" class="form-control form-control-lg" name="BorrowBook[quantity][]" value="1" min="1" max="3" aria-invalid="false">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="form-group field-model-end">
+                                <input type="datetime-local" id="model-start\${key}" class="form-control" name="BorrowBook[start][]">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="form-group field-model-end">
+                                <input type="datetime-local" id="model-end\${key}" class="form-control" name="BorrowBook[end][]">
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input type="checkbox" value="0" class="custom-control-input" id="status\${key}">
+                                <label class="custom-control-label" for="status\${key}">Agree</label>
+                                <input type="hidden" id="checkbox-value\${key}" name="BorrowBook[status][]" value="0">
+                                <div class="invalid-tooltip">
+                                    Agree
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 align-self-center">
+                          <div class="d-flex align-items-center flex-column">
+                            <button type='button' class='btn bg-red text-light btn-icon btn-sm btn_remove' id='remove_row_\${key}' data-key="\${key}"><i class='fa fa-trash'></i></button>
+                          </div>
+                        </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="form-group field-borrowbook-code\${key} has-success">
-                            <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg" name="BorrowBook[code][]" autofocus="" placeholder="" aria-invalid="false">
-                        </div>  
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-group field-borrowbook-quantity has-success">
-                            <input type="number" id="borrowbook-quantity\${key}" class="form-control form-control-lg" name="BorrowBook[quantity][]" value="1" min="1" max="3" step="1" aria-invalid="false">
-                        </div>                            
-                    </div>
-
-                    <div class="col-lg-4">
-                        <div class="form-group field-model-end">
-                            <input type="datetime-local" id="model-end\${key}" class="form-control" name="BorrowBook[start][]">
-                        </div>                           
-                    </div>
-
-                    <div class="col-lg-4">
-                        <div class="form-group field-model-end">
-                            <input type="datetime-local" id="model-end\${key}" class="form-control" name="BorrowBook[end][]">
-                        </div>                          
-                    </div>
-                 
                 </div>
-            </div>
-        </div>`
-    ); 
+            </div>`
+        );
+
+        rowCount++; // Increment the row counter
+
+        $('#status' + key).change(function() {
+            if ($(this).is(':checked')) {
+                $('#checkbox-value' + key).val(1);
+            } else {
+                $('#checkbox-value' + key).val(0);
+            }
+        });
+
+        $(document).on("click", ".btn_remove", function() {
+            var key = $(this).data("key");
+            Swal.fire({
+                title: "Warning!",
+                text: "Are you sure, you want to delete this element?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, Delete it.'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(".tab-pane[id='" + key + "']").remove();
+                    rowCount--; // Decrement the row counter when a row is removed
+                    validateQuantities(); // Revalidate quantities after removing a row
+                }
+            });
+        });
+
+        $('input[name="BorrowBook[quantity][]"]').change(validateQuantities); // Add validation to quantity inputs
+        validateQuantities(); // Initial validation
+    });
 });
+
 
 JS;
 $this->registerJs($js);

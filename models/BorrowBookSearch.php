@@ -17,7 +17,11 @@ class BorrowBookSearch extends BorrowBook
     public function rules()
     {
         return [
+            [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'start', 'end'], 'required'],
             [['id', 'information_borrower_book_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
+            [['quantity'], 'number', 'min' => 1, 'max' => 3, 'tooSmall' => 'Quantity must be at least 1.', 'tooBig' => 'Quantity must not exceed 3.'],
+            [['quantity'], 'validateTotalQuantity'],
+
             [['code', 'start', 'end', 'created_at', 'updated_at'], 'safe'],
         ];
     }

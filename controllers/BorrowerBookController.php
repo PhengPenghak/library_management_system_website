@@ -110,40 +110,57 @@ class BorrowerBookController extends \yii\web\Controller
     {
         $modelHeader = $this->findModel($id);
 
-        $borrowBook = BorrowBook::find(['information_borrower_book_id' => $id])->asArray()->all();
+        $borrowBook = BorrowBook::find()->where(['information_borrower_book_id' => $modelHeader->id, 'status' => 1])->all();
+
         if (Yii::$app->request->isPost) {
             $postData = Yii::$app->request->post('BorrowBook', []);
             $transaction = Yii::$app->db->beginTransaction();
-
             try {
 
-                $modelData = [];
-                foreach ($postData['information_borrower_book_id'] as $key => $time) {
-                    $InformationBorrowerBookID = $postData['information_borrower_book_id'][$key];
-                    $BookID = $postData['book_id'][$key];
-                    $Code = $postData['code'][$key];
-                    $Quantity = $postData['quantity'][$key];
-                    $Start = $postData['start'][$key];
-                    $End = $postData['end'][$key];
-                    $Status = $postData['status'][$key];
-                    $modelData[] = [$InformationBorrowerBookID, $BookID, $Code, $Quantity, $Start, $End, $Status];
-                }
+                if (empty($borrowBook)) {
+                    $modelData = [];
+                    foreach ($postData['information_borrower_book_id'] as $key => $time) {
+                        $InformationBorrowerBookID = $postData['information_borrower_book_id'][$key];
+                        $BookID = $postData['book_id'][$key];
+                        $Code = $postData['code'][$key];
+                        $Quantity = $postData['quantity'][$key];
+                        $Start = $postData['start'][$key];
+                        $End = $postData['end'][$key];
+                        $Status = $postData['status'][$key];
+                        $modelData[] = [$InformationBorrowerBookID, $BookID, $Code, $Quantity, $Start, $End, $Status];
+                    }
 
-                Yii::$app->db->createCommand()->batchInsert(BorrowBook::tableName(), [
-                    'information_borrower_book_id',
-                    'book_id',
-                    'code',
-                    'quantity',
-                    'start',
-                    'end',
-                    'status'
-                ], $modelData)->execute();
+                    Yii::$app->db->createCommand()->batchInsert(BorrowBook::tableName(), [
+                        'information_borrower_book_id',
+                        'book_id',
+                        'code',
+                        'quantity',
+                        'start',
+                        'end',
+                        'status'
+                    ], $modelData)->execute();
+                } else {
+                    foreach ($borrowBook as $key => $bBook) {
+                        $borrowBook[$key]->information_borrower_book_id = $postData['information_borrower_book_id'][$key];
+                        $borrowBook[$key]->book_id = $postData['book_id'][$key];
+                        $borrowBook[$key]->code = $postData['code'][$key];
+                        $borrowBook[$key]->quantity = $postData['quantity'][$key];
+                        $borrowBook[$key]->start = $postData['start'][$key];
+                        $borrowBook[$key]->end = $postData['end'][$key];
+                        $borrowBook[$key]->status = $postData['status'][$key];
+                        if (!$borrowBook[$key]->save()) throw new Exception("[$key] " . json_encode($borrowBook[$key]->getErrors()));
+                    }
+                }
 
                 $transaction->commit();
                 Yii::$app->session->setFlash('success', 'Bulk data saved successfully.');
                 return $this->redirect(Yii::$app->request->referrer);
             } catch (\Exception $e) {
                 $transaction->rollBack();
+
+                // echo '<pre>';
+                // print_r($e->getMessage());
+                // exit;
                 Yii::$app->session->setFlash('error', 'Failed to save bulk data. ' . $e->getMessage());
             }
         }
@@ -155,26 +172,6 @@ class BorrowerBookController extends \yii\web\Controller
             'modelHeader' => $modelHeader
         ]);
     }
-
-
-
-
-
-    // private function transformPostData($postData)
-    // {
-    //     $result = [];
-    //     $keys = array_keys($postData);
-
-    //     for ($i = 0; $i < count($postData[$keys[0]]); $i++) {
-    //         $item = [];
-    //         foreach ($keys as $key) {
-    //             $item[$key] = $postData[$key][$i];
-    //         }
-    //         $result[] = $item;
-    //     }
-
-    //     return $result;
-    // }
 
     /**
      * Finds the Blog model based on its primary key value.
