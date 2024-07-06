@@ -18,7 +18,7 @@ $this->title = 'សៀវភៅ';
     }
 </style>
 <div class="blog-index">
-    <nav class="page-navs mb-5" style="background: none;">
+    <nav class="page-navs mb-5 px-0" style="background: none;">
         <!-- .nav-scroller -->
         <div class="nav-scroller">
             <!-- .nav -->

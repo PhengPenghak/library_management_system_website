@@ -7,8 +7,7 @@ use yii\helpers\Html;
 
 $this->title = 'កែប្រែសៀវភៅ: ' . $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'សៀវភៅ', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => "#"];
 ?>
 <div class="book-update">
 

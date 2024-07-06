@@ -27,8 +27,8 @@
         "kornrunner/blurhash": "^1.2",
         "yii2tech/csv-grid": "^1.0",
         "kartik-v/yii2-widget-select2": "@dev",
-        "edofre/yii2-fullcalendar": "*",
         "phpoffice/phpspreadsheet": "^2.1",
+        "edofre/yii2-fullcalendar": "*",
         "mpdf/mpdf": "^8.2"
     },
     "require-dev": {
