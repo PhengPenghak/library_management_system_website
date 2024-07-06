@@ -6,7 +6,11 @@ use yii\web\View;
 
 $this->registerJsFile('https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 $this->registerCssFile('https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css');
-
+$this->registerCss("
+    .fc-agendaWeek-button, .fc-agendaDay-button {
+        display: none;
+    }
+");
 echo Fullcalendar::widget([
     'clientOptions' => [
         'header' => [
@@ -23,10 +27,11 @@ echo Fullcalendar::widget([
                 var endDate = moment(end).format('YYYY-MM-DD');
                 
                 Swal.fire({
-                    title: 'Create Event',
-                    html: '<input id=\"swal-input1\" class=\"swal2-input\" placeholder=\"Event Title\">' +
-                          '<textarea id=\"swal-input2\" class=\"swal2-textarea\" placeholder=\"Event Description\"></textarea>',
+                    title: 'បង្កើតព្រឹត្តិការណ៍',
+                    html: '<input id=\"swal-input1\" class=\"form-control\" placeholder=\"ឈ្មោះព្រឹត្តការណ៍\">' +
+                          '<textarea id=\"swal-input2\" class=\"form-control mt-3\" placeholder=\"ពិពណ៌នា\" rows=\"5\"></textarea>',
                     focusConfirm: false,
+                    confirmButtonText: 'យល់ព្រម',
                     preConfirm: () => {
                         return [
                             document.getElementById('swal-input1').value,
@@ -51,14 +56,18 @@ echo Fullcalendar::widget([
                                 },
                                 success: function(data) {
                                     $('#calendar').fullCalendar('refetchEvents');
-                                    Swal.fire('Event Created!', '', 'success');
+                                    Swal.fire({
+                                        title: 'ព្រឹត្តិការណ៍ត្រូវបានបង្កើត!',
+                                        icon: 'success',
+                                        confirmButtonText: 'យល់ព្រម' // Customize OK button text here
+                                    });
                                 },
                                 error: function() {
-                                    Swal.fire('Error creating event!', '', 'error');
+                                    Swal.fire('មានកុំហុសក្នុងការបង្កើត!', '', 'error');
                                 }
                             });
                         } else {
-                            Swal.fire('Title is required!', '', 'warning');
+                            Swal.fire('ទាមទារឈ្មោះព្រឹត្តិការណ៍!', '', 'warning');
                         }
                     }
                 });
@@ -67,24 +76,63 @@ echo Fullcalendar::widget([
         'eventClick' => new \yii\web\JsExpression("
             function(event) {
                 Swal.fire({
-                    title: 'Edit or Delete Event?',
-                    text: 'Click Edit to update the event or Delete to remove it.',
+                    title: 'កែប្រែ ឬលុប​',
+                    text: 'ចុចកែប្រែដើម្បីកែប្រែព្រឹត្តិការណ៍ ឬចុចលុបដើម្បីលុបព្រឹត្តិការណ៍',
                     icon: 'question',
                     showCancelButton: true,
-                    confirmButtonText: 'Edit',
-                    cancelButtonText: 'Delete',
+                    confirmButtonText: 'កែប្រែ',
+                    cancelButtonText: 'លុប',
                     cancelButtonColor: '#d33'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = '" . Url::to(['event/update']) . "?id=' + event.id;
+                        Swal.fire({
+                            title: 'កែប្រែព្រឹត្តិការណ៍',
+                            html: '<input id=\"swal-input1\" class=\"form-control\" value=\"' + event.title + '\" placeholder=\"ឈ្មោះព្រឹត្តការណ៍\">' +
+                                  '<textarea id=\"swal-input2\" class=\"form-control mt-3\" placeholder=\"ពិពណ៌នា\" rows=\"5\">' + event.description + '</textarea>',
+                            focusConfirm: false,
+                            preConfirm: () => {
+                                return [
+                                    document.getElementById('swal-input1').value,
+                                    document.getElementById('swal-input2').value
+                                ]
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                var title = result.value[0];
+                                var description = result.value[1];
+                                
+                                if (title) {
+                                    $.ajax({
+                                        url: '" . Url::to(['event/update']) . "?id=' + event.id,
+                                        type: 'POST',
+                                        data: {
+                                            title: title,
+                                            description: description,
+                                            start: event.start.format('YYYY-MM-DD'),
+                                            end: event.end ? event.end.format('YYYY-MM-DD') : event.start.format('YYYY-MM-DD'),
+                                            _csrf: yii.getCsrfToken()
+                                        },
+                                        success: function(data) {
+                                            $('#calendar').fullCalendar('refetchEvents');
+                                            Swal.fire('ព្រឹត្តិការណ៌ត្រូវបានកែប្រែ!', '', 'success');
+                                        },
+                                        error: function() {
+                                            Swal.fire('មានកុំហុសក្នុងការកែប្រែ!', '', 'error');
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire('ទាមទារឈ្មោះព្រឹត្តិការណ៍!', '', 'warning');
+                                }
+                            }
+                        });
                     } else if (result.dismiss === Swal.DismissReason.cancel) {
                         Swal.fire({
-                            title: 'Are you sure?',
-                            text: 'This event will be permanently deleted!',
+                            title: 'តើអ្នកប្រាកដឬទេ?',
+                            text: 'ព្រឹត្តការណ៍នឹងត្រូវបានលុបមិនអាចបងក្រោយ!',
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonText: 'Yes, delete it!',
-                            cancelButtonText: 'Cancel',
+                            confirmButtonText: 'ខ្ញុំយល់ព្រមលុប!',
+                            cancelButtonText: 'បោះបង់',
                             cancelButtonColor: '#d33'
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -112,11 +160,11 @@ $session = Yii::$app->session;
 if ($session->hasFlash('eventCreated')) {
     $this->registerJs("
         Swal.fire({
-            title: 'Event Created!',
-            text: 'Event has been created successfully.',
+            title: 'ព្រឹត្តិការណ៍ត្រូវបានបង្កើត!',
+            text: 'ព្រឹត្តិការណ៍ត្រូវបានបង្កើតដោយជោគជ័យ',
             icon: 'success',
             confirmButtonColor: '#3085d6',
-            confirmButtonText: 'I Got it.'
+            confirmButtonText: 'ខ្ញុំយល់ព្រម.'
         });
     ", View::POS_END);
 }

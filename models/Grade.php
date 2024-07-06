@@ -75,9 +75,9 @@ class Grade extends \yii\db\ActiveRecord
     public function getStatusTemp()
     {
         if ($this->status == 1) {
-            return '<span class="badge badge-info">Publish</span>';
+            return '<span class="badge badge-subtle badge-success">មានសិស្សរៀន</span>';
         } else {
-            return '<span class="badge badge-danger">Inactive</span>';
+            return '<span class="badge badge-subtle badge-danger">មិនមិនសិស្សរៀន</span>';
         }
     }
 }

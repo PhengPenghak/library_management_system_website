@@ -15,7 +15,7 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
     <div class="card-body">
       <div class="card-title"><?= Yii::t('app', 'ស្ថានភាព') ?></div>
 
-      <div class="d-flex justify-content-between align-items-center">
+      <div class="">
         <?= $form->field($model, 'status')->hiddenInput()->label(false); ?>
         <label class="switcher-control switcher-control-success switcher-control-lg">
           <input type="checkbox" value="<?= $model->status ?>" id="locationBook" class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
