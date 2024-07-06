@@ -38,10 +38,12 @@ class BorrowerBookController extends \yii\web\Controller
         $searchModel = new InfomationBorrowerBookSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
         $dataProvider->pagination->pageSize = Yii::$app->setupdata->pageSize();
+        $totalCount = $dataProvider->getTotalCount();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'totalCount' => $totalCount
         ]);
     }
 
@@ -106,72 +108,99 @@ class BorrowerBookController extends \yii\web\Controller
         ]);
     }
 
-    public function actionBorrowBook($id)
+    public function actionCreateBorrowBook($id)
     {
         $modelHeader = $this->findModel($id);
+        $borrowBooks = BorrowBook::find()->where(['information_borrower_book_id' => $modelHeader->id, 'status' => 1])->all();
 
-        $borrowBook = BorrowBook::find()->where(['information_borrower_book_id' => $modelHeader->id, 'status' => 1])->all();
 
         if (Yii::$app->request->isPost) {
             $postData = Yii::$app->request->post('BorrowBook', []);
             $transaction = Yii::$app->db->beginTransaction();
             try {
-
-                if (empty($borrowBook)) {
-                    $modelData = [];
-                    foreach ($postData['information_borrower_book_id'] as $key => $time) {
-                        $InformationBorrowerBookID = $postData['information_borrower_book_id'][$key];
-                        $BookID = $postData['book_id'][$key];
-                        $Code = $postData['code'][$key];
-                        $Quantity = $postData['quantity'][$key];
-                        $Start = $postData['start'][$key];
-                        $End = $postData['end'][$key];
-                        $Status = $postData['status'][$key];
-                        $modelData[] = [$InformationBorrowerBookID, $BookID, $Code, $Quantity, $Start, $End, $Status];
-                    }
-
-                    Yii::$app->db->createCommand()->batchInsert(BorrowBook::tableName(), [
-                        'information_borrower_book_id',
-                        'book_id',
-                        'code',
-                        'quantity',
-                        'start',
-                        'end',
-                        'status'
-                    ], $modelData)->execute();
-                } else {
-                    foreach ($borrowBook as $key => $bBook) {
-                        $borrowBook[$key]->information_borrower_book_id = $postData['information_borrower_book_id'][$key];
-                        $borrowBook[$key]->book_id = $postData['book_id'][$key];
-                        $borrowBook[$key]->code = $postData['code'][$key];
-                        $borrowBook[$key]->quantity = $postData['quantity'][$key];
-                        $borrowBook[$key]->start = $postData['start'][$key];
-                        $borrowBook[$key]->end = $postData['end'][$key];
-                        $borrowBook[$key]->status = $postData['status'][$key];
-                        if (!$borrowBook[$key]->save()) throw new Exception("[$key] " . json_encode($borrowBook[$key]->getErrors()));
-                    }
+                $modelData = [];
+                foreach ($postData['information_borrower_book_id'] as $key => $informationBorrowerBookID) {
+                    $modelData[] = [
+                        $informationBorrowerBookID,
+                        $postData['book_id'][$key],
+                        $postData['code'][$key],
+                        $postData['quantity'][$key],
+                        $postData['start'][$key],
+                        $postData['end'][$key],
+                        $postData['status'][$key],
+                    ];
                 }
 
+                Yii::$app->db->createCommand()->batchInsert(BorrowBook::tableName(), [
+                    'information_borrower_book_id',
+                    'book_id',
+                    'code',
+                    'quantity',
+                    'start',
+                    'end',
+                    'status'
+                ], $modelData)->execute();
+
                 $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Bulk data saved successfully.');
+                Yii::$app->session->setFlash('success', 'Borrowed books created successfully.');
                 return $this->redirect(Yii::$app->request->referrer);
             } catch (\Exception $e) {
                 $transaction->rollBack();
-
-                // echo '<pre>';
-                // print_r($e->getMessage());
-                // exit;
-                Yii::$app->session->setFlash('error', 'Failed to save bulk data. ' . $e->getMessage());
+                Yii::$app->session->setFlash('error', 'Failed to create borrowed books. ' . $e->getMessage());
             }
         }
 
         $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title');
         return $this->render('_form_borrow_book', [
-            'borrowBook' => $borrowBook,
+            'borrowBook' => [],
+            'borrowBooks' => $borrowBooks,
             'socialItems' => $socialItems,
             'modelHeader' => $modelHeader
         ]);
     }
+
+    public function actionUpdateBorrowBook($id)
+    {
+        $modelHeader = $this->findModel($id);
+        $borrowBooks = BorrowBook::find()->where(['information_borrower_book_id' => $modelHeader->id, 'status' => 1])->all();
+
+        if (Yii::$app->request->isPost) {
+            $postData = Yii::$app->request->post('BorrowBook', []);
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                foreach ($borrowBooks as $key => $borrowBook) {
+                    if (isset($postData['information_borrower_book_id'][$key])) {
+                        $borrowBook->information_borrower_book_id = $postData['information_borrower_book_id'][$key];
+                        $borrowBook->book_id = $postData['book_id'][$key];
+                        $borrowBook->code = $postData['code'][$key];
+                        $borrowBook->quantity = $postData['quantity'][$key];
+                        $borrowBook->start = $postData['start'][$key];
+                        $borrowBook->end = $postData['end'][$key];
+                        $borrowBook->status = $postData['status'][$key];
+                        if (!$borrowBook->save()) {
+                            throw new Exception("Update failed for record ID {$borrowBook->id}: " . json_encode($borrowBook->getErrors()));
+                        }
+                    }
+                }
+
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', 'Borrowed books updated successfully.');
+                return $this->redirect(Yii::$app->request->referrer);
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('error', 'Failed to update borrowed books. ' . $e->getMessage());
+            }
+        }
+
+        $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title');
+        return $this->render('_update_borrow_book', [
+            'borrowBook' => $borrowBooks,
+            'socialItems' => $socialItems,
+            'modelHeader' => $modelHeader
+        ]);
+    }
+
+
 
     /**
      * Finds the Blog model based on its primary key value.

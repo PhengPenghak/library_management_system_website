@@ -85,8 +85,14 @@ class InfomationBorrowerBook extends \yii\db\ActiveRecord
         }
     }
 
+
     public function getGrade()
     {
         return $this->hasOne(Grade::class, ['id' => 'grade_id']);
+    }
+
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
     }
 }

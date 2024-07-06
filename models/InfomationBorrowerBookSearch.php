@@ -46,32 +46,19 @@ class InfomationBorrowerBookSearch extends InfomationBorrowerBook
     {
         $query = InfomationBorrowerBook::find();
 
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['created_at' => SORT_DESC, 'updated_at' => SORT_DESC]]
+            'sort' => ['defaultOrder' => ['username' => SORT_ASC]]
         ]);
 
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            // 'type' => $this->type,
-            'status' => $this->status
-        ]);
-
-        $query->andFilterWhere([
-            'OR',
-            ['like', 'name', $this->globalSearch],
-        ]);
-
+        $query->andFilterWhere(['like', 'username', $this->globalSearch])
+            ->andFilterWhere(['like', 'status', $this->status]);
         return $dataProvider;
     }
 }

@@ -14,10 +14,10 @@ use kartik\select2\Select2;
 
 EditorAsset::register($this);
 
-$this->title = 'Details';
-$this->params['breadcrumbs'][] = ['label' => 'Itinerary List', 'url' => ['index']];
+$this->title = 'ព័ត៌មានអ្នកខ្ចីសៀវភៅ';
+$this->params['breadcrumbs'][] = ['label' => 'អ្នកខ្ចីសៀវភៅ', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['breadcrumbs'][] = empty($model->name) ? 'New Itinerary' : $model->name;
+$this->params['breadcrumbs'][] = empty($model->name) ? 'បង្កើត អ្នកខ្ចីសៀវភៅ' : $model->name;
 
 $base_url =  Yii::getAlias('@web');
 $model->status = $model->isNewRecord ? 1 : $model->status;
@@ -64,10 +64,13 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
                 <div class="tab-pane active show">
                     <div class="row">
                         <div class="col-md-4">
-                            <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($model, 'username')->textInput(['maxlength' => true, 'class' => 'form-control form-control-lg']) ?>
                         </div>
                         <div class="col-md-4">
-                            <?= $form->field($model, 'gender')->dropDownList(['1' => 'male', 2 => 'female']) ?>
+                            <?= $form->field($model, 'gender')->dropDownList(
+                                ['male' => 'Male', 'female' => 'Female'],
+                                ['class' => 'form-control form-control-lg']
+                            ) ?>
                         </div>
                         <div class="col-md-4">
                             <?= $form->field($model, 'grade_id',)->widget(Select2::class, [
@@ -77,6 +80,24 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
                                     'allowClear' => true
                                 ],
                             ]); ?>
+                        </div>
+
+
+                        <div class="col-lg-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="">
+                                        <span class="font-weight-bold">ស្ថានភាព</span>
+                                        <?= $form->field($model, 'status')->hiddenInput(['value' => !empty($model->status) ? $model->status : 0])->label(false); ?>
+                                        <label class="switcher-control switcher-control-danger switcher-control-lg">
+                                            <input type="checkbox" value="<?= $model->status ?>" id="book" class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
+                                            <span class="switcher-indicator"></span>
+                                            <span class="switcher-label-on"><i class="fas fa-check"></i></span>
+                                            <span class="switcher-label-off"><i class="fas fa-times"></i></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -96,23 +117,13 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
 <?php
 
 $script = <<<JS
-    
-    $("#itemStatus").change(function(){
-        if($(this).is(":checked")){
-            $("#touritinerary-status").val(1);
-        }else{
-            $("#touritinerary-status").val(0);
-        }
-        $("#submitButton").prop('disabled', false);
-    });
 
-    $("#blogImgStatus").change(function(){
+    $("#book").change(function(){
         if($(this).is(":checked")){
-            $("#touritinerary-is_best_seller").val(1);
+            $("#infomationborrowerbook-status").val(1);
         }else{
-            $("#touritinerary-is_best_seller").val(0);
+            $("#infomationborrowerbook-status").val(0);
         }
-        $("#submitButton").prop('disabled', false);
     });
 JS;
 

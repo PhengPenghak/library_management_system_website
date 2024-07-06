@@ -9,12 +9,18 @@ if (!$modelHeader->isNewRecord) {
         [
             'active' => ['detail'],
             'action' => 'detail',
-            'label' => 'Details'
+            'label' => 'ព័ត៌មានអ្នកខ្ចីសៀវភៅ'
         ],
         [
-            'active' => ['borrow-book'],
-            'action' => 'borrow-book',
-            'label' => 'Borrower Book'
+            'active' => ['create-borrow-book'],
+            'action' => 'create-borrow-book',
+            'label' => 'ខ្ចីសៀវភៅ'
+        ],
+
+        [
+            'active' => ['update-borrow-book'],
+            'action' => 'update-borrow-book',
+            'label' => 'សងសៀវភៅ'
         ],
 
     ];
@@ -30,7 +36,7 @@ if (!$modelHeader->isNewRecord) {
             echo "<li>" . Html::a($value['label'], ['borrower-book/' . $value['action'], 'id' => $modelHeader->id], ['class' => 'nav-link ' . $active]) . "</li>";
         }
     } else {
-        echo "<li>" . Html::a('Details', '#', ['class' => 'nav-link active prevent-default']) . "</li>";
+        echo "<li>" . Html::a('ព័ត៌មានអ្នកខ្ចីសៀវភៅ', '#', ['class' => 'nav-link active prevent-default']) . "</li>";
     }
     ?>
 </ul>

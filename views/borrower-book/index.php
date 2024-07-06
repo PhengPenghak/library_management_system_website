@@ -5,11 +5,31 @@ use yii\helpers\Url;
 use yii\bootstrap4\Modal;
 use yii\grid\GridView;
 
-$this->title = "Itinerary";
+$this->title = "អ្នកខ្ចីសៀវភៅ";
 
 /** @var \app\components\Formter $formater */
 $formater = Yii::$app->formater;
 ?>
+
+<style>
+    .active {
+        border-color: #346cb0 !important;
+    }
+
+    .badge-secondary-color {
+        background-color: #346cb0;
+    }
+</style>
+<nav class="page-navs mb-5 px-0" style="background: none;">
+    <!-- .nav-scroller -->
+    <div class="nav-scroller">
+        <!-- .nav -->
+        <div class="nav nav-tabs">
+            <a class="nav-link active" href="<?= Url::to(['borrower-book/index']) ?>">សៀវភៅទាំងអស់ <span class="badge badge-pill ml-2 badge-secondary-color text-light"><?= !empty($totalCount) ? $totalCount : '' ?></span></a>
+            <a class="nav-link" href="<?= Url::to(['book/index']) ?>">Activities <span class="badge">16</span></a>
+        </div><!-- /.nav -->
+    </div><!-- /.nav-scroller -->
+</nav>
 <div class="itinerary">
 
     <?= $this->render('_search', ['model' => $searchModel]); ?>
@@ -51,6 +71,29 @@ $formater = Yii::$app->formater;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     'username',
+                    'gender',
+                    [
+                        'attribute' => 'grade_id',
+                        'value' => function ($model) {
+                            return $model->grade ? $model->grade->title : 'No grade';
+                        },
+                    ],
+
+                    [
+                        'attribute' => 'created_by',
+                        'label' => 'បង្កើត​ឡើង​ដោយ',
+                        'value' => function ($model) {
+                            return $model->createdBy ? $model->createdBy->username : 'N/A';
+                        },
+                    ],
+
+                    [
+                        'attribute' => 'created_at',
+                        'label' => 'បង្កើត​ឡើង​ដោយ',
+                        'value' => function ($model) {
+                            return Yii::$app->formater->maskDateKH($model->created_at);
+                        }
+                    ],
 
                     [
                         'attribute' => 'status',
@@ -75,7 +118,7 @@ $formater = Yii::$app->formater;
                         'template' => '{update}',
                         'buttons' => [
                             'update' => function ($url, $model) {
-                                return Html::a('<i class="bi bi-pencil-square"></i>', ['borrower-book/borrow-book', 'id' => $model->id], ['class' => 'btn btn-sm btn-icon btn-secondary']);
+                                return Html::a('<i class="bi bi-pencil-square"></i>', ['borrower-book/detail', 'id' => $model->id], ['class' => 'btn btn-sm btn-icon btn-secondary']);
                             },
 
                         ],

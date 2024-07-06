@@ -36,10 +36,12 @@ class BorrowBook extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            // [['book_id', 'start', 'end'], 'required'],
+            [['book_id', 'information_borrower_book_id', 'code', 'start', 'end'], 'required'],
             [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['end', 'created_at', 'updated_at'], 'safe'],
+            [['start', 'end', 'created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 255],
+            [['quantity'], 'number', 'min' => 1, 'max' => 1, 'tooSmall' => 'Quantity must be at least 1.', 'tooBig' => 'Quantity must not exceed 3.'],
+
         ];
     }
 
@@ -63,7 +65,6 @@ class BorrowBook extends \yii\db\ActiveRecord
             'updated_by' => 'Updated By',
         ];
     }
-
     public function getBook()
     {
         return $this->hasOne(Book::class, ['id' => 'book_id']);

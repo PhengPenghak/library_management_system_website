@@ -55,49 +55,55 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
         <div class="card-body">
             <div class="tab-content" id="tab-content">
                 <?php
-                if (empty($borrowBooks)) {
+                if (empty($borrowBook)) {
                 ?>
                     <ul class="list-group" id="notfoundcontact">
                         <li class="list-group-item">No data found!</li>
                     </ul>
                     <?php
                 } else {
-                    if (count($borrowBooks) > 0) {
-                        foreach ($borrowBooks as $key => $value) {
+                    if (count($borrowBook) > 0) {
+                        foreach ($borrowBook as $key => $value) {
                     ?>
                             <div class="tab-pane active show" id="<?= $key ?>">
                                 <div class="row form-group" id="original-row">
                                     <div class="col-lg-4">
-                                        <input type="text" class="form-control form-control-lg mb-3" id="tpye_social_media_<?= $key ?>" value="<?= $value->book_id ?>" disabled></input>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group field-borrowbook-code<?= $key ?> has-success">
-                                            <input type="text" id="borrowbook-code<?= $key ?>" class="form-control form-control-lg" value="<?= $value->code ?>" disabled>
-                                        </div>
-                                    </div>
+                                        <input type="text" hidden id="information_borrower_book_id<?= $key ?>" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="<?= $id ?>" placeholder="" aria-invalid="false">
 
+                                        <?= Html::dropDownlist('BorrowBook[book_id][]', $value->book_id, $socialItems, ['class' => 'custom-select mb-3', 'id' => "book_id_{$key}", 'required' => true]) ?>
+                                    </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group field-borrowbook-quantity has-success">
-                                            <input type="number" id="borrowbook-quantity<?= $key ?>" class="form-control form-control-lg quantity-input" value="<?= $value->quantity ?>" disabled>
-                                        </div>
+                                        <?= Html::textInput('BorrowBook[code][]', $value->code, ['class' => 'form-control mb-3', 'id' => "code_{$key}", 'required' => true]) ?>
+
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <?= Html::textInput('BorrowBook[quantity][]', $value->quantity, [
+                                            'class' => 'form-control mb-3 quantity-input',
+                                            'id' => "quantity_{$key}",
+                                            'required' => true,
+                                            'type' => 'number',
+                                            'step' => 'any',
+                                            'min' => 1,
+                                            'max' => 1,
+                                        ]) ?>
                                     </div>
 
                                     <div class="col-lg-4">
                                         <div class="form-group field-model-end">
-                                            <input type="datetime-local" id="model-start<?= $key ?>" class="form-control" value="<?= $value->start ?>" disabled>
+                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->start ?>" name="BorrowBook[start][]">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group field-model-end">
+                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->end ?>" name="BorrowBook[end][]">
                                         </div>
                                     </div>
 
-                                    <div class="col-lg-4">
-                                        <div class="form-group field-model-end">
-                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->end ?>" disabled>
-                                        </div>
-                                    </div>
                                     <div class="col-lg-2">
                                         <div class="custom-control custom-checkbox mb-3">
-                                            <input type="checkbox" value="<?= $value->status ?>" disabled class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
+                                            <input type="checkbox" value="<?= $value->status ?>" class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
                                             <label class="custom-control-label" for="status<?= $key ?>">Agree</label>
-                                            <input type="hidden" id="checkbox-value<?= $key ?>" value="<?= $value->status ?>">
+                                            <input type="hidden" id="checkbox-value<?= $key ?>" name="BorrowBook[status][]" value="<?= $value->status ?>">
                                             <div class="invalid-tooltip">Agree</div>
                                         </div>
                                     </div>
@@ -105,17 +111,19 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                                 </div>
 
                             </div>
-                <?php
+                        <?php
                         }
+                    } else {
+                        ?>
+                        <ul class="list-group" id="notfoundcontact">
+                            <li class="list-group-item">Invalid data found!</li>
+                        </ul>
+                <?php
                     }
                 }
                 ?>
             </div>
             <div class="row mt-3">
-
-                <div class="col-lg-2">
-                    <button type="button" class="btn btn-lg btn-block btn-success" id="add-form-btn">Add New</button>
-                </div>
                 <div class="col-lg-2">
                     <?= Html::submitButton('<i class="fas fa-save mr-2"></i>Save', ['class' => 'btn btn-lg btn-block btn-primary']) ?>
                 </div>
@@ -133,18 +141,7 @@ $this->registerJsVar('id', $id);
 
 $js = <<< JS
     $('#add-form-btn').click(function() {
-        var rowCount = $('#tab-content .tab-pane').length;
-        if (rowCount >= 3) {
-            Swal.fire({
-                title: 'ការព្រមាន!',
-                text: 'អ្នកអាចបន្ថែមបានត្រឹមតែ 3 ជួរប៉ុណ្ណោះ។',
-                icon: 'ការព្រមាន',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'យល់ព្រម'
-            });
-            return;
-        }
-
+    
         var key = new Date().valueOf();
         $("#notfoundcontact").hide();
         var options = '';
@@ -158,31 +155,31 @@ $js = <<< JS
                         <input type="text" hidden id="information_borrower_book_id\${key}" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="${id}" placeholder="" aria-invalid="false">
 
                         <div class="col-lg-4">
-                            <select type="text" name="BorrowBook[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}" required>
+                            <select type="text" name="BorrowBook[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}">
                             \${options}
                             </select>
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group field-borrowbook-code\${key} has-success">
-                                <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg" name="BorrowBook[code][]" placeholder="Enter your code" required>
+                                <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg" name="BorrowBook[code][]" placeholder="Enter your code">
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group field-borrowbook-quantity has-success">
-                                <input type="number" id="borrowbook-quantity\${key}" class="form-control form-control-lg quantity-input" name="BorrowBook[quantity][]" value="1" min="1" max="1" required>
+                                <input type="number" id="borrowbook-quantity\${key}" class="form-control form-control-lg quantity-input" name="BorrowBook[quantity][]" value="1">
                             </div>
                         </div>
 
                         <div class="col-lg-4">
                             <div class="form-group field-model-end">
-                                <input type="datetime-local" id="model-start\${key}" class="form-control" name="BorrowBook[start][]" required>
+                                <input type="datetime-local" id="model-start\${key}" class="form-control" name="BorrowBook[start][]">
                             </div>
                         </div>
 
                         <div class="col-lg-4">
                             <div class="form-group field-model-end">
                             
-                                <input type="datetime-local" id="model-end\${key}" class="form-control" name="BorrowBook[end][]" required>
+                                <input type="datetime-local" id="model-end\${key}" class="form-control" name="BorrowBook[end][]">
                             </div>
                         </div>
                         <div class="col-lg-2">
@@ -202,8 +199,11 @@ $js = <<< JS
                           </div>
                         </div>
                     </div>
+                
             </div>`
         );
+
+        
 
         $('#status' + key).change(function() {
             if ($(this).is(':checked')) {
@@ -212,6 +212,7 @@ $js = <<< JS
                 $('#checkbox-value' + key).val(0);
             }
         });
+
 
         $(document).on("click", ".btn_remove", function() {
             var key = $(this).data("key");
@@ -229,7 +230,46 @@ $js = <<< JS
                 }
             });
         });
+
+       
     });
+
+    $(document).ready(function() {
+        $('.status-checkbox').each(function() {
+            var key = $(this).attr('id').replace('status', '');
+            var hiddenInput = $('#checkbox-value' + key);
+
+            if ($(this).is(':checked')) {
+                hiddenInput.val(1);
+            } else {
+                hiddenInput.val(0);
+            }
+
+            $(this).change(function() {
+                if ($(this).is(':checked')) {
+                    hiddenInput.val(1);
+                } else {
+                    hiddenInput.val(0);
+                }
+            });
+        });
+    });
+
+    // $(document).ready(function() {
+    //     $('.quantity-input').each(function() {
+    //         if ($(this).val() == 1) { 
+    //             $(this).prop('disabled', true);
+    //         }
+    //     });
+
+    //     $('.quantity-input').on('change', function() {
+    //         if ($(this).val() == 1) {
+    //             $(this).prop('disabled', true);
+    //         } else {
+    //             $(this).prop('disabled', false);
+    //         }
+    //     });
+    // });
 
 JS;
 $this->registerJs($js);
