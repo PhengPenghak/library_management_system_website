@@ -23,7 +23,7 @@ class SeedController extends Controller
                 ['Queen Size Bed', 2, 1],
                 ['2 Single Beds', 2, 1],
                 ['3 Single Beds', 3, 1],
-                ['4 Single Beds', 4,1],
+                ['4 Single Beds', 4, 1],
                 ['1 Single Bed', 1, 1],
                 ['Twin bed + 1 Extra bed', 3, 1],
                 ['Double bed + Extra bed', 3, 1],
@@ -172,7 +172,7 @@ class SeedController extends Controller
                 [12, '24 hrs security', 1],
                 [12, 'Safety deposit box', 1],
             ]
-        )->execute();   
+        )->execute();
 
         Yii::$app->db->createCommand()->batchInsert(
             'hotel_facility_group',
@@ -335,7 +335,7 @@ class SeedController extends Controller
 
             ]
         )->execute();
-        
+
         Yii::$app->db->createCommand()->batchInsert(
             'user_role_action',
             [
@@ -377,11 +377,12 @@ class SeedController extends Controller
                 [5, 'Manage Tag', 'tag', 'index,create,update,delete', 1],
             ]
         )->execute();
- 
+
         return ExitCode::OK;
     }
 
-    public function actionVendorRolePermission(){
+    public function actionVendorRolePermission()
+    {
         Yii::$app->db->createCommand()->batchInsert(
             'user_role_permission',
             [
@@ -429,7 +430,7 @@ class SeedController extends Controller
                 [2, 18],
                 [2, 19],
                 [2, 12],
-                [2, 14], 
+                [2, 14],
                 [3, 12],
                 [3, 14],
                 [3, 20],
@@ -437,7 +438,7 @@ class SeedController extends Controller
                 [4, 15],
                 [4, 26],
                 [4, 27],
-                [5, 1], 
+                [5, 1],
                 [5, 2],
                 [5, 8],
                 [5, 9],
@@ -445,12 +446,13 @@ class SeedController extends Controller
                 [5, 13],
                 [5, 20],
                 [5, 14],
-                [1, 28],   
+                [1, 28],
             ]
         )->execute();
     }
 
-    public function actionVendor(){
+    public function actionVendor()
+    {
         Yii::$app->db->createCommand()->batchInsert(
             'vendor',
             [
@@ -475,17 +477,15 @@ class SeedController extends Controller
 
             ]
         )->execute();
-
-
-
     }
 
-    public function actionVendorType(){
+    public function actionVendorType()
+    {
         Yii::$app->db->createCommand()->batchInsert(
             'vendor_type',
             [
                 'name',
-                
+
             ],
             [
                 ['Fine Dining'],
@@ -503,7 +503,8 @@ class SeedController extends Controller
         )->execute();
     }
 
-    public function actionZone(){
+    public function actionZone()
+    {
         Yii::$app->db->createCommand()->batchInsert(
             'zone',
             [
@@ -533,7 +534,8 @@ class SeedController extends Controller
         )->execute();
     }
 
-    public function actionUser(){
+    public function actionUser()
+    {
         Yii::$app->db->createCommand()->batchInsert(
             'user',
             [
@@ -556,5 +558,4 @@ class SeedController extends Controller
             ]
         )->execute();
     }
-
 }
