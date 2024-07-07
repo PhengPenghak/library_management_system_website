@@ -5,7 +5,6 @@ use app\models\Grade;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
 use kartik\select2\Select2;
 
 EditorAsset::register($this);
@@ -37,18 +36,10 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
 <div class="<?= $model->formName(); ?>">
 
     <?php
-
-    $validationUrl = ['itinerary/validation'];
-    if (!$model->isNewRecord) {
-        $validationUrl['id'] = $model->id;
-    }
-
     $form = ActiveForm::begin([
         'id' => 'form_detail',
         'enableAjaxValidation' => false,
         'enableClientValidation' => true,
-        // 'options' => ['autocomplete' => 'off'],
-        'validationUrl' => $validationUrl
     ]);
     ?>
     <div class="card card-fluid">
@@ -103,7 +94,7 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
 
     <div class="row d-flex justify-content-end">
         <div class="col-lg-3">
-            <?= Html::submitButton('<i class="fas fa-save mr-2"></i>រក្សាទុក', ['class' => 'btn btn-lg btn-block btn-primary']) ?>
+            <?= Html::submitButton('<i class="fas fa-save mr-2"></i>Save', ['class' => 'btn btn-lg btn-block btn-primary']) ?>
         </div>
     </div>
 

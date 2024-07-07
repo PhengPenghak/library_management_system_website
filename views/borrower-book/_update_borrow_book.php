@@ -10,7 +10,7 @@ use yii\helpers\Url;
 
 EditorAsset::register($this);
 
-$this->title = 'Itinerary';
+$this->title = 'អ្នកខ្ចីសៀវភៅ';
 $this->params['breadcrumbs'][] = ['label' => 'អ្នកខ្ចីសៀវភៅ', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -69,14 +69,16 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                                 <div class="row form-group" id="original-row">
                                     <div class="col-lg-4">
                                         <input type="text" hidden id="information_borrower_book_id<?= $key ?>" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="<?= $id ?>" placeholder="" aria-invalid="false">
-
+                                        <label>សៀវភៅ</label>
                                         <?= Html::dropDownlist('BorrowBook[book_id][]', $value->book_id, $socialItems, ['class' => 'custom-select mb-3', 'id' => "book_id_{$key}", 'required' => true]) ?>
                                     </div>
                                     <div class="col-lg-4">
+                                        <label>លេខសារពើភ័ណ្ខ</label>
                                         <?= Html::textInput('BorrowBook[code][]', $value->code, ['class' => 'form-control mb-3', 'id' => "code_{$key}", 'required' => true]) ?>
 
                                     </div>
                                     <div class="col-lg-4">
+                                        <label>ចំនួន</label>
                                         <?= Html::textInput('BorrowBook[quantity][]', $value->quantity, [
                                             'class' => 'form-control mb-3 quantity-input',
                                             'id' => "quantity_{$key}",
@@ -90,11 +92,13 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
 
                                     <div class="col-lg-4">
                                         <div class="form-group field-model-end">
+                                            <label>ថ្ងៃ​ចាប់ផ្តើមកាលបរិច្ឆេទ</label>
                                             <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->start ?>" name="BorrowBook[start][]">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group field-model-end">
+                                            <label>កាលបរិច្ឆេទបញ្ចប់</label>
                                             <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->end ?>" name="BorrowBook[end][]">
                                         </div>
                                     </div>
@@ -102,12 +106,11 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                                     <div class="col-lg-2">
                                         <div class="custom-control custom-checkbox mb-3">
                                             <input type="checkbox" value="<?= $value->status ?>" class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
-                                            <label class="custom-control-label" for="status<?= $key ?>">Agree</label>
+                                            <label class="custom-control-label" for="status<?= $key ?>">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
                                             <input type="hidden" id="checkbox-value<?= $key ?>" name="BorrowBook[status][]" value="<?= $value->status ?>">
-                                            <div class="invalid-tooltip">Agree</div>
+                                            <div class="invalid-tooltip">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</div>
                                         </div>
                                     </div>
-
                                 </div>
 
                             </div>
@@ -125,7 +128,7 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
             </div>
             <div class="row mt-3">
                 <div class="col-lg-2">
-                    <?= Html::submitButton('<i class="fas fa-save mr-2"></i>Save', ['class' => 'btn btn-lg btn-block btn-primary']) ?>
+                    <?= Html::submitButton('<i class="fas fa-save mr-2"></i>រក្សាទុក', ['class' => 'btn btn-lg btn-block btn-primary']) ?>
                 </div>
             </div>
 
@@ -155,40 +158,44 @@ $js = <<< JS
                         <input type="text" hidden id="information_borrower_book_id\${key}" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="${id}" placeholder="" aria-invalid="false">
 
                         <div class="col-lg-4">
+                            <label>សៀវភៅ</label>
                             <select type="text" name="BorrowBook[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}">
                             \${options}
                             </select>
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group field-borrowbook-code\${key} has-success">
+                                <label>លេខសារពើភ័ណ្ខ</label>
                                 <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg" name="BorrowBook[code][]" placeholder="Enter your code">
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group field-borrowbook-quantity has-success">
+                                <label>ចំនួន</label>
                                 <input type="number" id="borrowbook-quantity\${key}" class="form-control form-control-lg quantity-input" name="BorrowBook[quantity][]" value="1">
                             </div>
                         </div>
 
                         <div class="col-lg-4">
                             <div class="form-group field-model-end">
+                                <label>ថ្ងៃ​ចាប់ផ្តើមកាលបរិច្ឆេទ</label>
                                 <input type="datetime-local" id="model-start\${key}" class="form-control" name="BorrowBook[start][]">
                             </div>
                         </div>
 
                         <div class="col-lg-4">
                             <div class="form-group field-model-end">
-                            
+                                <label>កាលបរិច្ឆេទបញ្ចប់</label>
                                 <input type="datetime-local" id="model-end\${key}" class="form-control" name="BorrowBook[end][]">
                             </div>
                         </div>
                         <div class="col-lg-2">
                             <div class="custom-control custom-checkbox mb-3">
                                 <input type="checkbox" value="1" class="custom-control-input" id="status\${key}" checked>
-                                <label class="custom-control-label" for="status\${key}">Agree</label>
+                                <label class="custom-control-label" for="status\${key}">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
                                 <input type="hidden" id="checkbox-value\${key}" name="BorrowBook[status][]" value="1">
                                 <div class="invalid-tooltip">
-                                    Agree
+                                    អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ
                                 </div>
                             </div>
                         </div>

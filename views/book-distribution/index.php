@@ -25,8 +25,8 @@ $formater = Yii::$app->formater;
     <div class="nav-scroller">
         <!-- .nav -->
         <div class="nav nav-tabs">
-            <a class="nav-link active" href="<?= Url::to(['borrower-book/index']) ?>">ខ្ចី័ និង​ សង<span class="badge badge-pill ml-2 badge-secondary-color text-light"><?= !empty($totalCount) ? $totalCount : '' ?></span></a>
-            <a class="nav-link" href="<?= Url::to(['book-distribution/index']) ?>">ចែកសៀវទៅតាមថ្នាក់</a>
+            <a class="nav-link" href="<?= Url::to(['borrower-book/index']) ?>">ខ្ចី័ និង​ សង</a>
+            <a class="nav-link active" href="<?= Url::to(['book-distribution/index']) ?>">ចែកសៀវភៅតាមថ្នាក់ <span class="badge badge-pill ml-2 badge-secondary-color text-light"><?= !empty($totalCount) ? $totalCount : '' ?></span></a>
         </div><!-- /.nav -->
     </div><!-- /.nav-scroller -->
 </nav>
@@ -89,7 +89,7 @@ $formater = Yii::$app->formater;
 
                     [
                         'attribute' => 'created_at',
-                        'label' => 'កាលបរិច្ឆេទបង្កើត',
+                        'label' => 'បង្កើត​ឡើង​ដោយ',
                         'value' => function ($model) {
                             return Yii::$app->formater->maskDateKH($model->created_at);
                         }
@@ -101,13 +101,17 @@ $formater = Yii::$app->formater;
                         'headerOptions' => ['class' => 'text-center', 'style' => 'min-width: 100px;'],
                         'format' => 'raw',
                         'value' => function ($model) {
-                            return $model->getStatusTemp();
+                            if ($model->status == 1) {
+                                return '<span class="badge badge-info">Active</span>';
+                            } else {
+                                return '<span class="badge badge-warning">Inactive</span>';
+                            }
                         },
                     ],
 
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'header' => 'សកម្មភាព',
+                        'header' => 'Actions',
                         'headerOptions' => ['class' => 'text-center', 'style' => 'min-width: 100px'],
                         'contentOptions' => ['class' => 'text-center'],
                         'template' => '{options}',

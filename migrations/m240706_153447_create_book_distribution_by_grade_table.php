@@ -15,7 +15,7 @@ class m240706_153447_create_book_distribution_by_grade_table extends Migration
         $this->createTable('{{%book_distribution_by_grade}}', [
             'id' => $this->primaryKey(),
             'code' => $this->string()->notNull(),
-            'information_distribution_by_grade' => $this->integer(11)->notNull(),
+            'information_distribution_by_grade_id' => $this->integer(11)->notNull(),
             'book_id' => $this->integer(11)->notNull(),
             'start' => $this->date()->notNull(),
             'end' => $this->date()->notNull(),

@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "infomation_borrower_book".
+ * This is the model class for table "infomation_book_distribution_by_grade".
  *
  * @property int $id
  * @property int $grade_id
@@ -17,14 +17,14 @@ use Yii;
  * @property int|null $created_by
  * @property int|null $updated_by
  */
-class InfomationBorrowerBook extends \yii\db\ActiveRecord
+class InfomationBookDistributionByGrade extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'infomation_borrower_book';
+        return 'infomation_book_distribution_by_grade';
     }
 
     /**
@@ -51,14 +51,13 @@ class InfomationBorrowerBook extends \yii\db\ActiveRecord
             'grade_id' => 'ថ្នាក់',
             'username' => 'ឈ្មោះ​អ្នកប្រើប្រាស់',
             'gender' => 'ភេទ',
-            'status' => 'ស្ថានភាព',
+            'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
         ];
     }
-
 
     public function beforeSave($insert)
     {
@@ -79,11 +78,12 @@ class InfomationBorrowerBook extends \yii\db\ActiveRecord
     public function getStatusTemp()
     {
         if ($this->status == 1) {
-            return '<span class="badge badge-pill badge-info">បង្ហាញ</span>';
+            return '<span class="badge badge-subtle badge-success">នៅទំនេរ</span>';
         } else {
-            return '<span class="badge badge-pill badge-danger">មិនបង្ហាញ</span>';
+            return '<span class="badge badge-subtle badge-danger">មិនទំនេរ</span>';
         }
     }
+
 
 
     public function getGrade()
