@@ -46,8 +46,8 @@ class Grade extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'status' => 'Status',
+            'title' => 'ឈ្មោះថ្នាក់',
+            'status' => 'ស្ថានភាព',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',

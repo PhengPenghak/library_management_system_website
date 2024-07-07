@@ -141,10 +141,10 @@ echo Fullcalendar::widget([
                                     type: 'POST',
                                     success: function(result) {
                                         $('#calendar').fullCalendar('removeEvents', event.id);
-                                        Swal.fire('Deleted!', 'Your event has been deleted.', 'success');
+                                        Swal.fire('លុប!', 'ព្រឹត្តិការណ៍របស់អ្នកត្រូវបានលុបដោយជោគជ័យ.', 'success');
                                     },
                                     error: function() {
-                                        Swal.fire('Error!', 'There was an error deleting the event.', 'error');
+                                        // Swal.fire('Error!', 'There was an error deleting the event.', 'error');
                                     }
                                 });
                             }
