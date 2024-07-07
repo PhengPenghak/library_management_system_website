@@ -12,14 +12,14 @@ if (!$modelHeader->isNewRecord) {
             'label' => 'ព័ត៌មានអ្នកខ្ចីសៀវភៅ'
         ],
         [
-            'active' => ['create-borrow-book'],
-            'action' => 'create-borrow-book',
+            'active' => ['create-book-distribution'],
+            'action' => 'create-book-distribution',
             'label' => 'ខ្ចីសៀវភៅ'
         ],
 
         [
-            'active' => ['update-borrow-book'],
-            'action' => 'update-borrow-book',
+            'active' => ['update-book-distribution'],
+            'action' => 'update-book-distribution',
             'label' => 'សងសៀវភៅ'
         ],
 
@@ -33,7 +33,7 @@ if (!$modelHeader->isNewRecord) {
     if (!$modelHeader->isNewRecord) {
         foreach ($listArr as $key => $value) {
             $active = in_array($action, $value['active']) ? 'active' : '';
-            echo "<li>" . Html::a($value['label'], ['borrower-book/' . $value['action'], 'id' => $modelHeader->id], ['class' => 'nav-link ' . $active]) . "</li>";
+            echo "<li>" . Html::a($value['label'], ['book-distribution/' . $value['action'], 'id' => $modelHeader->id], ['class' => 'nav-link ' . $active]) . "</li>";
         }
     } else {
         echo "<li>" . Html::a('ព័ត៌មានអ្នកខ្ចីសៀវភៅ', '#', ['class' => 'nav-link active prevent-default']) . "</li>";

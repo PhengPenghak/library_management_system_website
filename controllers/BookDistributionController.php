@@ -3,16 +3,16 @@
 namespace app\controllers;
 
 use app\models\Book;
-use app\models\BorrowBook;
-use app\models\InfomationBorrowerBook;
-use app\models\InfomationBorrowerBookSearch;
+use app\models\BookDistributionByGrade;
+use app\models\InfomationBookDistributionByGrade;
+use app\models\InfomationBookDistributionByGradeSearch;
 use Exception;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
-class BorrowerBookController extends \yii\web\Controller
+class BookDistributionController extends \yii\web\Controller
 {
     /**
      * @inheritDoc
@@ -35,7 +35,7 @@ class BorrowerBookController extends \yii\web\Controller
     public function actionIndex()
     {
 
-        $searchModel = new InfomationBorrowerBookSearch();
+        $searchModel = new InfomationBookDistributionByGradeSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
         $dataProvider->pagination->pageSize = Yii::$app->setupdata->pageSize();
         $totalCount = $dataProvider->getTotalCount();
@@ -47,9 +47,9 @@ class BorrowerBookController extends \yii\web\Controller
         ]);
     }
 
-    public function actionCreateInformationBorrowerBook()
+    public function actionCreateInformationBookDistribution()
     {
-        $model = new InfomationBorrowerBook();
+        $model = new InfomationBookDistributionByGradeSearch();
         if ($this->request->isPost && $model->load($this->request->post())) {
 
             $transaction_exception = Yii::$app->db->beginTransaction();
@@ -73,7 +73,7 @@ class BorrowerBookController extends \yii\web\Controller
             }
         }
 
-        return $this->render('_form_information_borrower_book', [
+        return $this->render('_form_information_book-distribution', [
             'model' => $model,
         ]);
     }
@@ -102,24 +102,23 @@ class BorrowerBookController extends \yii\web\Controller
             }
         }
 
-        return $this->render('_form_information_borrower_book', [
+        return $this->render('_form_information_book-distribution', [
             'model' => $model,
             'modelHeader' => $modelHeader,
         ]);
     }
 
-    public function actionCreateBorrowBook($id)
+    public function actionCreateBookDistribution($id)
     {
         $modelHeader = $this->findModel($id);
-        $borrowBooks = BorrowBook::find()->where(['information_borrower_book_id' => $modelHeader->id, 'status' => 1])->all();
-
+        $BookDistributionByGrades = BookDistributionByGrade::find()->where(['information_distribution_by_grade_id' => $modelHeader->id, 'status' => 1])->all();
 
         if (Yii::$app->request->isPost) {
-            $postData = Yii::$app->request->post('BorrowBook', []);
+            $postData = Yii::$app->request->post('BookDistributionByGrade', []);
             $transaction = Yii::$app->db->beginTransaction();
             try {
                 $modelData = [];
-                foreach ($postData['information_borrower_book_id'] as $key => $informationBorrowerBookID) {
+                foreach ($postData['information_distribution_by_grade_id'] as $key => $informationBorrowerBookID) {
                     $modelData[] = [
                         $informationBorrowerBookID,
                         $postData['book_id'][$key],
@@ -131,8 +130,8 @@ class BorrowerBookController extends \yii\web\Controller
                     ];
                 }
 
-                Yii::$app->db->createCommand()->batchInsert(BorrowBook::tableName(), [
-                    'information_borrower_book_id',
+                Yii::$app->db->createCommand()->batchInsert(BookDistributionByGrade::tableName(), [
+                    'information_distribution_by_grade_id',
                     'book_id',
                     'code',
                     'quantity',
@@ -151,33 +150,30 @@ class BorrowerBookController extends \yii\web\Controller
         }
 
         $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title');
-        return $this->render('_form_borrow_book', [
+        return $this->render('_form_book-distribution', [
             'borrowBook' => [],
-            'borrowBooks' => $borrowBooks,
+            'BookDistributionByGrades' => $BookDistributionByGrades,
             'socialItems' => $socialItems,
             'modelHeader' => $modelHeader
         ]);
     }
 
-    public function actionUpdateBorrowBook($id)
+    public function actionUpdateBookDistribution($id)
     {
         $modelHeader = $this->findModel($id);
-        $borrowBooks = BorrowBook::find()->where(['information_borrower_book_id' => $modelHeader->id, 'status' => 1])->all();
+        $BookDistributionByGrades = BookDistributionByGrade::find()->where(['information_distribution_by_grade_id' => $modelHeader->id, 'status' => 1])->all();
 
         if (Yii::$app->request->isPost) {
-            $postData = Yii::$app->request->post('BorrowBook', []);
+            $postData = Yii::$app->request->post('BookDistributionByGrade', []);
+            Yii::debug($postData, 'postData'); // Debugging post data
+
             $transaction = Yii::$app->db->beginTransaction();
             try {
-                foreach ($borrowBooks as $key => $borrowBook) {
-                    if (isset($postData['information_borrower_book_id'][$key])) {
-                        $borrowBook->information_borrower_book_id = $postData['information_borrower_book_id'][$key];
-                        $borrowBook->book_id = $postData['book_id'][$key];
-                        $borrowBook->code = $postData['code'][$key];
-                        $borrowBook->quantity = $postData['quantity'][$key];
-                        $borrowBook->start = $postData['start'][$key];
-                        $borrowBook->end = $postData['end'][$key];
-                        $borrowBook->status = $postData['status'][$key];
+                foreach ($BookDistributionByGrades as $key => $borrowBook) {
+                    if (isset($postData[$key])) {
+                        $borrowBook->attributes = $postData[$key];
                         if (!$borrowBook->save()) {
+                            Yii::error($borrowBook->getErrors(), 'borrowBookErrors'); // Log errors
                             throw new Exception("Update failed for record ID {$borrowBook->id}: " . json_encode($borrowBook->getErrors()));
                         }
                     }
@@ -193,12 +189,13 @@ class BorrowerBookController extends \yii\web\Controller
         }
 
         $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title');
-        return $this->render('_update_borrow_book', [
-            'borrowBook' => $borrowBooks,
+        return $this->render('_update_book-distribution', [
+            'BookDistributionByGrades' => $BookDistributionByGrades,
             'socialItems' => $socialItems,
             'modelHeader' => $modelHeader
         ]);
     }
+
 
 
 
@@ -211,7 +208,7 @@ class BorrowerBookController extends \yii\web\Controller
      */
     protected function findModel($id)
     {
-        if (($model = InfomationBorrowerBook::findOne($id)) !== null) {
+        if (($model = InfomationBookDistributionByGrade::findOne($id)) !== null) {
             return $model;
         }
 

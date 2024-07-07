@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\BorrowBook;
+use app\models\BookDistributionByGrade;
 
 /**
  * BorrowBookSearch represents the model behind the search form of `app\models\BorrowBook`.
  */
-class BorrowBookSearch extends BorrowBook
+class BookDistributionByGradeSearch extends BookDistributionByGrade
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class BorrowBookSearch extends BorrowBook
     public function rules()
     {
         return [
-            [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'start', 'end'], 'required'],
-            [['id', 'information_borrower_book_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
+            [['information_distribution_by_grade_id', 'book_id', 'quantity', 'status', 'start', 'end'], 'required'],
+            [['id', 'information_distribution_by_grade_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
             [['code', 'start', 'end', 'created_at', 'updated_at'], 'safe'],
 
 
@@ -43,7 +43,7 @@ class BorrowBookSearch extends BorrowBook
      */
     public function search($params)
     {
-        $query = BorrowBook::find();
+        $query = BookDistributionByGrade::find();
 
         // add conditions that should always apply here
 
@@ -62,7 +62,7 @@ class BorrowBookSearch extends BorrowBook
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'information_borrower_book_id' => $this->information_borrower_book_id,
+            'information_distribution_by_grade_id' => $this->information_distribution_by_grade_id,
             'book_id' => $this->book_id,
             'start' => $this->start,
             'end' => $this->end,

@@ -5,11 +5,11 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "borrow_book".
+ * This is the model class for table "book_distribution_by_grade".
  *
  * @property int $id
- * @property string|null $code
- * @property int $information_borrower_book_id
+ * @property string $code
+ * @property int $information_distribution_by_grade
  * @property int $book_id
  * @property string $start
  * @property string $end
@@ -20,14 +20,14 @@ use Yii;
  * @property int|null $created_by
  * @property int|null $updated_by
  */
-class BorrowBook extends \yii\db\ActiveRecord
+class BookDistributionByGrade extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'borrow_book';
+        return 'book_distribution_by_grade';
     }
 
     /**
@@ -36,11 +36,12 @@ class BorrowBook extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['book_id', 'information_borrower_book_id', 'code', 'start', 'end'], 'required'],
-            [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
+            [['code', 'information_distribution_by_grade_id', 'book_id', 'start', 'end'], 'required'],
+            [['information_distribution_by_grade_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
             [['start', 'end', 'created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 255],
-            [['quantity'], 'number', 'min' => 1, 'max' => 1, 'tooSmall' => 'Quantity must be at least 1.', 'tooBig' => 'Quantity must not exceed 3.'],
+
+            [['quantity'], 'number', 'min' => 1, 'max' => 2000, 'tooSmall' => 'Quantity must be at least 1.', 'tooBig' => 'Quantity must not exceed 3.'],
 
         ];
     }
@@ -52,8 +53,8 @@ class BorrowBook extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'code' => 'Code',
-            'information_borrower_book_id' => 'Information Borrower Book ID',
+            'code' => 'លេខសារពើភ័ណ្ខ',
+            'information_distribution_by_grade_id' => 'Information Distribution By Grade',
             'book_id' => 'Book ID',
             'start' => 'Start',
             'end' => 'End',

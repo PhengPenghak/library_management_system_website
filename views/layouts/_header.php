@@ -24,8 +24,7 @@ $formater = Yii::$app->formater;
                 </span>
             </button>
             <a class="navbar-brand" href="<?= Yii::$app->homeUrl ?>">
-                <img alt="dernham logo" src="<?= Yii::getAlias("@web/img/LMS-Logo-2.png"); ?>" width="100%" />
-                <!-- DERNHAM -->
+                <img alt="LMS-Logo-2 Logo" src="<?= Yii::getAlias("@web/img/LMS-Logo-2.png"); ?>" width="100%" />
             </a>
         </div>
         <div class="top-bar-list">
@@ -38,7 +37,32 @@ $formater = Yii::$app->formater;
             </div>
             <div class="top-bar-item top-bar-item-right px-0">
                 <ul class="header-nav nav">
+                    <li class="nav-item dropdown header-nav-dropdown has-notified">
+                        <a class="nav-link" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="oi oi-envelope-open"></span></a> <!-- .dropdown-menu -->
+                        <div class="dropdown-menu dropdown-menu-rich dropdown-menu-right">
+                            <div class="dropdown-arrow"></div>
+                            <h6 class="dropdown-header stop-propagation">
+                                <span>Messages</span> <a href="#">Mark all as read</a>
+                            </h6>
+                            <div class="dropdown-scroll perfect-scrollbar ps">
 
+                                <a href="#" class="dropdown-item">
+                                    <div class="tile tile-circle bg-green"> GZ </div>
+                                    <div class="dropdown-item-body">
+                                        <p class="subject"> Gogo Zoom </p>
+                                        <p class="text text-truncate"> Live healthy with this wireless sensor. </p><span class="date">1 day ago</span>
+                                    </div>
+                                </a>
+                                <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+                                    <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                                </div>
+                                <div class="ps__rail-y" style="top: 0px; right: 0px;">
+                                    <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div>
+                                </div>
+                            </div>
+                            <a href="page-messages.html" class="dropdown-footer">All messages <i class="fas fa-fw fa-long-arrow-alt-right"></i></a>
+                        </div>
+                    </li>
                 </ul>
                 <div class="dropdown d-sm-flex">
                     <button class="btn-account" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

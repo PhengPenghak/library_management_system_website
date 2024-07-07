@@ -55,47 +55,47 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
         <div class="card-body">
             <div class="tab-content" id="tab-content">
                 <?php
-                if (empty($borrowBooks)) {
+                if (empty($BookDistributionByGrades)) {
                 ?>
                     <ul class="list-group" id="notfoundcontact">
                         <li class="list-group-item">No data found!</li>
                     </ul>
                     <?php
                 } else {
-                    if (count($borrowBooks) > 0) {
-                        foreach ($borrowBooks as $key => $value) {
+                    if (count($BookDistributionByGrades) > 0) {
+                        foreach ($BookDistributionByGrades as $key => $value) {
                     ?>
                             <div class="tab-pane active show" id="<?= $key ?>">
                                 <div class="row form-group" id="original-row">
                                     <div class="col-lg-4">
                                         <label>សៀវភៅ</label>
-                                        <input type="text" class="form-control form-control-lg mb-3" id="tpye_social_media_<?= $key ?>" value="<?= $value->book_id ?>" disabled></input>
+                                        <input type="text" class="form-control form-control-lg mb-3" id="tpye_social_media_<?= $key ?>" value="<?= $value->book->title ?>" disabled></input>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group field-borrowbook-code<?= $key ?> has-success">
-                                            <label>លេខសារពើភ័ណ្ខ</label>
-                                            <input type="text" id="borrowbook-code<?= $key ?>" class="form-control form-control-lg" value="<?= $value->code ?>" disabled>
+                                        <div class="form-group field-BookDistributionByGrade-code<?= $key ?> has-success">
+                                            <label for="BookDistributionByGrade-code<?= $key ?>">លេខសារពើភ័ណ្ខ</label>
+                                            <input type="text" id="BookDistributionByGrade-code<?= $key ?>" class="form-control form-control-lg" value="<?= $value->code ?>" disabled>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-4">
-                                        <div class="form-group field-borrowbook-quantity has-success">
-                                            <label>ចំនួន</label>
-                                            <input type="number" id="borrowbook-quantity<?= $key ?>" class="form-control form-control-lg quantity-input" value="<?= $value->quantity ?>" disabled>
+                                        <div class="form-group field-BookDistributionByGrade-quantity has-success">
+                                            <label for="model-start<?= $key ?>">ចំនួន</label>
+                                            <input type="number" id="BookDistributionByGrade-quantity<?= $key ?>" class="form-control form-control-lg quantity-input" value="<?= $value->quantity ?>" disabled>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-4">
                                         <div class="form-group field-model-end">
-                                            <label>ថ្ងៃ​ចាប់ផ្តើមកាលបរិច្ឆេទ</label>
-                                            <input type="datetime-local" id="model-start<?= $key ?>" class="form-control" value="<?= $value->start ?>" disabled>
+                                            <label for="model-start<?= $key ?>">ថ្ងៃ​ចាប់ផ្តើមកាលបរិច្ឆេទ</label>
+                                            <input type="datetime-local" id="model-start<?= $key ?>" class="form-control" value="<?= Yii::$app->formatter->asDatetime($value->start, 'php:Y-m-d\TH:i') ?>" disabled>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-4">
                                         <div class="form-group field-model-end">
                                             <label for="model-start<?= $key ?>">កាលបរិច្ឆេទបញ្ចប់</label>
-                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->end ?>" disabled>
+                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= Yii::$app->formatter->asDatetime($value->end, 'php:Y-m-d\TH:i') ?>" disabled>
                                         </div>
                                     </div>
                                     <div class="col-lg-2">
@@ -117,9 +117,8 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                 ?>
             </div>
             <div class="row mt-3">
-
                 <div class="col-lg-2">
-                    <button type="button" class="btn btn-lg btn-block btn-success" id="add-form-btn">បង្កើតថ្មី</button>
+                    <button type="button" class="btn btn-lg btn-block btn-success" id="add-form-btn"><i class="fas fa-plus"></i> ​បង្កើតថ្មី</button>
                 </div>
                 <div class="col-lg-2">
                     <?= Html::submitButton('<i class="fas fa-save mr-2"></i>រក្សាទុក', ['class' => 'btn btn-lg btn-block btn-primary']) ?>
@@ -138,17 +137,6 @@ $this->registerJsVar('id', $id);
 
 $js = <<< JS
     $('#add-form-btn').click(function() {
-        var rowCount = $('#tab-content .tab-pane').length;
-        if (rowCount >= 3) {
-            Swal.fire({
-                title: 'ការព្រមាន!',
-                text: 'អ្នកអាចបន្ថែមបានត្រឹមតែ 3 ជួរប៉ុណ្ណោះ។',
-                icon: 'ការព្រមាន',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'យល់ព្រម'
-            });
-            return;
-        }
 
         var key = new Date().valueOf();
         $("#notfoundcontact").hide();
@@ -160,48 +148,47 @@ $js = <<< JS
         $('#tab-content').append(
             `<div class="tab-pane active show" id="\${key}">
                     <div class="row form-group" id="original-row">
-                        <input type="text" hidden id="information_borrower_book_id\${key}" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="${id}" placeholder="" aria-invalid="false">
+                        <input type="text" hidden id="information_distribution_by_grade_id\${key}" class="form-control form-control-lg" name="BookDistributionByGrade[information_distribution_by_grade_id][]" autofocus="true" value="${id}" placeholder="" aria-invalid="false">
 
                         <div class="col-lg-4">
                             <label>សៀវភៅ</label>
-                            <select type="text" name="BorrowBook[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}" required>
+                            <select type="text" name="BookDistributionByGrade[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}" required>
                             \${options}
                             </select>
                         </div>
                         <div class="col-lg-4">
-                            <div class="form-group field-borrowbook-code\${key} has-success">
+                            <div class="form-group field-BookDistributionByGrade-code\${key} has-success">
                                 <label>លេខសារពើភ័ណ្ខ</label>
-                                <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg" name="BorrowBook[code][]" placeholder="បញ្ចូលលេខសារពើភ័ណ្ខ" required>
+                                <input type="text" id="BookDistributionByGrade-code\${key}" class="form-control form-control-lg" name="BookDistributionByGrade[code][]" placeholder="Enter your code" required>
                             </div>
                         </div>
                         <div class="col-lg-4">
-                            <div class="form-group field-borrowbook-quantity has-success">
+                            <div class="form-group field-BookDistributionByGrade-quantity has-success">
                                 <label>ចំនួន</label>
-                                <input type="number" id="borrowbook-quantity\${key}" class="form-control form-control-lg quantity-input" name="BorrowBook[quantity][]" value="1" min="1" max="1" required>
+                                <input type="number" id="BookDistributionByGrade-quantity\${key}" class="form-control form-control-lg quantity-input" name="BookDistributionByGrade[quantity][]" value="1">
                             </div>
                         </div>
 
                         <div class="col-lg-4">
                             <div class="form-group field-model-end">
                                 <label>ថ្ងៃ​ចាប់ផ្តើមកាលបរិច្ឆេទ</label>
-                                <input type="datetime-local" id="model-start${key}" class="form-control" name="BorrowBook[start][]" required placeholder="Select start date and time">
+                                <input type="datetime-local" id="model-start\${key}" class="form-control" name="BookDistributionByGrade[start][]" required>
                             </div>
                         </div>
-
 
                         <div class="col-lg-4">
                             <div class="form-group field-model-end">
                                 <label>កាលបរិច្ឆេទបញ្ចប់</label>
-                                <input type="datetime-local" id="model-end\${key}" class="form-control" name="BorrowBook[end][]" placeholder="បញ្ចូលកាលបរិច្ឆេទបញ្ចប់" required​>
+                                <input type="datetime-local" id="model-end\${key}" class="form-control" name="BookDistributionByGrade[end][]" required>
                             </div>
                         </div>
                         <div class="col-lg-2">
                             <div class="custom-control custom-checkbox mb-3">
                                 <input type="checkbox" value="1" class="custom-control-input" id="status\${key}" checked>
                                 <label class="custom-control-label" for="status\${key}">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
-                                <input type="hidden" id="checkbox-value\${key}" name="BorrowBook[status][]" value="1">
+                                <input type="hidden" id="checkbox-value\${key}" name="BookDistributionByGrade[status][]" value="1">
                                 <div class="invalid-tooltip">
-                                    អនុញ្ញាត ខ្ចីនិងសង
+                                    អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ
                                 </div>
                             </div>
                         </div>

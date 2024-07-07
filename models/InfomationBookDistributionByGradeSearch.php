@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\InfomationBorrowerBook;
+use app\models\InfomationBookDistributionByGrade;
 
 /**
  * InfomationBorrowerBookSearch represents the model behind the search form of `app\models\InfomationBorrowerBook`.
  */
-class InfomationBorrowerBookSearch extends InfomationBorrowerBook
+class InfomationBookDistributionByGradeSearch extends InfomationBookDistributionByGrade
 {
     /**
      * {@inheritdoc}
@@ -44,7 +44,7 @@ class InfomationBorrowerBookSearch extends InfomationBorrowerBook
      */
     public function search($params)
     {
-        $query = InfomationBorrowerBook::find();
+        $query = InfomationBookDistributionByGrade::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
