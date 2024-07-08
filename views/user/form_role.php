@@ -21,6 +21,18 @@ $this->params['pageTitle'] = $this->title;
         <div class="col-md-6">
           <div class="card-title"><?= Yii::t('app', 'Set role name') ?></div>
           <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+          <div class="card border border-warning">
+            <div class="card-body">
+              <span class="font-weight-semibold">Allow this role to be a master user of b2b frontend site.</span>
+              <?= $form->field($model, 'is_master')->hiddenInput()->label(false); ?>
+              <label class="switcher-control switcher-control-danger switcher-control-lg">
+                <input type="checkbox" value="<?= $model->is_master ?>" id="itemStatus" class="switcher-input" <?= $model->is_master == 1 ? 'checked' : '' ?>>
+                <span class="switcher-indicator"></span>
+                <span class="switcher-label-on"><i class="fas fa-check"></i></span>
+                <span class="switcher-label-off"><i class="fas fa-times"></i></span>
+              </label>
+            </div>
+          </div>
           <div class="card-title"><?= Yii::t('app', 'Choose what this role can access') ?></div>
 
           <table class="table table-condensed">
@@ -85,6 +97,14 @@ $script = <<<JS
     }else{
       $("input[name='chkboxAction[]'][data-id='"+id+"']").val('');
     }
+  });
+
+  $("#itemStatus").change(function(){
+      if($(this).is(":checked")){
+          $("#userrole-is_master").val(1);
+      }else{
+          $("#userrole-is_master").val(0);
+      }
   });
 
 JS;

@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Book;
 use app\models\Booking;
 use app\models\BorrowBook;
+use app\models\InfomationBorrowerBook;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -67,12 +68,37 @@ class SiteController extends Controller
         $borrowedBooksCount = BorrowBook::find()->count();
         $availableBooksCount = $totalBooksCount - $borrowedBooksCount;
 
+        $today = '2024-08-07';
+        $endDateRange = date('Y-m-d', strtotime('+7 days', strtotime($today)));
+
+        $reminders = [];
+        $borrowBooks = BorrowBook::find()
+            ->where(['between', 'DATE(end)', $today, $endDateRange])
+            ->all();
+
+        foreach ($borrowBooks as $borrowBook) {
+            $borrower = InfomationBorrowerBook::findOne($borrowBook->information_borrower_book_id);
+
+            if ($borrower) {
+                $message = "Reminder: You have borrowed the book with ID {$borrowBook->book_id}.\n";
+                $message .= "Start Date: {$borrowBook->start}\n";
+                $message .= "End Date: {$borrowBook->end}\n";
+
+                $reminders[] = $message;
+            }
+        }
+        $countReminders = count($reminders);
+
+
         return $this->render(
             'index',
             [
                 'totalBooksCount' => $totalBooksCount,
                 'borrowedBooksCount' => $borrowedBooksCount,
                 'availableBooksCount' => $availableBooksCount,
+                'reminders' => $reminders,
+                'countReminders' => $countReminders
+
             ]
         );
     }
@@ -115,5 +141,24 @@ class SiteController extends Controller
     public function actionCalendar()
     {
         return $this->render('calendar');
+    }
+
+    public function actionSendNotifications()
+    {
+        $currentDateTime = date('Y-m-d H:i:s');
+        $notifications = BorrowBook::find()
+            ->where(['<=', '2024-07-11 19:22:00', $currentDateTime])
+            ->andWhere(['>=', '2024-07-08 09:32:00', $currentDateTime])
+            ->all();
+
+        echo "<pre>";
+        print_r($notifications);
+        echo "</pre>";
+        exit;
+
+        foreach ($notifications as $notification) {
+            Yii::$app->session->setFlash('alert', $notification->id);
+            echo "Notification sent: {$notification->id}" . PHP_EOL;
+        }
     }
 }

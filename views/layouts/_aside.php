@@ -6,29 +6,15 @@ use yii\helpers\Html;
 /** @var \app\components\Master $master */
 $master = Yii::$app->master;
 
-$user_role_id = Yii::$app->user->identity->role_id;
-$userRole = Yii::$app->db->createCommand("SELECT user_role_action.controller, user_role_action.action
-    FROM user_role_permission
-    INNER JOIN user_role_action ON user_role_action.id = user_role_permission.action_id
-    WHERE user_role_id = :user_role_id", [
-    ':user_role_id' => $user_role_id
-])->queryAll();
 
-$roleVendor = $master->arrayFilterByColumn($userRole, 'controller', 'vendor');
-$roleMenu = $master->arrayFilterByColumn($userRole, 'controller', 'menu');
-$rolePromotion = $master->arrayFilterByColumn($userRole, 'controller', 'promotion');
-$roleBooking = $master->arrayFilterByColumn($userRole, 'controller', 'booking');
-$rolePromocode = $master->arrayFilterByColumn($userRole, 'controller', 'promotion-code');
-$roleReport = $master->arrayFilterByColumn($userRole, 'controller', 'report');
-$roleResetPassword = $master->arrayFilterByColumn($userRole, 'controller', 'reset-password');
-$roleAmenity = $master->arrayFilterByColumn($userRole, 'controller', 'amenity');
-$roleTag = $master->arrayFilterByColumn($userRole, 'controller', 'tag');
-$roleCancellation = $master->arrayFilterByColumn($userRole, 'controller', 'cancellation');
-$roleCity = $master->arrayFilterByColumn($userRole, 'controller', 'city');
-$roleZone = $master->arrayFilterByColumn($userRole, 'controller', 'zone');
-$rolePrmotionBanner = $master->arrayFilterByColumn($userRole, 'controller', 'promotion-banner');
-$roleNotificationCenter = $master->arrayFilterByColumn($userRole, 'controller', 'notification-center');
-$roleAccounting = $master->arrayFilterByColumn($userRole, 'controller', 'vendor');
+// $user_role_id = Yii::$app->user->identity->role_id;
+// $userRole = Yii::$app->db->createCommand("SELECT user_role_action.controller, user_role_action.action
+//     FROM user_role_permission
+//     INNER JOIN user_role_action ON user_role_action.id = user_role_permission.action_id
+//     WHERE user_role_id = :user_role_id", [
+//     ':user_role_id' => $user_role_id
+// ])->queryAll();
+
 
 $controller = Yii::$app->controller->id;
 $action = Yii::$app->controller->action->id;
@@ -166,20 +152,16 @@ $menu_group_type = empty($this->params['menu_group_type']) ? '' : $this->params[
                             <span class="menu-text">ការកំណត់</span>
                         </a>
                         <ul class="menu">
-                            <li class="menu-item <?= $controller_action_group == 'website-header' ? 'has-active' : ''; ?> py-1">
-                                <a href="<?= Url::toRoute(['website-header/index']) ?>" class="menu-link">
-                                    Header
-                                </a>
-                            </li>
-                            <li class="menu-item <?= $controller_action_group == 'website-footer' ? 'has-active' : ''; ?> py-1">
-                                <a href="<?= Url::toRoute(['website-footer/index']) ?>" class="menu-link">
-                                    Footer
-                                </a>
-                            </li>
-                            <li class="menu-item <?= $controller_action_group == 'website-page' ? 'has-active' : ''; ?>">
-                                <a href="<?= Url::toRoute(['page/page']) ?>" class="menu-link">
-                                    Page
-                                </a>
+                            <li class="menu-item <?= $controller == 'user' ? 'has-active' : ''; ?> py-1 has-child">
+                                <a href="#" class="menu-link"><?= Yii::t('app', 'User & Role') ?></a>
+                                <ul class="menu">
+                                    <li class="menu-item <?= $controller_action_group == 'setting_user' ? 'has-active' : ''; ?> py-1">
+                                        <a href="<?= Yii::getAlias("@web/user/index") ?>" class="menu-link">User</a>
+                                    </li>
+                                    <li class="menu-item <?= $controller_action_group == 'setting_role' ? 'has-active' : ''; ?> py-1">
+                                        <a href="<?= Yii::getAlias("@web/user/role") ?>" class="menu-link">Role</a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     </li>
