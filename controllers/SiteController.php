@@ -69,12 +69,14 @@ class SiteController extends Controller
         $availableBooksCount = $totalBooksCount - $borrowedBooksCount;
 
         $today = '2024-08-07';
-        $endDateRange = date('Y-m-d', strtotime('+7 days', strtotime($today)));
 
         $reminders = [];
+
         $borrowBooks = BorrowBook::find()
-            ->where(['between', 'DATE(end)', $today, $endDateRange])
+            ->where(['<=', 'DATE(start)', $today])
+            ->andWhere(['>=', 'DATE(end)', $today])
             ->all();
+
 
         foreach ($borrowBooks as $borrowBook) {
             $borrower = InfomationBorrowerBook::findOne($borrowBook->information_borrower_book_id);

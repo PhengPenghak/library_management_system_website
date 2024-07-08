@@ -2,29 +2,54 @@
 
 use app\models\BorrowBook;
 use app\models\InfomationBorrowerBook;
-use app\models\Promotion;
-use app\models\VendorRegister;
 use yii\bootstrap4\Html;
+use yii\db\Expression;
 use yii\helpers\Url;
 
 
+$tomorrow = date('Y-m-d', strtotime('+1 day'));
 
-$today = '2024-08-07';
-$reminders = [];
-$borrowBooks = BorrowBook::find()
-    ->Where(['<', 'DATE(end)', $today])
+$borrowBooks = (new \yii\db\Query())
+    ->select([
+        'borrow_book.information_borrower_book_id',
+        'infomation_borrower_book.username',
+        'grade.title AS grade_title',
+        'book.title AS book_title',
+        'borrow_book.end'
+    ])
+    ->from('borrow_book')
+    ->innerJoin('book', 'borrow_book.book_id = book.id')
+    ->innerJoin('infomation_borrower_book', 'borrow_book.information_borrower_book_id = infomation_borrower_book.id')
+    ->innerJoin('grade', 'infomation_borrower_book.grade_id = grade.id')
+    ->where(['=', new Expression('DATE(borrow_book.end)'), $tomorrow])
+    ->andWhere(['borrow_book.status' => 1])
     ->all();
+
+$reminders = [];
 foreach ($borrowBooks as $borrowBook) {
-    $borrower = InfomationBorrowerBook::findOne($borrowBook->information_borrower_book_id);
+    $borrower = InfomationBorrowerBook::findOne($borrowBook['information_borrower_book_id']);
+    $username = Html::encode($borrowBook['username']);
+    $bookTitle = Html::encode($borrowBook['book_title']);
+    $endDate = Yii::$app->formatter->asDate($borrowBook['end'], 'long');
+    $borrowerUrl = Url::to(['borrower-book/detail', 'id' => $borrower->id]);
 
     if ($borrower) {
-        $message = "Reminder: You have borrowed the book with ID {$borrowBook->book_id}.\n";
-        $message .= "Start Date: {$borrowBook->start}\n";
-        $message .= "End Date: {$borrowBook->end}\n";
+        $message = "<a class='dropdown-item' href='{$borrowerUrl}'> រំលឹក៖ អ្នកបានខ្ចីសៀវភៅជិតដល់ថ្ងែផុតកំណត់. <br>
+    
+        ឈ្មោះ៖: {$username}.
+        <br>
+        សៀវភៅ៖: {$bookTitle}.
+        <br>  
+        ថ្ងៃផុតកំណត់៖ {$endDate}.
 
+        </a>
+        ";
         $reminders[] = $message;
     }
 }
+
+$reminderCount = count($reminders);
+
 
 /** @var \app\components\Formater $formater */
 $formater = Yii::$app->formater;
@@ -58,8 +83,14 @@ $formater = Yii::$app->formater;
             </div>
             <div class="top-bar-item top-bar-item-right px-0">
                 <ul class="header-nav nav">
-                    <li class="nav-item dropdown header-nav-dropdown has-notified">
-                        <a class="nav-link" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="oi oi-envelope-open text-white"></span></a>
+                    <li class="nav-item dropdown header-nav-dropdown">
+
+                        <a class="nav-link" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div class="oi oi-lg oi-envelope-open text-white" style="font-size:medium">
+                            </div>
+
+                            <div class="badge badge-warning" style="font-size: small;"> <?= $reminderCount ?></div>
+                        </a>
                         <div class="dropdown-menu dropdown-menu-rich dropdown-menu-right">
                             <div class="dropdown-arrow"></div>
                             <h6 class="dropdown-header stop-propagation">
@@ -69,9 +100,7 @@ $formater = Yii::$app->formater;
 
                                 <?php
                                 foreach ($reminders as $reminder) { ?>
-                                    <a href="#" class="dropdown-item">
-                                        <?= $reminder ?>
-                                    </a>
+                                    <?= $reminder ?>
                                 <?php    }
                                 ?>
 

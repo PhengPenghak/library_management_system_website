@@ -70,6 +70,8 @@ class BorrowBook extends \yii\db\ActiveRecord
         return $this->hasOne(Book::class, ['id' => 'book_id']);
     }
 
+    // BorrowBook.php (model file)
+
     public function getInformationBorrowerBook()
     {
         return $this->hasOne(InfomationBorrowerBook::class, ['id' => 'information_borrower_book_id']);
