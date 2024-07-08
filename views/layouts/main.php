@@ -80,6 +80,7 @@ SweetAlert2Asset::register($this);
 
 </html>
 <?= $this->render('_toast') ?>
+<?= $this->render('//site/modal_scrollable'); ?>
 <script type="text/javascript">
     yii.confirm = function(message, okCallback, cancelCallback) {
         var val = $(this).data('value');
