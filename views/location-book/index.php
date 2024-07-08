@@ -5,7 +5,7 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Url;
 
-$this->title = 'ប្រភេទសៀវភៅ';
+$this->title = 'ទីតាំងដាក់សៀវភៅ';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div>
@@ -50,6 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'category_book_id',
                         'label' => 'ចំនួនប្រើប្រាស់',
+                        'headerOptions' => ['class' => 'text-primary'],
                         'value' => function ($model) {
                             return $model->bookCount ? $model->bookCount  : 'មិនមានប្រើប្រាស់';
                         },

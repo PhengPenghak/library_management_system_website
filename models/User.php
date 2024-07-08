@@ -49,7 +49,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
             [['email', 'username'], 'unique'],
             [['email', 'username', 'role_id'], 'required', 'on' => ['update', 'profile', 'create']],
-            [['role_id', 'status'], 'integer'],
+            [['role_id', 'user_type_id', 'status'], 'integer'],
             [['email', 'password_hash', 'password_reset_token', 'auth_key', 'username'], 'string'],
             [['created_at', 'updated_at', 'file'], 'safe'],
 
@@ -75,6 +75,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             'id' => 'ID',
             'role_id' => 'User Type',
+            'user_type_id' => 'User Type',
             'phone_number' => Yii::t('app', 'Mobile'),
             'current_password' => Yii::t('app', 'Current Password'),
             'new_password' => Yii::t('app', 'New Password'),
@@ -283,23 +284,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
     public function getRole()
     {
-        switch ($this->role_id) {
-            case 1:
-                return 'Admin';
-                break;
-            case 2:
-                return 'Vendor';
-                break;
-
-            default:
-                return 'Customer';
-                break;
-        }
-    }
-
-    public function getAvatar()
-    {
-        return Yii::$app->upload->getFileUrlById($this->img_id);
+        return $this->hasOne(UserRole::class, ['id' => 'role_id']);
     }
 
     public static function getUserPermission($controller)
@@ -312,7 +297,7 @@ class User extends ActiveRecord implements IdentityInterface
             ->andWhere(['user_role_action.controller' => $controller])
             ->asArray()
             ->all();
-        $array = ['dependent', 'validation', 'ajax-request', 'clear-filter', 'export-csv'];
+        $array = ['dependent', 'validation'];
         foreach ($permission as $row) {
             $extra_actions =  explode(",", $row["action"]);
             foreach ($extra_actions as $ex) {
@@ -321,5 +306,31 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         return $array;
+    }
+
+    /**
+     * this function using to get all action from table "user_type_action" and then store it in instance, 
+     * bcuz we don't need to get it again from database when we call this function again and again
+     * @return array    array of actions
+     * @author rachhen <rachhen.it@gmail.com>
+     */
+    public static function getAllAction()
+    {
+        $user_id = Yii::$app->user->getId();
+        if (!$user_id) return Yii::$app->getResponse()->redirect(\yii\helpers\Url::to(['site/login']));
+
+        if (!self::$is_got_actions) {
+            $sql = "SELECT a.controller, a.action, a.extra_action
+                FROM user_type_action AS a
+                INNER JOIN user_type_permission as b ON b.action_id = a.id
+                INNER JOIN user_type as c ON c.id = b.user_type_id
+                WHERE c.id = :user_type_id";
+
+            $user_type_id = Yii::$app->user->identity->user_type_id;
+            $command = Yii::$app->db->createCommand($sql);
+            $command->bindParam(":user_type_id", $user_type_id);
+            return self::$is_got_actions = $command->queryAll();
+        }
+        return self::$is_got_actions;
     }
 }

@@ -45,6 +45,7 @@ SweetAlert2Asset::register($this);
     <div class="app">
 
         <?= $this->render('_header'); ?>
+
         <?= $this->render('_aside'); ?>
 
         <main class="app-main">

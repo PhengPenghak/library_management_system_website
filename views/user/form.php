@@ -13,10 +13,18 @@ $this->params['pageTitle'] = $this->title;
 
 
   <?php
+
+  $validationUrl = ['user/validation'];
+  if (!$model->isNewRecord) {
+    $validationUrl['id'] = $model->id;
+  }
+
   $form = ActiveForm::begin([
     'id' => $model->formName(),
     'enableAjaxValidation' => true,
     'enableClientValidation' => true,
+    // 'options' => ['autocomplete' => 'off'],
+    'validationUrl' => $validationUrl
   ]);
   ?>
 
@@ -29,10 +37,16 @@ $this->params['pageTitle'] = $this->title;
 
           <div class="row">
             <div class="col-md-6">
-              <?= $form->field($modelUserProfield, 'first_name')->textInput(['maxlength' => true]) ?>
+              <?= $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-md-6">
-              <?= $form->field($modelUserProfield, 'last_name')->textInput(['maxlength' => true]) ?>
+              <?= $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <?= $form->field($model, 'mobile')->textInput(['maxlength' => true]) ?>
             </div>
           </div>
 
@@ -66,9 +80,9 @@ $this->params['pageTitle'] = $this->title;
       <div class="card border border-warning">
         <div class="card-body">
           <div class="card-title"><?= Yii::t('app', 'Restriction Area') ?></div>
-          <?= $form->field($model, 'role_id')->dropDownList(ArrayHelper::map(UserRole::find()->all(), 'id', 'name'), ['class' => 'custom-select'])->label("User Role") ?>
+          <?= $form->field($model, 'role_id')->dropDownList(ArrayHelper::map(UserRole::find()->all(), 'id', 'name'), ['prompt' => 'Choose one', 'class' => 'custom-select'])->label("User Role") ?>
           <span class="font-weight-bold">Status</span>
-          <?= $form->field($model, 'status')->hiddenInput(['value' => $model->isNewRecord ? 2 : $model->status])->label(false); ?>
+          <?= $form->field($model, 'status')->hiddenInput()->label(false); ?>
           <label class="switcher-control switcher-control-danger switcher-control-lg">
             <input type="checkbox" value="<?= $model->status ?>" id="itemStatus" class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
             <span class="switcher-indicator"></span>
@@ -91,7 +105,7 @@ $script = <<<JS
         if($(this).is(":checked")){
             $("#user-status").val(1);
         }else{
-            $("#user-status").val(2);
+            $("#user-status").val(0);
         }
     })   
 

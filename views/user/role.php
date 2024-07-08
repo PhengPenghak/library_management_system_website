@@ -28,13 +28,9 @@ $this->params['pageTitle'] = $this->title;
         'dataProvider' => $dataProvider,
         'tableOptions' => [
           'class' => 'table table-hover',
-          'id' => 'tableRole',
           'cellspacing' => '0',
           'width' => '100%',
         ],
-        'rowOptions'   => function ($model, $key, $index, $grid) {
-          return ['data-id' => $model->id, 'class' => 'cs-pointer'];
-        },
         'layout' => "
             <div class='table-responsive'>
                 {items}
@@ -58,21 +54,25 @@ $this->params['pageTitle'] = $this->title;
         'columns' => [
           ['class' => 'yii\grid\SerialColumn'],
           'name',
+
+          [
+            'class' => 'yii\grid\ActionColumn',
+            'header' => 'Actions',
+            'headerOptions' => ['class' => 'text-center'],
+            'contentOptions' => ['class' => 'text-center'],
+            'template' => '{update}',
+            'buttons' => [
+              'update' => function ($url, $model) {
+                return Html::a('<i class="bi bi-pencil-square"></i>', ['user/role-update', 'id' => $model->id], ['class' => 'btn btn-sm btn-icon btn-secondary']);
+              },
+              'delete' => function ($url, $model) {
+                return Html::a('<i class="bi bi-trash2"></i>', '#', ['class' => 'btn btn-sm btn-icon btn-secondary']);
+              }
+            ],
+
+          ],
         ],
       ]); ?>
 
     </div>
   </div>
-
-</div>
-<?php
-$this->registerJs("
-
-$('#tableRole td').click(function (e) {
-    var id = $(this).closest('tr').data('id');
-    if(e.target == this)
-        location.href = '" . Url::to(['user/role-update']) . "?id=' + id;
-});
-
-");
-?>
