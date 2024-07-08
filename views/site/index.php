@@ -176,7 +176,6 @@ $this->title = 'Library - Management System Dashboard';
     </div>
 </div>
 
-
 <?php
 
 $js = <<< JS

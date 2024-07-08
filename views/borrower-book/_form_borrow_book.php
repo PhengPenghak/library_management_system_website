@@ -184,7 +184,7 @@ $js = <<< JS
                         <div class="col-lg-4">
                             <div class="form-group field-model-end">
                                 <label>ថ្ងៃ​ចាប់ផ្តើមកាលបរិច្ឆេទ</label>
-                                <input type="datetime-local" id="model-start${key}" class="form-control" name="BorrowBook[start][]" required placeholder="Select start date and time">
+                                <input type="datetime-local" id="model-start\${key}" class="form-control" name="BorrowBook[start][]" required placeholder="Select start date and time">
                             </div>
                         </div>
 

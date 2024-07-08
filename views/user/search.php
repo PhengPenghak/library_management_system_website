@@ -21,7 +21,7 @@ use yii\helpers\Url;
         Search <i class="bi bi-search"></i>
       </button>
 
-      <a class="btn btn-warning rounded-pill" href="<?= Url::toRoute(['vendor/create-user']) ?>">
+      <a class="btn btn-warning rounded-pill" href="<?= Url::toRoute(['user/create']) ?>">
         Add New <i class="bi bi-plus-circle"></i>
       </a>
     </div>

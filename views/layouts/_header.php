@@ -1,9 +1,30 @@
 <?php
 
+use app\models\BorrowBook;
+use app\models\InfomationBorrowerBook;
 use app\models\Promotion;
 use app\models\VendorRegister;
 use yii\bootstrap4\Html;
 use yii\helpers\Url;
+
+
+
+$today = '2024-08-07';
+$reminders = [];
+$borrowBooks = BorrowBook::find()
+    ->Where(['<', 'DATE(end)', $today])
+    ->all();
+foreach ($borrowBooks as $borrowBook) {
+    $borrower = InfomationBorrowerBook::findOne($borrowBook->information_borrower_book_id);
+
+    if ($borrower) {
+        $message = "Reminder: You have borrowed the book with ID {$borrowBook->book_id}.\n";
+        $message .= "Start Date: {$borrowBook->start}\n";
+        $message .= "End Date: {$borrowBook->end}\n";
+
+        $reminders[] = $message;
+    }
+}
 
 /** @var \app\components\Formater $formater */
 $formater = Yii::$app->formater;
@@ -38,7 +59,7 @@ $formater = Yii::$app->formater;
             <div class="top-bar-item top-bar-item-right px-0">
                 <ul class="header-nav nav">
                     <li class="nav-item dropdown header-nav-dropdown has-notified">
-                        <a class="nav-link" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="oi oi-envelope-open"></span></a> <!-- .dropdown-menu -->
+                        <a class="nav-link" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="oi oi-envelope-open text-white"></span></a>
                         <div class="dropdown-menu dropdown-menu-rich dropdown-menu-right">
                             <div class="dropdown-arrow"></div>
                             <h6 class="dropdown-header stop-propagation">
@@ -46,13 +67,14 @@ $formater = Yii::$app->formater;
                             </h6>
                             <div class="dropdown-scroll perfect-scrollbar ps">
 
-                                <a href="#" class="dropdown-item">
-                                    <div class="tile tile-circle bg-green"> GZ </div>
-                                    <div class="dropdown-item-body">
-                                        <p class="subject"> Gogo Zoom </p>
-                                        <p class="text text-truncate"> Live healthy with this wireless sensor. </p><span class="date">1 day ago</span>
-                                    </div>
-                                </a>
+                                <?php
+                                foreach ($reminders as $reminder) { ?>
+                                    <a href="#" class="dropdown-item">
+                                        <?= $reminder ?>
+                                    </a>
+                                <?php    }
+                                ?>
+
                                 <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
                                     <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                                 </div>
@@ -71,7 +93,7 @@ $formater = Yii::$app->formater;
                         </span>
                         <span class="account-summary pr-lg-4 d-none d-lg-block text-white">
                             <span class="account-name"><?= Yii::$app->user->identity->name ?></span>
-                            <span class="account-description"><?= Yii::$app->user->identity->role ?></span>
+                            <span class="account-description"><?= Yii::$app->user->identity->role->name ?></span>
                         </span>
                     </button>
                     <div class="dropdown-menu">
