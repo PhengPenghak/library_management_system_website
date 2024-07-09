@@ -78,6 +78,13 @@ $this->title = 'សៀវភៅ';
                             return $model->createdBy ? $model->createdBy->username : 'N/A';
                         },
                     ],
+                    [
+                        'attribute' => 'created_at',
+                        'label' => 'កាលបរិច្ឆេទបង្កើត',
+                        'value' => function ($model) {
+                            return Yii::$app->formater->maskDateKH($model->created_at);
+                        }
+                    ],
 
                     [
                         'attribute' => 'status',

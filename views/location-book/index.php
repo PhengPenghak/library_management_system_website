@@ -40,11 +40,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['class' => 'yii\grid\SerialColumn'],
 
                     'title',
+
                     [
-                        'attribute' => 'status',
-                        'format' => 'raw',
+                        'attribute' => 'created_by',
+                        'label' => 'បង្កើត​ឡើង​ដោយ',
                         'value' => function ($model) {
-                            return $model->getStatusTemp();
+                            return $model->createdBy ? $model->createdBy->username : 'N/A';
+                        },
+                    ],
+                    [
+                        'attribute' => 'created_at',
+                        'label' => 'កាលបរិច្ឆេទបង្កើត',
+                        'value' => function ($model) {
+                            return Yii::$app->formater->maskDateKH($model->created_at);
                         }
                     ],
                     [
@@ -52,8 +60,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         'label' => 'ចំនួនប្រើប្រាស់',
                         'headerOptions' => ['class' => 'text-primary'],
                         'value' => function ($model) {
-                            return $model->bookCount ? $model->bookCount  : 'មិនមានប្រើប្រាស់';
+                            return $model->bookCount ? Yii::$app->formater->maskNumberKH($model->bookCount) : 'មិនមានប្រើប្រាស់';
                         },
+                    ],
+                    [
+                        'attribute' => 'status',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            return $model->getStatusTemp();
+                        }
                     ],
                     [
                         'class' => ActionColumn::class,

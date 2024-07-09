@@ -1,6 +1,7 @@
 <?php
 
 use app\assets\DateRangePickerAsset;
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
@@ -26,7 +27,12 @@ $this->title = 'Library - Management System Dashboard';
         background-color: #FFC122;
     }
 
-    .bg-card-warning * {
+    .bg-card-primary {
+        background-color: #3B5998;
+    }
+
+    .bg-card-warning *,
+    .bg-card-primary * {
         color: #fff !important;
     }
 
@@ -85,20 +91,9 @@ $this->title = 'Library - Management System Dashboard';
                     <div class="col-lg-9">
                         <div class="card-title">
                             <h3>សៀវភៅខ្ចីសរុប</h3>
-                            <span class="text-muted"> + 250</span>
+                            <h4 class="text-muted"> + <?= $totalCountOver ?></h4>
                         </div>
                         <hr>
-                        <div class="d-flex mt-auto">
-                            <div class="d-flex flex-column">
-                                <h6 class="text-muted">ប្រចាំសប្តាហ៍</h6>
-                                <span class="text-muted"> + 250</span>
-                            </div>
-                            <div class="custom-divider mx-3"></div>
-                            <div class="d-flex flex-column">
-                                <h6 class=" text-muted">ប្រចាំឆ្នាំ</h6>
-                                <span class="text-muted"> + 250</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -118,20 +113,9 @@ $this->title = 'Library - Management System Dashboard';
                     <div class="col-lg-9">
                         <div class="card-title">
                             <h3>សៀវភៅមិនទាន់សង</h3>
-                            <span class="text-muted"> + 250</span>
+                            <h4 class="text-muted"> + <?= $totalCount ?></h4>
                         </div>
                         <hr>
-                        <div class="d-flex mt-auto">
-                            <div class="d-flex flex-column ">
-                                <h6 class="text-muted">ប្រចាំសប្តាហ៍</h6>
-                                <span class="text-muted"> + 250</span>
-                            </div>
-                            <div class="custom-divider mx-3"></div>
-                            <div class="d-flex flex-column">
-                                <h6 class=" text-muted">ប្រចាំឆ្នាំ</h6>
-                                <span class="text-muted"> + 250</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -154,25 +138,270 @@ $this->title = 'Library - Management System Dashboard';
                     <div class="col-lg-9">
                         <div class="card-title">
                             <h3>អ្នកអានសៀវភៅសរុប</h3>
-                            <span class="text-muted"> + 250</span>
+                            <h4 class="text-muted"> + <?= $memberJoinedLibrary ?></h4>
                         </div>
                         <hr>
-                        <div class="d-flex mt-auto">
-                            <div class="d-flex flex-column ">
-                                <h6 class="text-muted">ប្រចាំសប្តាហ៍</h6>
-                                <span class="text-muted"> + 250</span>
-                            </div>
-                            <div class="custom-divider mx-3"></div>
-                            <div class="d-flex flex-column">
-                                <h6 class=" text-muted">ប្រចាំឆ្នាំ</h6>
-                                <span class="text-muted"> + 250</span>
-                            </div>
-                        </div>
 
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card text-black bg-card-primary">
+            <div class="card-body border border-success">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <div class="border-icon-cus">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="29" height="22" viewBox="0 0 29 22" fill="none">
+                                <path d="M26.2993 21.5496C26.2993 21.5496 28.0493 21.5496 28.0493 19.7996C28.0493 18.0496 26.2993 12.7996 19.2993 12.7996C12.2993 12.7996 10.5493 18.0496 10.5493 19.7996C10.5493 21.5496 12.2993 21.5496 12.2993 21.5496H26.2993ZM12.3384 19.7996C12.3324 19.7989 12.3239 19.7977 12.3136 19.796C12.3087 19.7952 12.304 19.7944 12.2993 19.7935C12.3019 19.3314 12.5913 17.9916 13.628 16.7822C14.5977 15.6509 16.294 14.5496 19.2993 14.5496C22.3046 14.5496 24.001 15.6509 24.9706 16.7822C26.0073 17.9916 26.2968 19.3314 26.2993 19.7935C26.2947 19.7944 26.2899 19.7952 26.2851 19.796C26.2748 19.7977 26.2663 19.7989 26.2602 19.7996H12.3384Z" fill="#4A4A4A" />
+                                <path d="M19.2993 9.29956C21.2323 9.29956 22.7993 7.73256 22.7993 5.79956C22.7993 3.86656 21.2323 2.29956 19.2993 2.29956C17.3663 2.29956 15.7993 3.86656 15.7993 5.79956C15.7993 7.73256 17.3663 9.29956 19.2993 9.29956ZM24.5493 5.79956C24.5493 8.69906 22.1988 11.0496 19.2993 11.0496C16.3998 11.0496 14.0493 8.69906 14.0493 5.79956C14.0493 2.90007 16.3998 0.549561 19.2993 0.549561C22.1988 0.549561 24.5493 2.90007 24.5493 5.79956Z" fill="#4A4A4A" />
+                                <path d="M12.1872 13.2895C11.5435 13.0836 10.8285 12.9339 10.0353 12.8574C9.64273 12.8195 9.23101 12.7996 8.79932 12.7996C1.79932 12.7996 0.0493164 18.0496 0.0493164 19.7996C0.0493164 20.9662 0.63265 21.5496 1.79932 21.5496H9.17795C8.93155 21.0524 8.79932 20.4631 8.79932 19.7996C8.79932 18.0316 9.4595 16.2261 10.7065 14.7179C11.1325 14.2026 11.6271 13.722 12.1872 13.2895ZM8.65939 14.5504C7.61379 16.1484 7.04932 17.9703 7.04932 19.7996H1.79932C1.79932 19.3433 2.08674 17.997 3.12802 16.7822C4.08251 15.6686 5.74118 14.584 8.65939 14.5504Z" fill="#4A4A4A" />
+                                <path d="M2.67432 6.67456C2.67432 3.77507 5.02482 1.42456 7.92432 1.42456C10.8238 1.42456 13.1743 3.77507 13.1743 6.67456C13.1743 9.57406 10.8238 11.9246 7.92432 11.9246C5.02482 11.9246 2.67432 9.57406 2.67432 6.67456ZM7.92432 3.17456C5.99132 3.17456 4.42432 4.74156 4.42432 6.67456C4.42432 8.60756 5.99132 10.1746 7.92432 10.1746C9.85731 10.1746 11.4243 8.60756 11.4243 6.67456C11.4243 4.74156 9.85731 3.17456 7.92432 3.17456Z" fill="#4A4A4A" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="card-title">
+                            <h3>សៀវភៅសរុប</h3>
+                            <h4 class="text-muted"> + <?= $QTYBook ?></h4>
+                        </div>
+                        <hr>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card text-black bg-success">
+            <div class="card-body border border-success">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <div class="border-icon-cus">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="29" height="22" viewBox="0 0 29 22" fill="none">
+                                <path d="M26.2993 21.5496C26.2993 21.5496 28.0493 21.5496 28.0493 19.7996C28.0493 18.0496 26.2993 12.7996 19.2993 12.7996C12.2993 12.7996 10.5493 18.0496 10.5493 19.7996C10.5493 21.5496 12.2993 21.5496 12.2993 21.5496H26.2993ZM12.3384 19.7996C12.3324 19.7989 12.3239 19.7977 12.3136 19.796C12.3087 19.7952 12.304 19.7944 12.2993 19.7935C12.3019 19.3314 12.5913 17.9916 13.628 16.7822C14.5977 15.6509 16.294 14.5496 19.2993 14.5496C22.3046 14.5496 24.001 15.6509 24.9706 16.7822C26.0073 17.9916 26.2968 19.3314 26.2993 19.7935C26.2947 19.7944 26.2899 19.7952 26.2851 19.796C26.2748 19.7977 26.2663 19.7989 26.2602 19.7996H12.3384Z" fill="#4A4A4A" />
+                                <path d="M19.2993 9.29956C21.2323 9.29956 22.7993 7.73256 22.7993 5.79956C22.7993 3.86656 21.2323 2.29956 19.2993 2.29956C17.3663 2.29956 15.7993 3.86656 15.7993 5.79956C15.7993 7.73256 17.3663 9.29956 19.2993 9.29956ZM24.5493 5.79956C24.5493 8.69906 22.1988 11.0496 19.2993 11.0496C16.3998 11.0496 14.0493 8.69906 14.0493 5.79956C14.0493 2.90007 16.3998 0.549561 19.2993 0.549561C22.1988 0.549561 24.5493 2.90007 24.5493 5.79956Z" fill="#4A4A4A" />
+                                <path d="M12.1872 13.2895C11.5435 13.0836 10.8285 12.9339 10.0353 12.8574C9.64273 12.8195 9.23101 12.7996 8.79932 12.7996C1.79932 12.7996 0.0493164 18.0496 0.0493164 19.7996C0.0493164 20.9662 0.63265 21.5496 1.79932 21.5496H9.17795C8.93155 21.0524 8.79932 20.4631 8.79932 19.7996C8.79932 18.0316 9.4595 16.2261 10.7065 14.7179C11.1325 14.2026 11.6271 13.722 12.1872 13.2895ZM8.65939 14.5504C7.61379 16.1484 7.04932 17.9703 7.04932 19.7996H1.79932C1.79932 19.3433 2.08674 17.997 3.12802 16.7822C4.08251 15.6686 5.74118 14.584 8.65939 14.5504Z" fill="#4A4A4A" />
+                                <path d="M2.67432 6.67456C2.67432 3.77507 5.02482 1.42456 7.92432 1.42456C10.8238 1.42456 13.1743 3.77507 13.1743 6.67456C13.1743 9.57406 10.8238 11.9246 7.92432 11.9246C5.02482 11.9246 2.67432 9.57406 2.67432 6.67456ZM7.92432 3.17456C5.99132 3.17456 4.42432 4.74156 4.42432 6.67456C4.42432 8.60756 5.99132 10.1746 7.92432 10.1746C9.85731 10.1746 11.4243 8.60756 11.4243 6.67456C11.4243 4.74156 9.85731 3.17456 7.92432 3.17456Z" fill="#4A4A4A" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="card-title">
+                            <h3 class="text-light">សៀវភៅនៅសល់</h3>
+                            <h4 class="text-light"> + <?= $availableBooksCount ?></h4>
+                        </div>
+                        <hr>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr class="border-0">
+<h5 class="mt-5 mb-4">បញ្ចីអ្នកខ្ចីសៀវភៅមិនទាន់សង</h5>
+
+<div class="card card-bg-default">
+    <div class="card-body">
+
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'rowOptions'   => function ($model) {
+                return ['data-id' => $model->id, 'class' => 'cs-pointer'];
+            },
+            'tableOptions' => [
+                'id' => 'tableItinerary',
+                'class' => 'table table-hover',
+                'cellspacing' => '0',
+                'width' => '100%',
+            ],
+            'layout' => "
+            <div class='table-responsive'>
+                {items}
+            </div>
+            <hr>
+            <div class='row'>
+                <div class='col-md-6'>
+                    {summary}
+                </div>
+                <div class='col-md-6'>
+                    {pager}
+                </div>
+            </div>
+        ",
+            'pager' => [
+                'firstPageLabel' => 'First',
+                'lastPageLabel' => 'Last',
+                'maxButtonCount' => 5,
+            ],
+
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'attribute' => 'informationBorrowerBook.username',
+                    'label' => 'ឈ្មោះ',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                ],
+
+                [
+                    'attribute' => 'informationBorrowerBook.gender',
+                    'label' => 'ភេទ',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                ],
+                [
+                    'attribute' => 'book.title',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                ],
+
+                [
+                    'attribute' => 'title',
+                    'label' => 'ថ្នាក់',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                    'value' => function ($model) {
+                        return $model->informationBorrowerBook->grade->title;
+                    },
+                ],
+
+                // [
+                //     'attribute' => 'infomation_borrower_book.created_by',
+                //     'label' => 'បង្កើត​ឡើង​ដោយ',
+                //     'value' => function ($model) {
+                //         return $model->createdBy ? $model->createdBy->username : 'N/A';
+                //     },
+                // ],
+
+                [
+                    'attribute' => 'borrow_book.end',
+                    'label' => 'កាលបរិច្ឆេទខ្ចី',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                    'value' => function ($model) {
+                        return Yii::$app->formater->maskDateKH($model->end);
+                    }
+                ],
+                [
+                    'attribute' => 'ផុតកំណត់',
+                    'headerOptions' => ['class' => 'text-primary'],
+                    'contentOptions' => ['style' => 'color:#FC5F55'],
+
+                    'value' => function ($model) {
+                        return  Yii::$app->formater->maskNumberKH($model->getDaysAgo()) . ' ថ្ងៃ';
+                    },
+                ],
+
+                // [
+                //     'attribute' => 'status',
+                //     'contentOptions' => ['class' => 'text-center'],
+                //     'headerOptions' => ['class' => 'text-center', 'style' => 'min-width: 100px;'],
+                //     'format' => 'raw',
+                //     'value' => function ($model) {
+                //         return $model->getStatusTemp();
+                //     },
+                // ],
+
+
+            ],
+        ]); ?>
+
+    </div>
+</div>
+
+<hr class="border-0">
+<h5 class="mt-5 mb-4">បញ្ចីអ្នកខ្ចីសៀវភៅ</h5>
+<div class="card card-bg-default">
+    <div class="card-body">
+
+        <?= GridView::widget([
+            'dataProvider' => $dataProviderOver,
+            'rowOptions'   => function ($model) {
+                return ['data-id' => $model->id, 'class' => 'cs-pointer'];
+            },
+            'tableOptions' => [
+                'id' => 'tableItinerary',
+                'class' => 'table table-hover',
+                'cellspacing' => '0',
+                'width' => '100%',
+            ],
+            'layout' => "
+            <div class='table-responsive'>
+                {items}
+            </div>
+            <hr>
+            <div class='row'>
+                <div class='col-md-6'>
+                    {summary}
+                </div>
+                <div class='col-md-6'>
+                    {pager}
+                </div>
+            </div>
+        ",
+            'pager' => [
+                'firstPageLabel' => 'First',
+                'lastPageLabel' => 'Last',
+                'maxButtonCount' => 5,
+            ],
+
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'attribute' => 'informationBorrowerBook.username',
+                    'label' => 'ឈ្មោះ',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                ],
+
+                [
+                    'attribute' => 'informationBorrowerBook.gender',
+                    'label' => 'ភេទ',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                ],
+                [
+                    'attribute' => 'book.title',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                ],
+
+                [
+                    'attribute' => 'title',
+                    'label' => 'ថ្នាក់',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                    'value' => function ($model) {
+                        return $model->informationBorrowerBook->grade->title;
+                    },
+                ],
+
+                [
+                    'attribute' => 'borrow_book.end',
+                    'label' => 'កាលបរិច្ឆេទខ្ចី',
+                    'headerOptions' => ['class' => 'text-primary'],
+
+                    'value' => function ($model) {
+                        return Yii::$app->formater->maskDateKH($model->end);
+                    }
+                ],
+                [
+                    'attribute' => 'status',
+                    'contentOptions' => ['class' => 'text-center'],
+                    'headerOptions' => ['class' => 'text-center', 'style' => 'min-width: 100px;'],
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return $model->getStatusTemp();
+                    },
+                ],
+
+
+            ],
+        ]); ?>
+
     </div>
 </div>
 

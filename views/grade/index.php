@@ -47,6 +47,21 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     ],
                     [
+                        'attribute' => 'created_by',
+                        'label' => 'បង្កើត​ឡើង​ដោយ',
+                        'value' => function ($model) {
+                            return $model->createdBy ? $model->createdBy->username : 'N/A';
+                        },
+                    ],
+
+                    [
+                        'attribute' => 'created_at',
+                        'label' => 'កាលបរិច្ឆេទបង្កើត',
+                        'value' => function ($model) {
+                            return Yii::$app->formater->maskDateKH($model->created_at);
+                        }
+                    ],
+                    [
                         'class' => ActionColumn::class,
                         'header' => 'កែប្រែ',
                         'headerOptions' => ['class' => 'text-center text-primary'],

@@ -52,7 +52,22 @@ $this->params['breadcrumbs'][] = $this->title;
                         'label' => 'សិស្សស្រីសរុប',
                     ],
                     [
+                        'attribute' => 'created_by',
+                        'label' => 'បង្កើត​ឡើង​ដោយ',
+                        'value' => function ($model) {
+                            return $model->createdBy ? $model->createdBy->username : 'N/A';
+                        },
+                    ],
+                    [
+                        'attribute' => 'created_at',
+                        'label' => 'កាលបរិច្ឆេទបង្កើត',
+                        'value' => function ($model) {
+                            return Yii::$app->formater->maskDateKH($model->created_at);
+                        }
+                    ],
+                    [
                         'attribute' => 'ស្ថានភាព',
+                        'headerOptions' => ['class' => 'text-primary'],
                         'format' => 'raw',
                         'value' => function ($model) {
                             return $model->getStatusTemp();

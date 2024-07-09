@@ -63,7 +63,7 @@ DateRangePickerAsset::register($this);
 
             <?= Html::a('Export to Excel', ['export-excel'], ['class' => 'btn btn-lg btn-warning']) ?> -->
 
-            <?= Html::a('<i class="bi bi-plus-square mr-2"></i> បញ្ចូលសៀវភៅថ្មី', ['book/create'], ['class' => 'btn btn-lg btn-primary modalButton']) ?>
+            <?= Html::a('<i class="bi bi-plus-square mr-2"></i> បញ្ចូលសៀវភៅថ្មី', ['book/create'], ['class' => 'btn btn-lg btn-primary']) ?>
             <!-- <button type="button" data-title="Add Category Book" value="(['book/create'])" class="btn btn-lg btn-primary modalButton"><i class="bi bi-plus-square mr-2"></i>Add <span class="d-none d-lg-inline">Category Book</span></button> -->
         </div>
     </div>
