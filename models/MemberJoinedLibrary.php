@@ -34,8 +34,8 @@ class MemberJoinedLibrary extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type_member', 'total_member', 'total_member_female', 'dateTime'], 'required'],
-            [['total_member', 'total_member_female', 'status', 'created_by', 'updated_by'], 'integer'],
+            [['type_member', 'total_member', 'total_member_female', 'dateTime', 'type', 'grade_id'], 'required'],
+            [['total_member', 'total_member_female', 'status', 'grade_id', 'type', 'type_joined', 'created_by', 'updated_by'], 'integer'],
             [['dateTime', 'created_at', 'updated_at'], 'safe'],
             [['type_member'], 'string', 'max' => 255],
         ];
