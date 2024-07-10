@@ -80,4 +80,8 @@ class Grade extends \yii\db\ActiveRecord
             return '<span class="badge badge-subtle badge-danger">មិនមិនសិស្សរៀន</span>';
         }
     }
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
+    }
 }

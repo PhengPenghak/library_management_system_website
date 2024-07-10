@@ -89,4 +89,8 @@ class LocationBook extends \yii\db\ActiveRecord
             ->count();
         return $itinerary > 0 ? true : false;
     }
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
+    }
 }

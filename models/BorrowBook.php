@@ -76,4 +76,19 @@ class BorrowBook extends \yii\db\ActiveRecord
     {
         return $this->hasOne(InfomationBorrowerBook::class, ['id' => 'information_borrower_book_id']);
     }
+    public function getDaysAgo()
+    {
+        $endDate = new \DateTime($this->end);
+        $currentDate = new \DateTime();
+        $interval = $currentDate->diff($endDate);
+        return $interval->days;
+    }
+    public function getStatusTemp()
+    {
+        if ($this->status == 1) {
+            return '<span class="badge badge-subtle badge-danger">មិនទាន់សង</span>';
+        } else {
+            return '<span class="badge badge-subtle badge-success">សង់រួចរាល់</span>';
+        }
+    }
 }

@@ -5,13 +5,17 @@ namespace app\controllers;
 use app\models\Book;
 use app\models\Booking;
 use app\models\BorrowBook;
+use app\models\BorrowBookSearch;
 use app\models\InfomationBorrowerBook;
+use app\models\InfomationBorrowerBookSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
+use app\models\MemberJoinedLibrary;
+use DateTime;
 
 class SiteController extends Controller
 {
@@ -66,7 +70,6 @@ class SiteController extends Controller
     {
         $totalBooksCount = Book::find()->count();
         $borrowedBooksCount = BorrowBook::find()->count();
-        $availableBooksCount = $totalBooksCount - $borrowedBooksCount;
 
         $today = '2024-08-07';
 
@@ -91,7 +94,21 @@ class SiteController extends Controller
         }
         $countReminders = count($reminders);
 
+        $searchModel = new BorrowBookSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        $currentToday = date('Y-m-d');
+        $dataProvider->query->andWhere(['<', 'end', $currentToday]);
+        $dataProvider->query->andWhere(['=', 'borrow_book.status', 1]);
+        $dataProvider->pagination->pageSize = 10;
+        $totalCount = $dataProvider->getTotalCount();
+        $searchModelOver = new BorrowBookSearch();
+        $dataProviderOver = $searchModelOver->search($this->request->queryParams);
+        $dataProviderOver->pagination->pageSize = 10;
+        $totalCountOver = $dataProviderOver->getTotalCount();
+        $QTYBook = Book::find()->sum('quantity');
+        $availableBooksCount = $QTYBook - $borrowedBooksCount;
 
+        $memberJoinedLibrary = MemberJoinedLibrary::find()->where(['status' => 1])->sum('total_member');
         return $this->render(
             'index',
             [
@@ -99,8 +116,15 @@ class SiteController extends Controller
                 'borrowedBooksCount' => $borrowedBooksCount,
                 'availableBooksCount' => $availableBooksCount,
                 'reminders' => $reminders,
-                'countReminders' => $countReminders
-
+                'countReminders' => $countReminders,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'totalCount' => $totalCount,
+                'searchModelOver' => $searchModelOver,
+                'dataProviderOver' => $dataProviderOver,
+                'totalCountOver' => $totalCountOver,
+                'memberJoinedLibrary' => $memberJoinedLibrary,
+                'QTYBook' => $QTYBook
             ]
         );
     }

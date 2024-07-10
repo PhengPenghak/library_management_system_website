@@ -95,4 +95,8 @@ class InfomationBorrowerBook extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'created_by']);
     }
+    public function getBook()
+    {
+        return $this->hasOne(Book::class, ['id' => 'book_id']);
+    }
 }

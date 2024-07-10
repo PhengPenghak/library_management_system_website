@@ -34,7 +34,7 @@ $formater = Yii::$app->formater;
 
     <?= $this->render('_search', ['model' => $searchModel]); ?>
 
-    <div class="card">
+    <div class="card card-bg-default">
         <div class="card-body">
 
             <?= GridView::widget([

@@ -43,8 +43,10 @@ class BorrowBookSearch extends BorrowBook
      */
     public function search($params)
     {
-        $query = BorrowBook::find();
-
+        $query = BorrowBook::find()
+            ->joinWith('informationBorrowerBook')
+            ->joinWith('informationBorrowerBook.grade')
+            ->joinWith('book');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -59,20 +61,6 @@ class BorrowBookSearch extends BorrowBook
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'information_borrower_book_id' => $this->information_borrower_book_id,
-            'book_id' => $this->book_id,
-            'start' => $this->start,
-            'end' => $this->end,
-            'quantity' => $this->quantity,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'created_by' => $this->created_by,
-            'updated_by' => $this->updated_by,
-        ]);
 
         $query->andFilterWhere(['like', 'code', $this->code]);
 

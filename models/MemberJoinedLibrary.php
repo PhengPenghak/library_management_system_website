@@ -60,6 +60,23 @@ class MemberJoinedLibrary extends \yii\db\ActiveRecord
         ];
     }
 
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->created_at = date('Y-m-d H:i:s');
+                $this->created_by = Yii::$app->user->identity->id;
+            } else {
+                $this->updated_at = date('Y-m-d H:i:s');
+                $this->updated_by = Yii::$app->user->identity->id;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     public function getStatusTemp()
     {
         if ($this->status == 1) {
@@ -71,5 +88,9 @@ class MemberJoinedLibrary extends \yii\db\ActiveRecord
     public function getGrade()
     {
         return $this->hasOne(Grade::class, ['id' => 'type_member']);
+    }
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
     }
 }
