@@ -77,6 +77,8 @@ class MemberJoinedLibraryController extends Controller
             if ($model->load($this->request->post())) {
                 $transaction_exception = Yii::$app->db->beginTransaction();
                 try {
+                    // print_r($model->grade_id);
+                    // exit;
                     if (!$model->save()) throw new Exception($master->errToString($model->getErrors()));
 
                     $transaction_exception->commit();
@@ -94,42 +96,6 @@ class MemberJoinedLibraryController extends Controller
         }
 
         return $this->renderAjax('_form', [
-            'model' => $model,
-        ]);
-    }
-    public function actionCreate()
-    {
-        $model = new MemberJoinedLibrary();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing MemberJoinedLibrary model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
             'model' => $model,
         ]);
     }

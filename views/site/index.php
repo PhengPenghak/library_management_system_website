@@ -291,7 +291,7 @@ $this->title = 'Library - Management System Dashboard';
                     'contentOptions' => ['style' => 'color:#FC5F55'],
 
                     'value' => function ($model) {
-                        return  Yii::$app->formater->maskNumberKH($model->getDaysAgo()) . ' ថ្ងៃ';
+                        return  $model->getDaysAgo() == 0 ? 'ថ្ងៃនេះ' : Yii::$app->formater->maskNumberKH($model->getDaysAgo()) . ' ថ្ងៃ';
                     },
                 ],
 

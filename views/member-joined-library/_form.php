@@ -11,15 +11,27 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
 
 <div class="member-joined-library">
   <?php $form = ActiveForm::begin(); ?>
-  <?= $form->field($model, 'type_member')->textInput(['autofocus' => true, 'placeholder' => 'បញ្ចូលថ្នាក់'])->label(false) ?>
+  <?= $form->field($model, 'type_joined')->dropDownList(
+    [1 => 'សិស្ស', 2 => 'គ្រូ', 3 => 'សមាគមន៍'],
+    ['class' => 'form-control form-control-lg', 'id' => 'people_type']
+  )->label('អ្នកអាន') ?>
+  <?= $form->field($model, 'grade_id',)->widget(Select2::class, [
+    'data' => ArrayHelper::map(Grade::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title'),
+    'options' => ['placeholder' => 'ជ្រើសរើសថ្នាក់...', 'class' => 'custom-select'],
+    'pluginOptions' => [
+      'allowClear' => true,
 
-  <?= $form->field($model, 'total_member')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសរុប'])->label(false) ?>
+    ],
+  ])->label('ថ្នាក់'); ?>
 
-  <?= $form->field($model, 'total_member_female')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសិស្សស្រី់​​​'])->label(false) ?>
+  <?= $form->field($model, 'total_member')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសរុប', 'class' => 'form-control-lg form-control'])->label(false) ?>
+
+  <?= $form->field($model, 'total_member_female')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសិស្សស្រី់​​​', 'class' => 'form-control-lg form-control'])->label(false) ?>
 
   <div class="form-group field-model-end">
-    <?= $form->field($model, 'dateTime')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសរុប', "type" => "datetime-local", "id" => "model-end"])->label(false) ?>
+    <?= $form->field($model, 'dateTime')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសរុប', "type" => "datetime-local", "id" => "model-end", 'class' => 'form-control-lg form-control'])->label(false) ?>
   </div>
+
 
   <div class="card border">
     <div class="card-body">
@@ -53,6 +65,14 @@ $script = <<<JS
         $("#memberJoinLibrary-status").val(0);
     }
   });
+$("#people_type").on("change", function(){
+  if($(this).val() != 1){
+    $(".custom-select").prop("disabled", true);
+  }else{
+    $(".custom-select").prop("disabled", false);
+  }
+});
+  
 
 JS;
 $this->registerJs($script);

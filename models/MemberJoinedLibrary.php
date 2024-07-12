@@ -34,10 +34,9 @@ class MemberJoinedLibrary extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type_member', 'total_member', 'total_member_female', 'dateTime', 'type', 'grade_id'], 'required'],
-            [['total_member', 'total_member_female', 'status', 'grade_id', 'type', 'type_joined', 'created_by', 'updated_by'], 'integer'],
+            [['total_member', 'type_joined', 'total_member_female', 'dateTime'], 'required'],
+            [['grade_id', 'type_joined', 'total_member', 'total_member_female', 'status', 'created_by', 'updated_by'], 'integer'],
             [['dateTime', 'created_at', 'updated_at'], 'safe'],
-            [['type_member'], 'string', 'max' => 255],
         ];
     }
 
@@ -48,6 +47,8 @@ class MemberJoinedLibrary extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'grade_id' => 'Grade ID',
+            'type_joined' => 'Type Joined',
             'type_member' => 'Type Member',
             'total_member' => 'Total Member',
             'total_member_female' => 'Total Member Female',
@@ -85,9 +86,20 @@ class MemberJoinedLibrary extends \yii\db\ActiveRecord
             return '<span class="badge badge-subtle badge-danger">មិនបានចូលអានសៀវភៅ</span>';
         }
     }
+    public function getJionType()
+    {
+        if ($this->type_joined == 1) {
+            return 'សិស្ស';
+        }
+        if ($this->type_joined == 2) {
+            return 'គ្រូ';
+        } else {
+            return 'សមាគមន៍';
+        }
+    }
     public function getGrade()
     {
-        return $this->hasOne(Grade::class, ['id' => 'type_member']);
+        return $this->hasOne(Grade::class, ['id' => 'grade_id']);
     }
     public function getCreatedBy()
     {
