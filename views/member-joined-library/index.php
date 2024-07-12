@@ -40,8 +40,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['class' => 'yii\grid\SerialColumn'],
 
                     [
-                        'attribute' => 'type_member',
+                        'attribute' => 'grade_id',
                         'label' => 'ថ្នាក់',
+                        'value' => function ($model) {
+                            return $model->grade ? $model->grade->title : 'មិនមែនសិស្ស';
+                        },
+                    ],
+                    [
+                        'attribute' => 'type_joined',
+                        'label' => 'អ្នកចូលអាន',
+                        'value' => function ($model) {
+                            return $model->getJionType();
+                        }
                     ],
                     [
                         'attribute' => 'total_member',
