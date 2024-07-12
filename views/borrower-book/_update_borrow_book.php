@@ -4,9 +4,9 @@ use app\assets\EditorAsset;
 use app\models\Book;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use kartik\select2\Select2;
 use yii\bootstrap4\Html;
-use yii\helpers\Url;
+use yii\web\View;
+
 
 EditorAsset::register($this);
 
@@ -66,52 +66,52 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                         foreach ($borrowBook as $key => $value) {
                     ?>
                             <div class="tab-pane active show" id="<?= $key ?>">
-                                <div class="row form-group" id="original-row">
-                                    <div class="col-lg-4">
-                                        <input type="text" hidden id="information_borrower_book_id<?= $key ?>" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="<?= $id ?>" placeholder="" aria-invalid="false">
-                                        <label>សៀវភៅ</label>
-                                        <?= Html::dropDownlist('BorrowBook[book_id][]', $value->book_id, $socialItems, ['class' => 'custom-select mb-3', 'id' => "book_id_{$key}", 'required' => true]) ?>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <label>លេខសារពើភ័ណ្ខ</label>
-                                        <?= Html::textInput('BorrowBook[code][]', $value->code, ['class' => 'form-control mb-3', 'id' => "code_{$key}", 'required' => true]) ?>
+                                <div class="card">
+                                    <div class="card-body shadow-sm">
+                                        <div class="row form-group" id="original-row">
+                                            <div class="col-lg-4">
+                                                <input type="text" hidden id="information_borrower_book_id<?= $key ?>" class="form-control form-control-lg" name="BorrowBook[information_borrower_book_id][]" autofocus="true" value="<?= $id ?>" placeholder="" aria-invalid="false">
+                                                <label>សៀវភៅ</label>
+                                                <?= Html::dropDownlist('BorrowBook[book_id][]', $value->book_id, $socialItems, ['class' => 'form-control form-control-lg custom-select mb-3', 'id' => "book_id_{$key}", 'required' => true]) ?>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label>លេខសារពើភ័ណ្ខ</label>
+                                                <?= Html::textInput('BorrowBook[code][]', $value->code, ['class' => 'form-control form-control-lg mb-3', 'id' => "code_{$key}", 'required' => true]) ?>
 
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <label>ចំនួន</label>
-                                        <?= Html::textInput('BorrowBook[quantity][]', $value->quantity, [
-                                            'class' => 'form-control mb-3 quantity-input',
-                                            'id' => "quantity_{$key}",
-                                            'required' => true,
-                                            'type' => 'number',
-                                            'step' => 'any',
-                                            'min' => 1,
-                                            'max' => 1,
-                                        ]) ?>
-                                    </div>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label>ចំនួន</label>
+                                                <?= Html::textInput('BorrowBook[quantity][]', $value->quantity, [
+                                                    'class' => 'form-control form-control-lg mb-3 quantity-input',
+                                                    'id' => "quantity_{$key}",
+                                                    'required' => true,
+                                                    'type' => 'number',
+                                                    'step' => 'any',
+                                                    'min' => 1,
+                                                    'max' => 1,
+                                                ]) ?>
+                                            </div>
 
-                                    <div class="col-lg-4">
-                                        <div class="form-group field-model-end">
-                                            <label>ថ្ងៃ​ចាប់ផ្តើមកាលបរិច្ឆេទ</label>
-                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->start ?>" name="BorrowBook[start][]">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group field-model-end">
-                                            <label>កាលបរិច្ឆេទបញ្ចប់</label>
-                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= $value->end ?>" name="BorrowBook[end][]">
-                                        </div>
-                                    </div>
+                                            <div class="col-lg-3">
+                                                <label for="dateRange<?= $key ?>">កាលបរិច្ឆេទ</label>
+                                                <input type="text" id="dateRange<?= $key ?>" value="<?= $value->start ?> - <?= $value->end ?>" name="dateRange" class="form-control form-control-lg dateRangePicker">
+                                                <input type="hidden" id="start<?= $key ?>" value="<?= $value->start ?>" name="BorrowBook[start][]">
+                                                <input type="hidden" id="end<?= $key ?>" value="<?= $value->end ?>" name="BorrowBook[end][]">
+                                            </div>
 
-                                    <div class="col-lg-2">
-                                        <div class="custom-control custom-checkbox mb-3">
-                                            <input type="checkbox" value="<?= $value->status ?>" class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
-                                            <label class="custom-control-label" for="status<?= $key ?>">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
-                                            <input type="hidden" id="checkbox-value<?= $key ?>" name="BorrowBook[status][]" value="<?= $value->status ?>">
-                                            <div class="invalid-tooltip">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</div>
+                                            <div class="col-lg-2">
+                                                <div class="custom-control custom-checkbox mb-3">
+                                                    <input type="checkbox" value="<?= $value->status ?>" class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
+                                                    <label class="custom-control-label" for="status<?= $key ?>">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
+                                                    <input type="hidden" id="checkbox-value<?= $key ?>" name="BorrowBook[status][]" value="<?= $value->status ?>">
+                                                    <div class="invalid-tooltip">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
+
 
                             </div>
                         <?php
@@ -141,6 +141,12 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
 <?php
 $this->registerJsVar('socialItems', $socialItems);
 $this->registerJsVar('id', $id);
+
+
+$this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js', ['position' => View::POS_HEAD]);
+$this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js', ['position' => View::POS_HEAD]);
+$this->registerCssFile('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css');
+$this->registerJsFile('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 
 $js = <<< JS
     $('#add-form-btn').click(function() {
@@ -238,6 +244,20 @@ $js = <<< JS
             });
         });
 
+        $(document).ready(function() {
+            $('#dateRange' + key).daterangepicker({
+                timePicker: false,
+                locale: {
+                    format: 'YYYY-MM-DD',
+                }
+            });
+
+            $('#dateRange' + key).on('apply.daterangepicker', function(ev, picker) {
+                $('#start' + key).val(picker.startDate.format('YYYY-MM-DD'));
+                $('#end' + key).val(picker.endDate.format('YYYY-MM-DD'));
+            });
+        });
+
        
     });
 
@@ -262,22 +282,27 @@ $js = <<< JS
         });
     });
 
-    // $(document).ready(function() {
-    //     $('.quantity-input').each(function() {
-    //         if ($(this).val() == 1) { 
-    //             $(this).prop('disabled', true);
-    //         }
-    //     });
+    $(document).ready(function() {
+        $('.dateRangePicker').each(function() {
+            var key = $(this).attr('id').replace('dateRange', '');
+            var start = $('#start' + key).val();
+            var end = $('#end' + key).val();
 
-    //     $('.quantity-input').on('change', function() {
-    //         if ($(this).val() == 1) {
-    //             $(this).prop('disabled', true);
-    //         } else {
-    //             $(this).prop('disabled', false);
-    //         }
-    //     });
-    // });
+            $(this).daterangepicker({
+                timePicker: false,
+                locale: {
+                    format: 'YYYY-MM-DD',
+                },
+                startDate: start,
+                endDate: end
+            });
 
+            $(this).on('apply.daterangepicker', function(ev, picker) {
+                $('#start' + key).val(picker.startDate.format('YYYY-MM-DD'));
+                $('#end' + key).val(picker.endDate.format('YYYY-MM-DD'));
+            });
+        });
+    });
 JS;
 $this->registerJs($js);
 ?>

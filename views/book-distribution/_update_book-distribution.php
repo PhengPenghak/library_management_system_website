@@ -7,6 +7,7 @@ use yii\helpers\ArrayHelper;
 use kartik\select2\Select2;
 use yii\bootstrap4\Html;
 use yii\helpers\Url;
+use yii\web\View;
 
 EditorAsset::register($this);
 
@@ -71,18 +72,17 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                                         <label for="model-start<?= $key ?>">សៀវភៅ</label>
 
                                         <input type="text" hidden id="information_distribution_by_grade_id<?= $key ?>" class="form-control form-control-lg" name="BookDistributionByGrade[<?= $key ?>][information_distribution_by_grade_id]" value="<?= $id ?>" aria-invalid="false">
-                                        <?= Html::dropDownlist("BookDistributionByGrade[$key][book_id]", $value->book_id, $socialItems, ['class' => 'custom-select mb-3', 'id' => "book_id_$key", 'required' => true]) ?>
+                                        <?= Html::dropDownlist("BookDistributionByGrade[$key][book_id]", $value->book_id, $socialItems, ['class' => 'form-control form-control-lg custom-select mb-3', 'id' => "book_id_$key", 'required' => true]) ?>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-2">
                                         <label for="BookDistributionByGrade-code<?= $key ?>">លេខសារពើភ័ណ្ខ</label>
-
-                                        <?= Html::textInput("BookDistributionByGrade[$key][code]", $value->code, ['class' => 'form-control mb-3', 'id' => "code_$key", 'required' => true]) ?>
+                                        <?= Html::textInput("BookDistributionByGrade[$key][code]", $value->code, ['class' => 'form-control form-control-lg mb-3', 'id' => "code_$key", 'required' => true]) ?>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-2">
                                         <label for="model-start<?= $key ?>">ចំនួន</label>
 
                                         <?= Html::textInput("BookDistributionByGrade[$key][quantity]", $value->quantity, [
-                                            'class' => 'form-control mb-3 quantity-input',
+                                            'class' => 'form-control form-control-lg mb-3 quantity-input',
                                             'id' => "quantity_$key",
                                             'required' => true,
                                             'type' => 'number',
@@ -91,18 +91,15 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                                             'max' => 2000,
                                         ]) ?>
                                     </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group field-model-start">
-                                            <label for="model-start<?= $key ?>">ថ្ងៃ​ចាប់ផ្តើមកាលបរិច្ឆេទ</label>
-                                            <input type="datetime-local" id="model-start<?= $key ?>" class="form-control" value="<?= Yii::$app->formatter->asDatetime($value->start, 'php:Y-m-d\TH:i') ?>" name="BookDistributionByGrade[<?= $key ?>][start]">
-                                        </div>
+
+                                    <div class="col-lg-3">
+                                        <label for="dateRange<?= $key ?>">កាលបរិច្ឆេទ</label>
+                                        <input type="text" id="dateRange<?= $key ?>" value="<?= $value->start ?> - <?= $value->end ?>" name="dateRange" class="form-control form-control-lg dateRangePicker">
+                                        <input type="hidden" id="start<?= $key ?>" value="<?= $value->start ?>" name="BookDistributionByGrade[<?= $key ?>][start]">
+                                        <input type="hidden" id="end<?= $key ?>" value="<?= $value->end ?>" name="BookDistributionByGrade[<?= $key ?>][end]">
                                     </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group field-model-end">
-                                            <label for="model-start<?= $key ?>">កាលបរិច្ឆេទបញ្ចប់</label>
-                                            <input type="datetime-local" id="model-end<?= $key ?>" class="form-control" value="<?= Yii::$app->formatter->asDatetime($value->end, 'php:Y-m-d\TH:i') ?>" name="BookDistributionByGrade[<?= $key ?>][end]">
-                                        </div>
-                                    </div>
+
+
                                     <div class="col-lg-2">
                                         <div class="custom-control custom-checkbox mb-3">
                                             <input type="checkbox" class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
@@ -141,6 +138,14 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
 <?php
 $this->registerJsVar('socialItems', $socialItems);
 $this->registerJsVar('id', $id);
+
+
+
+$this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js', ['position' => View::POS_HEAD]);
+$this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js', ['position' => View::POS_HEAD]);
+$this->registerCssFile('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css');
+$this->registerJsFile('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+
 
 $js = <<< JS
     $('#add-form-btn').click(function() {
@@ -258,21 +263,50 @@ $js = <<< JS
         });
     });
 
-    // $(document).ready(function() {
-    //     $('.quantity-input').each(function() {
-    //         if ($(this).val() == 1) { 
-    //             $(this).prop('disabled', true);
-    //         }
-    //     });
+    $(document).ready(function() {
+        $('.dateRangePicker').each(function() {
+            var key = $(this).attr('id').replace('dateRange', '');
+            var start = $('#start' + key).val();
+            var end = $('#end' + key).val();
 
-    //     $('.quantity-input').on('change', function() {
-    //         if ($(this).val() == 1) {
-    //             $(this).prop('disabled', true);
-    //         } else {
-    //             $(this).prop('disabled', false);
-    //         }
-    //     });
-    // });
+            $(this).daterangepicker({
+                timePicker: false,
+                locale: {
+                    format: 'YYYY-MM-DD',
+                },
+                startDate: start,
+                endDate: end
+            });
+
+            $(this).on('apply.daterangepicker', function(ev, picker) {
+                $('#start' + key).val(picker.startDate.format('YYYY-MM-DD'));
+                $('#end' + key).val(picker.endDate.format('YYYY-MM-DD'));
+            });
+        });
+    });
+
+
+    $(document).ready(function() {
+        $('.dateRangePicker').each(function() {
+            var key = $(this).attr('id').replace('dateRange', '');
+            var start = $('#start' + key).val();
+            var end = $('#end' + key).val();
+
+            $(this).daterangepicker({
+                timePicker: false,
+                locale: {
+                    format: 'YYYY-MM-DD',
+                },
+                startDate: start,
+                endDate: end
+            });
+
+            $(this).on('apply.daterangepicker', function(ev, picker) {
+                $('#start' + key).val(picker.startDate.format('YYYY-MM-DD'));
+                $('#end' + key).val(picker.endDate.format('YYYY-MM-DD'));
+            });
+        });
+    });
 
 JS;
 $this->registerJs($js);

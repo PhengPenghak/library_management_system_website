@@ -5,6 +5,7 @@ namespace app\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\InfomationBorrowerBook;
+use yii\helpers\ArrayHelper;
 
 /**
  * InfomationBorrowerBookSearch represents the model behind the search form of `app\models\InfomationBorrowerBook`.
@@ -14,7 +15,7 @@ class InfomationBorrowerBookSearch extends InfomationBorrowerBook
     /**
      * {@inheritdoc}
      */
-    public $globalSearch;
+    public $globalSearch, $gradeTitle;
 
     public function rules()
     {
@@ -44,12 +45,17 @@ class InfomationBorrowerBookSearch extends InfomationBorrowerBook
      */
     public function search($params)
     {
-        $query = InfomationBorrowerBook::find();
+        $query = InfomationBorrowerBook::find()->joinWith('grade');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => ['defaultOrder' => ['username' => SORT_ASC]]
         ]);
+
+        $dataProvider->sort->attributes['gradeTitle'] = [
+            'asc' => ['grade.title' => SORT_ASC],
+            'desc' => ['grade.title' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -57,8 +63,23 @@ class InfomationBorrowerBookSearch extends InfomationBorrowerBook
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['like', 'username', $this->globalSearch])
-            ->andFilterWhere(['like', 'status', $this->status]);
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'grade_id' => $this->grade_id,
+            'status' => $this->status,
+            // Add other filters here
+        ]);
+
+        $query->andFilterWhere(['like', 'username', $this->username])
+            ->andFilterWhere(['like', 'gender', $this->gender])
+            ->andFilterWhere(['like', 'grade.title', $this->gradeTitle]); // Add filter condition for grade title
+
         return $dataProvider;
+    }
+
+    public static function getGradeList()
+    {
+        $grades = Grade::find()->all();
+        return ArrayHelper::map($grades, 'id', 'title');
     }
 }
