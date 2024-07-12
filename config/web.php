@@ -8,8 +8,7 @@ use \yii\web\Request;
 $baseUrl = str_replace('/web', '', (new Request)->getBaseUrl());
 
 $config = [
-    'id' => 'prointix-hotel-admin',
-    'language' => 'km-KH', // Set the default language to Cambodian (Khmer)
+    'id' => 'library-mangement-system',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [

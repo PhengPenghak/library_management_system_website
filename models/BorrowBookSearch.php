@@ -14,13 +14,21 @@ class BorrowBookSearch extends BorrowBook
     /**
      * {@inheritdoc}
      */
+
+    public $globalSearch, $from_date, $to_date;
+    public $username;
+
+    public $dateRange;
+
     public function rules()
     {
         return [
             [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'start', 'end'], 'required'],
             [['id', 'information_borrower_book_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['code', 'start', 'end', 'created_at', 'updated_at'], 'safe'],
+            [['code', 'start', 'end', 'created_at', 'updated_at', 'username'], 'safe'],
 
+            [['globalSearch', 'from_date', 'to_date'], 'safe'],
+            [['dateRange'], 'safe'],
 
         ];
     }
@@ -47,7 +55,6 @@ class BorrowBookSearch extends BorrowBook
             ->joinWith('informationBorrowerBook')
             ->joinWith('informationBorrowerBook.grade')
             ->joinWith('book');
-        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -56,13 +63,34 @@ class BorrowBookSearch extends BorrowBook
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+
             return $dataProvider;
         }
 
+        if ($this->dateRange) {
+            list($startDate, $endDate) = explode(' - ', $this->dateRange);
+            $query->andFilterWhere(['between', 'start', $startDate, $endDate]);
+            $query->andFilterWhere(['between', 'end', $startDate, $endDate]);
+        }
 
-        $query->andFilterWhere(['like', 'code', $this->code]);
+
+        // $query->andFilterWhere(['between', 'DATE(borrow_book.created_at)', $this->from_date, $this->to_date])
+        //     ->andFilterWhere([
+        //         'OR',
+        //         ['like', 'borrow_book.title', $this->globalSearch],
+        //         ['like', 'borrow_book.code', $this->globalSearch],
+
+        //     ]);
+
+        // if ($this->globalSearch) {
+        //     $query->andFilterWhere([
+        //         'OR',
+        //         ['like', 'borrow_book.title', $this->globalSearch],
+        //         ['like', 'infomation_borrower_book.username', $this->globalSearch],
+        //         ['like', 'borrow_book.code', $this->globalSearch],
+
+        //     ]);
+        // }
 
         return $dataProvider;
     }
