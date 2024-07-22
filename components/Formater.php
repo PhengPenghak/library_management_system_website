@@ -87,7 +87,13 @@ class Formater extends \yii\web\Request
 
     return str_replace($str, $rplc, $month);
   }
+  public function maskMonthKHmer($month)
+  {
+    $str = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    $rplc = ['មករា', 'កុម្ភះ', 'មិនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
 
+    return str_replace($str, $rplc, $month);
+  }
   public function maskDateKH($date, $format = "ថ្ងៃD, d M Y")
   {
     $str = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

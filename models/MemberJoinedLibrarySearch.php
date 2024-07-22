@@ -14,7 +14,7 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
     /**
      * {@inheritdoc}
      */
-    public $globalSearch;
+    public $globalSearch, $scheduleType;
     public function rules()
     {
         return [
@@ -41,7 +41,8 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
      */
     public function search($params)
     {
-        $query = MemberJoinedLibrary::find();
+        $query = MemberJoinedLibrary::find()
+            ->joinWith('grade');
 
         // add conditions that should always apply here
 
@@ -58,7 +59,8 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['like', 'type_member', $this->globalSearch]);
+        $query->andFilterWhere(['like', 'grade.title', $this->globalSearch])
+            ->andFilterWhere(['=', 'member_joined_library.status', $this->scheduleType]);
 
         return $dataProvider;
     }
