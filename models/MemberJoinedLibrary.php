@@ -23,6 +23,7 @@ class MemberJoinedLibrary extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    // public $title;
     public static function tableName()
     {
         return 'member_joined_library';
@@ -81,9 +82,9 @@ class MemberJoinedLibrary extends \yii\db\ActiveRecord
     public function getStatusTemp()
     {
         if ($this->status == 1) {
-            return '<span class="badge badge-subtle badge-success">បានចូលអានសៀវភៅ</span>';
+            return '<span class="badge badge-subtle badge-success">ចូលអានតាមកាលវិភាគ</span>';
         } else {
-            return '<span class="badge badge-subtle badge-danger">មិនបានចូលអានសៀវភៅ</span>';
+            return '<span class="badge badge-subtle badge-warning">ចូលអានសេរី</span>';
         }
     }
     public function getJionType()

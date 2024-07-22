@@ -2,11 +2,13 @@
 
 namespace app\controllers;
 
-use app\models\BorrowBook;
 use app\models\BorrowBookSearch;
 use app\models\Grade;
 use app\models\GradeSearch;
 use app\models\InfomationBorrowerBookSearch;
+use app\models\MemberJoinedLibrary;
+use app\models\MemberJoinedLibrarySearch;
+use DateTime;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
 use Mpdf\Mpdf;
@@ -184,5 +186,85 @@ class ReportController extends Controller
             'inline' => false,
         ])->send();
         unlink($filename);
+    }
+    public function actionLibrary()
+    {
+        $selectedDate = empty(Yii::$app->request->get('selectedDate')) ? date("m-Y") : Yii::$app->request->get('selectedDate');
+        $gradeSearchModel = new MemberJoinedLibrarySearch();
+        $gradeDataProvider = $gradeSearchModel->search(Yii::$app->request->queryParams);
+        $grades = Grade::find()->all();
+        $gradeList = ArrayHelper::map($grades, 'id', 'title');
+        $searchModel = new MemberJoinedLibrarySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if ($dataProvider->getCount() === 0) {
+            throw new NotFoundHttpException('No records found.');
+        }
+        $scheduleType = Yii::$app->request->getQueryParam('scheduleType', 0);
+
+        $activityProvider = new ActiveDataProvider([
+            'query' => MemberJoinedLibrarySearch::find()
+                ->andWhere(['like', 'DATE(dateTime)', $selectedDate])
+                ->andWhere(['status' => $scheduleType]),
+            // 'pagination' => [
+            //     'pageSize' => Yii::$app->params['pageSize']
+            // ],
+            'sort' => [
+                'defaultOrder' => [
+                    'dateTime' => SORT_DESC, // Replace 'id' with the column you want to sort by
+                ]
+            ],
+        ]);
+
+
+        return $this->render('library/index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'gradeSearchModel' => $gradeSearchModel,
+            'gradeDataProvider' => $gradeDataProvider,
+            'selectedDate' => $selectedDate,
+            'activityProvider' => $activityProvider,
+
+            'gradeList' => $gradeList
+
+        ]);
+    }
+    public function actionReportLibrary()
+    {
+        Yii::$app->cache->flush();
+
+        // Ensure no output is sent before the PDF generation
+        if (ob_get_contents()) ob_end_clean();
+        $dateFromUrl = Yii::$app->request->get('selectMonth');
+        if (empty($dateFromUrl)) {
+            $dateFromUrl = date("Y-m-d");
+        }
+        $date = new DateTime($dateFromUrl);
+        $daysInMonth = $date->format('t');
+        $libraryItems = MemberJoinedLibrary::find()
+            ->andWhere(['between', 'created_at', $date->format('Y-m-01'), $date->format('Y-m-t')])
+            ->all();
+        // echo "<pre>";
+        // print_r($libraryItems);
+        // exit;
+
+        $mpdf = new Mpdf([
+            'format' => 'A4',
+            'default_font' => 'khmerOS',
+            'fontDir' => array_merge((new ConfigVariables())->getDefaults()['fontDir'], [
+                Yii::getAlias('@webroot') . '/fonts',
+            ]),
+            'fontdata' => array_merge((new FontVariables())->getDefaults()['fontdata'], [
+                'khmerOS' => [
+                    'R' => 'khmerOS.ttf',
+                    'B' => 'khmerOS.ttf',
+                ],
+            ]),
+        ]);
+        $html = $this->renderPartial('library/report_library', [
+            'daysInMonth' => $daysInMonth,
+            'libraryItems' => $libraryItems,
+        ]);
+        $mpdf->WriteHTML($html);
+        $mpdf->Output('report.pdf', \Mpdf\Output\Destination::INLINE);
     }
 }

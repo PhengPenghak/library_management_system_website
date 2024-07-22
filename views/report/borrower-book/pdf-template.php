@@ -27,6 +27,7 @@
                     <th style="width:130px; font-size:.9rem; padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center; border-bottom: 2px solid #dee2e6; color: black;">លេខសារពើភ័ណ្ខ</th>
                     <th style="width:70px; font-size:.9rem; padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center; border-bottom: 2px solid #dee2e6; color: black;">ចំនួន</th>
                     <th style="font-size:.9rem; padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center; border-bottom: 2px solid #dee2e6; color: black;">កាលបរិច្ឆេទខ្ខី</th>
+
                 </tr>
             </thead>
             <tbody>

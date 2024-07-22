@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'created_at',
                         'label' => 'កាលបរិច្ឆេទបង្កើត',
                         'value' => function ($model) {
-                            return Yii::$app->formater->maskDateKH($model->created_at);
+                            return Yii::$app->formater->maskDateKH($model->dateTime);
                         }
                     ],
                     [
