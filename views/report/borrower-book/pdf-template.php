@@ -54,7 +54,7 @@
         <table class="table table-sm mb-0">
             <thead class="thead-">
                 <tr>
-                    <th>លេខរៀង</th>
+                    <th style="background-color:aqua;">លេខរៀង</th>
                     <th>ឈ្មោះសិស្ស</th>
                     <th>ភេទ</th>
                     <th>ថ្នាក់</th>

@@ -11,6 +11,10 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
 
 <div class="member-joined-library">
   <?php $form = ActiveForm::begin(); ?>
+  <?= $form->field($model, 'status')->dropDownList(
+    [1 => 'ចូលតាមកាលវិភាគ', 0 => 'ចូលសេរី'],
+    ['class' => 'form-control form-control-lg', 'id' => 'status_type']
+  )->label('ស្ថានភាព') ?>
   <?= $form->field($model, 'type_joined')->dropDownList(
     [1 => 'សិស្ស', 2 => 'គ្រូ', 3 => 'សមាគមន៍'],
     ['class' => 'form-control form-control-lg', 'id' => 'people_type']
@@ -24,33 +28,16 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
     ],
   ])->label('ថ្នាក់'); ?>
 
-  <?= $form->field($model, 'total_member')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសរុប', 'class' => 'form-control-lg form-control'])->label(false) ?>
+  <?= $form->field($model, 'total_member')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសរុប', 'class' => 'form-control-lg form-control'])->label("ចំនួនសរុប") ?>
 
-  <?= $form->field($model, 'total_member_female')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសិស្សស្រី់​​​', 'class' => 'form-control-lg form-control'])->label(false) ?>
+  <?= $form->field($model, 'total_member_female')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសិស្សស្រី់​​​', 'class' => 'form-control-lg form-control'])->label("ចំនួនសិស្សស្រី") ?>
 
   <div class="form-group field-model-end">
-    <?= $form->field($model, 'dateTime')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសរុប', "type" => "datetime-local", "id" => "model-end", 'class' => 'form-control-lg form-control'])->label(false) ?>
+    <?= $form->field($model, 'dateTime')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសរុប', "type" => "datetime-local", "id" => "model-end", 'class' => 'form-control-lg form-control'])->label("កាលបរិច្ឆេទ") ?>
   </div>
 
-
-  <div class="card border">
-    <div class="card-body">
-      <div class="card-title"><?= Yii::t('app', 'ស្ថានភាព') ?></div>
-
-      <div class="">
-        <?= $form->field($model, 'status')->hiddenInput(['id' => 'memberJoinLibrary-status'])->label(false); ?>
-        <label class="switcher-control switcher-control-success switcher-control-lg">
-          <input type="checkbox" value="<?= $model->status ?>" id="memberJoinLibrary" class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
-          <span class="switcher-indicator"></span>
-          <span class="switcher-label-on"><i class="fas fa-check"></i></span>
-          <span class="switcher-label-off"><i class="fas fa-times"></i></span>
-        </label>
-      </div>
-    </div>
-  </div>
   <div class="my-3">
     <?= Html::submitButton('<i class="fas fa-save mr-2"></i>រក្សាទុក', ['class' => 'btn btn-lg  btn-primary px-5']) ?>
-
   </div>
 
   <?php ActiveForm::end(); ?>

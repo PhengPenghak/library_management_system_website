@@ -14,7 +14,7 @@ class m240710_065044_create_member_joined_library_table extends Migration
     {
         $this->createTable('{{%member_joined_library}}', [
             'id' => $this->primaryKey(),
-            'grade_id' => $this->integer()->notNull(),
+            'grade_id' => $this->integer(),
             'type_joined' => $this->integer(),
             'total_member' => $this->integer()->notNull(),
             'total_member_female' => $this->integer()->notNull(),
