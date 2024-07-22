@@ -11,50 +11,32 @@ use app\models\BorrowBook;
  */
 class BorrowBookSearch extends BorrowBook
 {
-    /**
-     * {@inheritdoc}
-     */
-
-    public $globalSearch, $from_date, $to_date;
-    public $username;
-
-    public $dateRange;
+    public $from_date;
+    public $to_date;
+    public $grade_title;
+    public $book_title;
+    public $borrower_name;
+    public $information_borrower_grade_title;
 
     public function rules()
     {
         return [
-            [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'start', 'end'], 'required'],
+            [['information_borrower_book_id', 'book_id', 'quantity', 'status'], 'required'],
             [['id', 'information_borrower_book_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['code', 'start', 'end', 'created_at', 'updated_at', 'username'], 'safe'],
-
-            [['globalSearch', 'from_date', 'to_date'], 'safe'],
-            [['dateRange'], 'safe'],
-
+            [['code', 'start', 'end', 'created_at', 'updated_at', 'username', 'grade_title', 'book_title', 'borrower_name', 'information_borrower_grade_title', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
-     * @return ActiveDataProvider
-     */
     public function search($params)
     {
-        $query = BorrowBook::find()
-            ->joinWith('informationBorrowerBook')
-            ->joinWith('informationBorrowerBook.grade')
-            ->joinWith('book');
+        $query = BorrowBook::find();
+        $query->joinWith(['book', 'informationBorrowerBook']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -63,34 +45,24 @@ class BorrowBookSearch extends BorrowBook
         $this->load($params);
 
         if (!$this->validate()) {
-
             return $dataProvider;
         }
 
-        if ($this->dateRange) {
-            list($startDate, $endDate) = explode(' - ', $this->dateRange);
-            $query->andFilterWhere(['between', 'start', $startDate, $endDate]);
-            $query->andFilterWhere(['between', 'end', $startDate, $endDate]);
-        }
+        $query->andFilterWhere([
+            'like', 'grade.title', $this->grade_title,
+        ])
+            ->andFilterWhere([
+                'like', 'book.title', $this->book_title,
+            ])
+            ->andFilterWhere([
+                'like', 'information_borrower_book.name', $this->borrower_name,
+            ])
+            ->andFilterWhere([
+                'like', 'information_borrower_book.grade_title', $this->information_borrower_grade_title,
+            ]);
 
+        $query->andFilterWhere(['between', 'DATE(borrow_book.created_at)', $this->from_date, $this->to_date]);
 
-        // $query->andFilterWhere(['between', 'DATE(borrow_book.created_at)', $this->from_date, $this->to_date])
-        //     ->andFilterWhere([
-        //         'OR',
-        //         ['like', 'borrow_book.title', $this->globalSearch],
-        //         ['like', 'borrow_book.code', $this->globalSearch],
-
-        //     ]);
-
-        // if ($this->globalSearch) {
-        //     $query->andFilterWhere([
-        //         'OR',
-        //         ['like', 'borrow_book.title', $this->globalSearch],
-        //         ['like', 'infomation_borrower_book.username', $this->globalSearch],
-        //         ['like', 'borrow_book.code', $this->globalSearch],
-
-        //     ]);
-        // }
 
         return $dataProvider;
     }

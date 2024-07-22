@@ -8,6 +8,7 @@ use app\models\InfomationBorrowerBook;
 use app\models\InfomationBorrowerBookSearch;
 use Exception;
 use Yii;
+use yii\db\Query;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
@@ -177,6 +178,8 @@ class BorrowerBookController extends \yii\web\Controller
                         $borrowBook->start = $postData['start'][$key];
                         $borrowBook->end = $postData['end'][$key];
                         $borrowBook->status = $postData['status'][$key];
+                        $borrowBook->missing_books = $postData['missing_books'][$key];
+
                         if (!$borrowBook->save()) {
                             throw new Exception("Update failed for record ID {$borrowBook->id}: " . json_encode($borrowBook->getErrors()));
                         }
@@ -216,5 +219,32 @@ class BorrowerBookController extends \yii\web\Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionChart()
+    {
+        // Initialize an array with 0 counts for each month
+        $monthlyCounts = array_fill(0, 12, 0);
+
+        // Fetch data from the BorrowBook model, grouped by month
+        $data = (new Query())
+            ->select(['MONTH(start) AS month', 'COUNT(*) AS count'])
+            ->from('borrow_book')
+            ->groupBy(['MONTH(start)'])
+            ->all();
+
+        // Populate the monthly counts array
+        foreach ($data as $item) {
+            $monthIndex = $item['month'] - 1; // Convert to 0-based index
+            $monthlyCounts[$monthIndex] = (int)$item['count'];
+        }
+
+        // Labels for the 12 months
+        $labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        return $this->render('chart', [
+            'labels' => $labels,
+            'counts' => $monthlyCounts,
+        ]);
     }
 }

@@ -25,6 +25,8 @@ class BorrowBook extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+
     public static function tableName()
     {
         return 'borrow_book';
@@ -36,12 +38,12 @@ class BorrowBook extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['book_id', 'information_borrower_book_id', 'code', 'start', 'end'], 'required'],
-            [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
+            [['book_id', 'information_borrower_book_id', 'code'], 'required'],
+            [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'missing_books', 'created_by', 'updated_by'], 'integer'],
             [['start', 'end', 'created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 255],
-            [['quantity'], 'number', 'min' => 1, 'max' => 1, 'tooSmall' => 'Quantity must be at least 1.', 'tooBig' => 'Quantity must not exceed 3.'],
-
+            [['code'], 'unique'],
+            [['quantity'], 'number', 'min' => 1, 'max' => 1, 'tooSmall' => 'Quantity must be at least 1.', 'tooBig' => 'Quantity must not exceed 1.'],
         ];
     }
 
@@ -54,7 +56,8 @@ class BorrowBook extends \yii\db\ActiveRecord
             'id' => 'ID',
             'code' => 'Code',
             'information_borrower_book_id' => 'Information Borrower Book ID',
-            'book_id' => 'Book ID',
+            'missing_books' => 'Missing Books',
+            'book_id' => 'Book',
             'start' => 'Start',
             'end' => 'End',
             'quantity' => 'Quantity',
@@ -65,17 +68,23 @@ class BorrowBook extends \yii\db\ActiveRecord
             'updated_by' => 'Updated By',
         ];
     }
+
+    public function getGrade()
+    {
+        return $this->hasOne(InfomationBorrowerBook::class, ['grade_id' => 'id'])
+            ->via('informationBorrowerBook');
+    }
+
     public function getBook()
     {
         return $this->hasOne(Book::class, ['id' => 'book_id']);
     }
 
-    // BorrowBook.php (model file)
-
     public function getInformationBorrowerBook()
     {
         return $this->hasOne(InfomationBorrowerBook::class, ['id' => 'information_borrower_book_id']);
     }
+
     public function getDaysAgo()
     {
         $endDate = new \DateTime($this->end);
@@ -83,6 +92,9 @@ class BorrowBook extends \yii\db\ActiveRecord
         $interval = $currentDate->diff($endDate);
         return $interval->days;
     }
+
+
+
     public function getStatusTemp()
     {
         if ($this->status == 1) {

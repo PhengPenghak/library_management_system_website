@@ -9,7 +9,6 @@ use app\models\UserRoleSearch;
 use app\models\UserSearch;
 use Yii;
 use Exception;
-use Ramsey\Uuid\Uuid;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 
@@ -18,29 +17,29 @@ class UserController extends Controller
   /**
    * @inheritDoc
    */
-  // public function behaviors()
-  // {
-  //   return array_merge(
-  //     parent::behaviors(),
-  //     [
-  //       'access' => [
-  //         'class' => \yii\filters\AccessControl::class,
-  //         'rules' => [
-  //           [
-  //             'actions' => User::getUserPermission(Yii::$app->controller->id),
-  //             'allow' => true,
-  //           ]
-  //         ],
-  //       ],
-  //       'verbs' => [
-  //         'class' => VerbFilter::class,
-  //         'actions' => [
-  //           'delete' => ['POST'],
-  //         ],
-  //       ],
-  //     ]
-  //   );
-  // }
+  public function behaviors()
+  {
+    return array_merge(
+      parent::behaviors(),
+      [
+        'access' => [
+          'class' => \yii\filters\AccessControl::class,
+          'rules' => [
+            [
+              'actions' => User::getUserPermission(Yii::$app->controller->id),
+              'allow' => true,
+            ]
+          ],
+        ],
+        'verbs' => [
+          'class' => VerbFilter::class,
+          'actions' => [
+            'delete' => ['POST'],
+          ],
+        ],
+      ]
+    );
+  }
 
   public function beforeAction($action)
   {

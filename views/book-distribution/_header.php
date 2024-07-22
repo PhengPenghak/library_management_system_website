@@ -9,12 +9,12 @@ if (!$modelHeader->isNewRecord) {
         [
             'active' => ['detail'],
             'action' => 'detail',
-            'label' => 'ព័ត៌មានអ្នកខ្ចីសៀវភៅ'
+            'label' => 'ព័ត៌មានអ្នកទទួលសៀវភៅ'
         ],
         [
             'active' => ['create-book-distribution'],
             'action' => 'create-book-distribution',
-            'label' => 'ខ្ចីសៀវភៅ'
+            'label' => 'ទទួលសៀវភៅ'
         ],
 
         [

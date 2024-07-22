@@ -15,7 +15,32 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+
+
+
+
     'components' => [
+
+        'backup' => [
+            'class' => 'amoracr\backup\Backup',
+            'backupDir' => '@app/backups', // Directory where backups are stored
+            'databases' => [
+                [
+                    'class' => 'amoracr\backup\components\MySqlBackup',
+                    'dsn' => 'mysql:host=localhost;dbname=library_management_system',
+                    'username' => 'root',
+                    'password' => '',
+                    'backupDir' => '@app/backups', // Directory for database backups
+                    'fileName' => 'library_management_system_' . date('Ymd_His') . '.sql', // Custom filename with timestamp
+                    'compression' => 'gzip', // Optional: use gzip compression
+                    'tables' => [], // Leave empty to backup all tables
+                ],
+            ],
+            'directories' => [
+                'images' => '@app/web/images',
+                'uploads' => '@app/web/uploads',
+            ],
+        ],
 
         'fullcalendar' => [
             'class' => 'philippfrenzel\yii2fullcalendar\Fullcalendar',

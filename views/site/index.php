@@ -5,19 +5,13 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use yii\web\View;
 
 DateRangePickerAsset::register($this);
 
 $base_url = Yii::getAlias("@web");
 /** @var \app\components\Formater $formater */
 $formater = Yii::$app->formater;
-
-$this->registerJsFile(
-    // 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.1.2/chart.min.js',
-    'https://cdn.jsdelivr.net/npm/chart.js',
-    ['depends' => [\yii\web\JqueryAsset::class]]
-);
-
 
 $this->title = 'Library - Management System Dashboard';
 ?>
@@ -193,8 +187,42 @@ $this->title = 'Library - Management System Dashboard';
                             <h4 class="text-light"> + <?= $availableBooksCount ?></h4>
                         </div>
                         <hr>
-
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr class="border-0">
+<div class="row">
+    <div class="col-lg-6">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info" role="alert">
+                        តារាងទិន្នន័យប្រចាំខែ
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <canvas id="borrowBookChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info" role="alert">
+                        សម្រាប់ទិន្នន័យបម្រុងទុក
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <?= Html::a('ទិន្នន័យបម្រុងទុក', ['site/backup'], ['class' => 'btn btn-lg btn-primary']) ?>
                 </div>
             </div>
         </div>
@@ -406,10 +434,75 @@ $this->title = 'Library - Management System Dashboard';
 </div>
 
 <?php
+$this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js', ['position' => View::POS_HEAD]);
+$this->registerJsFile('https://code.jquery.com/jquery-3.5.1.min.js', ['position' => View::POS_HEAD]);
+$baseUrl = Yii::getAlias("@web");
+
 
 $js = <<< JS
+$(document).ready(function() {
+    $.ajax({
+        url: '/library_management_system_website/site/chart-data', // URL to the action that provides chart data
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            var ctx = document.getElementById('borrowBookChart').getContext('2d');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.months,
 
-
+                        datasets: [{
+                            label: 'Books Borrowed',
+                            data: data.counts,
+                           
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }],                        
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Count'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                console.error('Canvas element not found or not correctly initialized.');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to fetch chart data:', error);
+        }
+    });
+});
 JS;
 $this->registerJs($js);
 ?>
