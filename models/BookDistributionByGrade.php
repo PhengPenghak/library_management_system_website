@@ -36,7 +36,7 @@ class BookDistributionByGrade extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['code', 'information_distribution_by_grade_id', 'book_id', 'start', 'end'], 'required'],
+            [['information_distribution_by_grade_id', 'book_id', 'start', 'end'], 'required'],
             [['information_distribution_by_grade_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
             [['start', 'end', 'created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 255],

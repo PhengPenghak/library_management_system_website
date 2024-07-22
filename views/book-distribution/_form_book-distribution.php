@@ -4,15 +4,13 @@ use app\assets\EditorAsset;
 use app\models\Book;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use kartik\select2\Select2;
 use yii\bootstrap4\Html;
-use yii\helpers\Url;
 use yii\web\View;
 
 EditorAsset::register($this);
 
-$this->title = 'អ្នកខ្ចីសៀវភៅ';
-$this->params['breadcrumbs'][] = ['label' => 'អ្នកខ្ចីសៀវភៅ', 'url' => ['index']];
+$this->title = 'អ្នកទទួលសៀវភៅ';
+$this->params['breadcrumbs'][] = ['label' => 'អ្នកទទួលសៀវភៅ', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 
@@ -68,42 +66,38 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                     ?>
                             <div class="tab-pane active show" id="<?= $key ?>">
                                 <div class="row form-group" id="original-row">
-                                    <div class="col-lg-4">
-                                        <label>សៀវភៅ</label>
-                                        <input type="text" class="form-control form-control-lg mb-3" id="tpye_social_media_<?= $key ?>" value="<?= $value->book->title ?>" disabled></input>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <div class="form-group field-BookDistributionByGrade-code<?= $key ?> has-success">
-                                            <label for="BookDistributionByGrade-code<?= $key ?>">លេខសារពើភ័ណ្ខ</label>
-                                            <input type="text" id="BookDistributionByGrade-code<?= $key ?>" class="form-control form-control-lg" value="<?= $value->code ?>" disabled>
+                                    <div class="col-lg-11">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label>សៀវភៅ</label>
+                                                <input type="text" class="form-control form-control-lg mb-3" id="tpye_social_media_<?= $key ?>" value="<?= $value->book->title ?>" disabled></input>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <div class="form-group field-BookDistributionByGrade-quantity has-success">
+                                                    <label for="model-start<?= $key ?>">ចំនួន</label>
+                                                    <input type="number" id="BookDistributionByGrade-quantity<?= $key ?>" class="form-control form-control-lg quantity-input" value="<?= $value->quantity ?>" disabled>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-3">
+                                                <label for="dateRange<?= $key ?>">កាលបរិច្ឆេទ</label>
+                                                <input type="text" id="dateRange<?= $key ?>" value="<?= $value->start ?> - <?= $value->end ?>" name="dateRange" class="form-control form-control-lg dateRangePicker" disabled>
+                                                <input type="hidden" id="start<?= $key ?>" value="<?= $value->start ?>" name="BookDistributionByGrade[start][]">
+                                                <input type="hidden" id="end<?= $key ?>" value="<?= $value->end ?>" name="BookDistributionByGrade[end][]">
+                                            </div>
+
+                                            <div class="col-lg-2">
+                                                <div class="custom-control custom-checkbox mb-3">
+                                                    <input type="checkbox" value="<?= $value->status ?>" disabled class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
+                                                    <label class="custom-control-label" for="status<?= $key ?>">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
+                                                    <input type="hidden" id="checkbox-value<?= $key ?>" value="<?= $value->status ?>">
+                                                    <div class="invalid-tooltip">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-lg-2">
-                                        <div class="form-group field-BookDistributionByGrade-quantity has-success">
-                                            <label for="model-start<?= $key ?>">ចំនួន</label>
-                                            <input type="number" id="BookDistributionByGrade-quantity<?= $key ?>" class="form-control form-control-lg quantity-input" value="<?= $value->quantity ?>" disabled>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-3">
-                                        <label for="dateRange<?= $key ?>">កាលបរិច្ឆេទ</label>
-                                        <input type="text" id="dateRange<?= $key ?>" value="<?= $value->start ?> - <?= $value->end ?>" name="dateRange" class="form-control form-control-lg dateRangePicker" disabled>
-                                        <input type="hidden" id="start<?= $key ?>" value="<?= $value->start ?>" name="BookDistributionByGrade[start][]">
-                                        <input type="hidden" id="end<?= $key ?>" value="<?= $value->end ?>" name="BookDistributionByGrade[end][]">
-                                    </div>
-
-                                    <div class="col-lg-2">
-                                        <div class="custom-control custom-checkbox mb-3">
-                                            <input type="checkbox" value="<?= $value->status ?>" disabled class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
-                                            <label class="custom-control-label" for="status<?= $key ?>">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
-                                            <input type="hidden" id="checkbox-value<?= $key ?>" value="<?= $value->status ?>">
-                                            <div class="invalid-tooltip">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</div>
-                                        </div>
-                                    </div>
-
                                 </div>
-
                             </div>
                 <?php
                         }
@@ -151,47 +145,42 @@ $js = <<< JS
             `<div class="tab-pane active show" id="\${key}">
                     <div class="row form-group" id="original-row">
                         <input type="text" hidden id="information_distribution_by_grade_id\${key}" class="form-control form-control-lg" name="BookDistributionByGrade[information_distribution_by_grade_id][]" autofocus="true" value="${id}" placeholder="" aria-invalid="false">
-
-                        <div class="col-lg-4">
-                            <label>សៀវភៅ</label>
-                            <select type="text" name="BookDistributionByGrade[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}" required>
-                            \${options}
-                            </select>
-                        </div>
-                        <div class="col-lg-2">
-                            <div class="form-group field-BookDistributionByGrade-code\${key} has-success">
-                                <label>លេខសារពើភ័ណ្ខ</label>
-                                <input type="text" id="BookDistributionByGrade-code\${key}" class="form-control form-control-lg" name="BookDistributionByGrade[code][]" placeholder="Enter your code" required>
-                            </div>
-                        </div>
-                        <div class="col-lg-2">
-                            <div class="form-group field-BookDistributionByGrade-quantity has-success">
-                                <label>ចំនួន</label>
-                                <input type="number" id="BookDistributionByGrade-quantity\${key}" class="form-control form-control-lg quantity-input" name="BookDistributionByGrade[quantity][]" value="1">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3">
-                            <label for="dateRange\${key}">កាលបរិច្ឆេទ</label>
-                            <input type="text" id="dateRange\${key}" name="dateRange" class="form-control form-control-lg">
-                            <input type="hidden" id="start\${key}" name="BookDistributionByGrade[start][]">
-                            <input type="hidden" id="end\${key}" name="BookDistributionByGrade[end][]">
-                        </div>
-
-                        <div class="col-lg-2">
-                            <div class="custom-control custom-checkbox mb-3">
-                                <input type="checkbox" value="1" class="custom-control-input" id="status\${key}" checked>
-                                <label class="custom-control-label" for="status\${key}">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
-                                <input type="hidden" id="checkbox-value\${key}" name="BookDistributionByGrade[status][]" value="1">
-                                <div class="invalid-tooltip">
-                                    អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ
+                        <div class="col-lg-11">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <label>សៀវភៅ</label>
+                                    <select type="text" name="BookDistributionByGrade[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}" required>
+                                    \${options}
+                                    </select>
                                 </div>
-                            </div>
-                        </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group field-BookDistributionByGrade-quantity has-success">
+                                        <label>ចំនួន</label>
+                                        <input type="number" id="BookDistributionByGrade-quantity\${key}" class="form-control form-control-lg quantity-input" name="BookDistributionByGrade[quantity][]" value="1">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="dateRange\${key}">កាលបរិច្ឆេទ</label>
+                                    <input type="text" id="dateRange\${key}" name="dateRange" class="form-control form-control-lg">
+                                    <input type="hidden" id="start\${key}" name="BookDistributionByGrade[start][]">
+                                    <input type="hidden" id="end\${key}" name="BookDistributionByGrade[end][]">
+                                </div>
+                                <div class="col-lg-2">
+                                    <div class="custom-control custom-checkbox mb-3">
+                                        <input type="checkbox" value="1" class="custom-control-input" id="status\${key}" checked>
+                                        <label class="custom-control-label" for="status\${key}">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
+                                        <input type="hidden" id="checkbox-value\${key}" name="BookDistributionByGrade[status][]" value="1">
+                                        <div class="invalid-tooltip">
+                                            អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <div class="col-lg-2 align-self-center">
+                             </div>
+                        </div>
+                        <div class="col-lg-1 align-self-center">
                           <div class="d-flex align-items-center flex-column">
-                            <button type='button' class='btn bg-red text-light btn-icon btn-sm btn_remove' id='remove_row_\${key}' data-key="\${key}"><i class='fa fa-trash'></i></button>
+                            <button type='button' class='btn bg-red text-light btn-icon btn-sm btn_remove mb-4' id='remove_row_\${key}' data-key="\${key}"><i class='fa fa-trash'></i></button>
                           </div>
                         </div>
                     </div>

@@ -14,7 +14,7 @@ class m240630_053911_create_borrow_book_table extends Migration
     {
         $this->createTable('{{%borrow_book}}', [
             'id' => $this->primaryKey(),
-            'code' => $this->string(),
+            'code' => $this->string()->unique(),
             'information_borrower_book_id' => $this->integer(11)->notNull(),
             'book_id' => $this->integer(11)->notNull(),
             'start' => $this->dateTime()->notNull(),

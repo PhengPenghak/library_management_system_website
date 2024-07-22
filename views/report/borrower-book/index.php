@@ -15,41 +15,28 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="row">
-    <div class="col-md-6">
-        <?php $form = ActiveForm::begin([
-            'action' => ['borrower-book'],
-            'method' => 'get',
-            'class' => 'form-inline'
-        ]); ?>
-
-        <div class="form-group">
-            <?php
-            if (!empty($searchModel)) { ?>
-                <?= $form->field($searchModel, 'grade_id')->dropDownList(
-                    InfomationBorrowerBookSearch::getGradeList(),
-                    ['prompt' => 'Select Grade']
-                )->label(false) ?>
-            <?php    } else {
-                echo 'no dataFound';
-            }
-
-            ?>
-
-        </div>
-
-        <div class="form-group">
-            <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        </div>
-
-        <?php ActiveForm::end(); ?>
-    </div>
-</div>
-
-<div class="row">
     <div class="col-md-12">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => null,
+            'tableOptions' => [
+                'class' => 'table table-hover',
+                'cellspacing' => '0',
+                'width' => '100%',
+            ],
+            'layout' => "
+                <div class='table-responsive'>
+                    {items}
+                </div>
+                <hr>
+                <div class='row'>
+                    <div class='col-md-6'>
+                        {summary}
+                    </div>
+                    <div class='col-md-6'>
+                        {pager}
+                    </div>
+                </div>
+            ",
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                 [

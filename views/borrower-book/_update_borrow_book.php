@@ -102,17 +102,23 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                                             <div class="col-lg-2">
                                                 <div class="custom-control custom-checkbox mb-3">
                                                     <input type="checkbox" value="<?= $value->status ?>" class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
-                                                    <label class="custom-control-label" for="status<?= $key ?>">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
+                                                    <label class="custom-control-label" for="status<?= $key ?>">អនុញ្ញាត សងសៀវភៅ</label>
                                                     <input type="hidden" id="checkbox-value<?= $key ?>" name="BorrowBook[status][]" value="<?= $value->status ?>">
-                                                    <div class="invalid-tooltip">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</div>
+                                                    <div class="invalid-tooltip">អនុញ្ញាត សងសៀវភៅ</div>
                                                 </div>
                                             </div>
+
+                                            <div class="col-lg-2">
+                                                <div class="custom-control custom-checkbox mb-3">
+                                                    <input type="checkbox" value="<?= $value->missing_books ?>" class="custom-control-input missing-books-checkbox" id="missing-books-checkbox<?= $key ?>" <?= $value->missing_books ? 'checked' : '' ?>>
+                                                    <label class="custom-control-label" for="missing-books-checkbox<?= $key ?>">សៀវភៅបាត់</label>
+                                                    <input type="hidden" id="missing_books<?= $key ?>" name="BorrowBook[missing_books][]" value="<?= $value->missing_books ?>">
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
-
-
-
                             </div>
                         <?php
                         }
@@ -260,6 +266,28 @@ $js = <<< JS
 
        
     });
+
+    $(document).ready(function() {
+        $('.missing-books-checkbox').each(function() {
+            var key = $(this).attr('id').replace('missing-books-checkbox', '');
+            var hiddenInput = $('#missing_books' + key);
+            if ($(this).is(':checked')) {
+                hiddenInput.val(1);
+            } else {
+                hiddenInput.val(0);
+            }
+
+            // Change event handler
+            $(this).change(function() {
+                if ($(this).is(':checked')) {
+                    hiddenInput.val(1);
+                } else {
+                    hiddenInput.val(0);
+                }
+            });
+        });
+    });
+
 
     $(document).ready(function() {
         $('.status-checkbox').each(function() {

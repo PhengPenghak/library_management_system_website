@@ -122,7 +122,6 @@ class BookDistributionController extends \yii\web\Controller
                     $modelData[] = [
                         $informationBorrowerBookID,
                         $postData['book_id'][$key],
-                        $postData['code'][$key],
                         $postData['quantity'][$key],
                         $postData['start'][$key],
                         $postData['end'][$key],
@@ -133,7 +132,6 @@ class BookDistributionController extends \yii\web\Controller
                 Yii::$app->db->createCommand()->batchInsert(BookDistributionByGrade::tableName(), [
                     'information_distribution_by_grade_id',
                     'book_id',
-                    'code',
                     'quantity',
                     'start',
                     'end',
