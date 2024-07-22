@@ -7,17 +7,22 @@ use yii\helpers\Url;
 
 ?>
 <div class="col-xl-12">
-    <div class="d-md-flex align-items-md-start pb-5">
-        <h1 class="page-title mr-sm-auto"> Basic Table </h1>
-        <div class="btn-toolbar">
-            <?= Html::a('<i class="fas fa-file-pdf"></i> Export PDF', ['report/create-pdf', 'id' => $id], [
-                'class' => 'btn btn-lg btn-light',
-            ]) ?>
-
-            <?= Html::a('<i class="fas fa-file-excel"></i> Export Excel', ['report/export-excel', 'id' => $id], [
-                'class' => 'btn btn-lg btn-light',
-            ]) ?>
-
+    <h3><?= Html::encode($this->title) ?></h3>
+    <div class="row my-5 body">
+        <div class="col-lg-4 col-6 ">
+            <div class="card border-success mt-2">
+                <div class="card-body" id="countByDateType">
+                    <h5 class="card-title ">Previous month tasks </h5>
+                    <?= Html::dropDownList(
+                        'dateFilter',
+                        $datetype,
+                        $drowdown,
+                        ['class' => 'form-control dateFilter']
+                    )
+                    ?>
+                    <h1 class="countingNumber"><?= $countByDateType ?></h1>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -27,7 +32,6 @@ use yii\helpers\Url;
         'method' => 'get',
     ]);
     ?>
-    <?= $this->render('_search', ['searchModel' => $searchModel, 'id' => $id]) ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
