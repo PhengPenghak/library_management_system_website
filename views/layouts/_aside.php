@@ -8,13 +8,13 @@ $master = Yii::$app->master;
 
 
 
-$user_role_id = Yii::$app->user->identity->role_id;
-$userRole = Yii::$app->db->createCommand("SELECT user_role_action.controller, user_role_action.action
-    FROM user_role_permission
-    INNER JOIN user_role_action ON user_role_action.id = user_role_permission.action_id
-    WHERE user_role_id = :user_role_id", [
-    ':user_role_id' => $user_role_id
-])->queryAll();
+// $user_role_id = Yii::$app->user->identity->role_id;
+// $userRole = Yii::$app->db->createCommand("SELECT user_role_action.controller, user_role_action.action
+//     FROM user_role_permission
+//     INNER JOIN user_role_action ON user_role_action.id = user_role_permission.action_id
+//     WHERE user_role_id = :user_role_id", [
+//     ':user_role_id' => $user_role_id
+// ])->queryAll();
 
 
 
