@@ -121,14 +121,14 @@ $formater = Yii::$app->formater;
                             <img src="<?= Yii::getAlias("@web"); ?>/img/profile_holder.jpeg" alt="">
                         </span>
                         <span class="account-summary pr-lg-4 d-none d-lg-block text-white">
-                            <span class="account-name"><?= Yii::$app->user->identity->name ?></span>
+                            <span class="account-name"><?= Yii::$app->user->identity->username ?></span>
                             <span class="account-description"><?= Yii::$app->user->identity->role->name ?></span>
                         </span>
                     </button>
                     <div class="dropdown-menu">
                         <div class="dropdown-arrow d-lg-none" x-arrow=""></div>
                         <div class="dropdown-arrow ml-3 d-none d-lg-block"></div>
-                        <h6 class="dropdown-header d-none d-sm-block d-lg-none"> <?= Yii::$app->user->identity->name ?> </h6>
+                        <h6 class="dropdown-header d-none d-sm-block d-lg-none"> <?= Yii::$app->user->identity->username ?> </h6>
                         <a class="dropdown-item" href="<?= Url::toRoute(['user/index']) ?>">
                             <span class="bi bi-person mr-2"></span> <?= Yii::t('app', 'Profile') ?>
                         </a>

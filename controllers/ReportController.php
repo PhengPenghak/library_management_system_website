@@ -14,16 +14,17 @@ use DateTime;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
 use Mpdf\Mpdf;
-use Mpdf\Output\Destination;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\data\SqlDataProvider;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class ReportController extends Controller
 {
@@ -59,9 +60,9 @@ class ReportController extends Controller
         $gradeList = ArrayHelper::map($grades, 'id', 'title');
         $searchModel = new InfomationBorrowerBookSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        if ($dataProvider->getCount() === 0) {
-            throw new NotFoundHttpException('No records found.');
-        }
+        // if ($dataProvider->getCount() === 0) {
+        //     throw new NotFoundHttpException('No records found.');
+        // }
 
         return $this->render('borrower-book/index', [
             'searchModel' => $searchModel,
@@ -137,18 +138,18 @@ class ReportController extends Controller
     public function actionExportExcel($id)
     {
         $reportBorrowerBook = Yii::$app->db->createCommand("SELECT
-                borrow_book.id AS ID, borrow_book.code, borrow_book.quantity, borrow_book.start, borrow_book.end,
-                infomation_borrower_book.username, infomation_borrower_book.gender,
-                grade.title,
-                book.title AS bookTitle
-            FROM
-                borrow_book
-                INNER JOIN infomation_borrower_book ON infomation_borrower_book.id = borrow_book.information_borrower_book_id
-                INNER JOIN grade ON grade.id = infomation_borrower_book.grade_id
-                INNER JOIN book ON book.id = borrow_book.book_id
-            WHERE
-                grade_id = :gradeId
-        ")
+            borrow_book.id AS ID, borrow_book.code, borrow_book.quantity, borrow_book.start, borrow_book.end,
+            infomation_borrower_book.username, infomation_borrower_book.gender,
+            grade.title,
+            book.title AS bookTitle
+        FROM
+            borrow_book
+            INNER JOIN infomation_borrower_book ON infomation_borrower_book.id = borrow_book.information_borrower_book_id
+            INNER JOIN grade ON grade.id = infomation_borrower_book.grade_id
+            INNER JOIN book ON book.id = borrow_book.book_id
+        WHERE
+            grade_id = :gradeId
+    ")
             ->bindParam('gradeId', $id)
             ->queryAll();
         $spreadsheet = new Spreadsheet();
@@ -165,6 +166,32 @@ class ReportController extends Controller
             'កាលបរិច្ឆេទបញ្ចប់',
         ];
         $sheet->fromArray([$header], NULL, 'A1');
+
+        // Apply header styles
+        $headerStyleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => 'FFFFD700', // Gold color
+                ],
+            ],
+        ];
+        $sheet->getStyle('A1:I1')->applyFromArray($headerStyleArray);
+        $sheet->getRowDimension('1')->setRowHeight(30);
+
         $dataRows = [];
         foreach ($reportBorrowerBook as $borrowerBook) {
             $dataRows[] = [
@@ -180,6 +207,25 @@ class ReportController extends Controller
             ];
         }
         $sheet->fromArray($dataRows, NULL, 'A2');
+
+        // Apply data rows styles
+        $dataStyleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('A2:I' . (count($dataRows) + 1))->applyFromArray($dataStyleArray);
+
+        // Auto size columns
+        foreach (range('A', 'I') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
         $writer = new Xlsx($spreadsheet);
         $filename = 'របាយការណ៏អ្នកខ្ចីសៀបភៅ.xlsx';
         $writer->save($filename);
