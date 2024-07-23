@@ -118,7 +118,7 @@ $formater = Yii::$app->formater;
                         'template' => '{update}',
                         'buttons' => [
                             'update' => function ($url, $model) {
-                                return Html::a('<i class="bi bi-pencil-square"></i>', ['borrower-book/detail', 'id' => $model->id], ['class' => 'btn btn-sm btn-icon btn-secondary']);
+                                return Html::a('<i class="bi bi-pencil-square"></i>', ['book-distribution/detail', 'id' => $model->id], ['class' => 'btn btn-sm btn-icon btn-secondary']);
                             },
 
                         ],

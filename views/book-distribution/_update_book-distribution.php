@@ -66,50 +66,57 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                     if (count($BookDistributionByGrades) > 0) {
                         foreach ($BookDistributionByGrades as $key => $value) {
                     ?>
-                            <div class="tab-pane active show" id="<?= $key ?>">
-                                <div class="row form-group" id="original-row">
-                                    <div class="col-lg-4">
-                                        <label for="model-start<?= $key ?>">សៀវភៅ</label>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="tab-pane active show" id="<?= $key ?>">
+                                        <div class="row form-group" id="original-row">
+                                            <div class="col-lg-11">
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <label for="model-start<?= $key ?>">សៀវភៅ</label>
 
-                                        <input type="text" hidden id="information_distribution_by_grade_id<?= $key ?>" class="form-control form-control-lg" name="BookDistributionByGrade[<?= $key ?>][information_distribution_by_grade_id]" value="<?= $id ?>" aria-invalid="false">
-                                        <?= Html::dropDownlist("BookDistributionByGrade[$key][book_id]", $value->book_id, $socialItems, ['class' => 'form-control form-control-lg custom-select mb-3', 'id' => "book_id_$key", 'required' => true]) ?>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <label for="BookDistributionByGrade-code<?= $key ?>">លេខសារពើភ័ណ្ខ</label>
-                                        <?= Html::textInput("BookDistributionByGrade[$key][code]", $value->code, ['class' => 'form-control form-control-lg mb-3', 'id' => "code_$key", 'required' => true]) ?>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <label for="model-start<?= $key ?>">ចំនួន</label>
+                                                        <input type="text" hidden id="information_distribution_by_grade_id<?= $key ?>" class="form-control form-control-lg" name="BookDistributionByGrade[<?= $key ?>][information_distribution_by_grade_id]" value="<?= $id ?>" aria-invalid="false">
+                                                        <?= Html::dropDownlist("BookDistributionByGrade[$key][book_id]", $value->book_id, $socialItems, ['class' => 'form-control form-control-lg custom-select mb-3', 'id' => "book_id_$key", 'required' => true]) ?>
+                                                    </div>
 
-                                        <?= Html::textInput("BookDistributionByGrade[$key][quantity]", $value->quantity, [
-                                            'class' => 'form-control form-control-lg mb-3 quantity-input',
-                                            'id' => "quantity_$key",
-                                            'required' => true,
-                                            'type' => 'number',
-                                            'step' => 'any',
-                                            'min' => 1,
-                                            'max' => 2000,
-                                        ]) ?>
-                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label for="model-start<?= $key ?>">ចំនួន</label>
 
-                                    <div class="col-lg-3">
-                                        <label for="dateRange<?= $key ?>">កាលបរិច្ឆេទ</label>
-                                        <input type="text" id="dateRange<?= $key ?>" value="<?= $value->start ?> - <?= $value->end ?>" name="dateRange" class="form-control form-control-lg dateRangePicker">
-                                        <input type="hidden" id="start<?= $key ?>" value="<?= $value->start ?>" name="BookDistributionByGrade[<?= $key ?>][start]">
-                                        <input type="hidden" id="end<?= $key ?>" value="<?= $value->end ?>" name="BookDistributionByGrade[<?= $key ?>][end]">
-                                    </div>
+                                                        <?= Html::textInput("BookDistributionByGrade[$key][quantity]", $value->quantity, [
+                                                            'class' => 'form-control form-control-lg mb-3 quantity-input',
+                                                            'id' => "quantity_$key",
+                                                            'required' => true,
+                                                            'type' => 'number',
+                                                            'step' => 'any',
+                                                            'min' => 1,
+                                                            'max' => 2000,
+                                                        ]) ?>
+                                                    </div>
+
+                                                    <div class="col-lg-3">
+                                                        <label for="dateRange<?= $key ?>">កាលបរិច្ឆេទ</label>
+                                                        <input type="text" id="dateRange<?= $key ?>" value="<?= $value->start ?> - <?= $value->end ?>" name="dateRange" class="form-control form-control-lg dateRangePicker">
+                                                        <input type="hidden" id="start<?= $key ?>" value="<?= $value->start ?>" name="BookDistributionByGrade[<?= $key ?>][start]">
+                                                        <input type="hidden" id="end<?= $key ?>" value="<?= $value->end ?>" name="BookDistributionByGrade[<?= $key ?>][end]">
+                                                    </div>
 
 
-                                    <div class="col-lg-2">
-                                        <div class="custom-control custom-checkbox mb-3">
-                                            <input type="checkbox" class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
-                                            <label class="custom-control-label" for="status<?= $key ?>">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
-                                            <input type="hidden" id="checkbox-value<?= $key ?>" name="BookDistributionByGrade[<?= $key ?>][status]" value="<?= $value->status ?>">
-                                            <div class="invalid-tooltip">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</div>
+                                                    <div class="col-lg-3">
+                                                        <div class="custom-control custom-checkbox mb-3">
+                                                            <input type="checkbox" class="custom-control-input status-checkbox" id="status<?= $key ?>" <?= $value->status ? 'checked' : '' ?>>
+                                                            <label class="custom-control-label" for="status<?= $key ?>">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</label>
+                                                            <input type="hidden" id="checkbox-value<?= $key ?>" name="BookDistributionByGrade[<?= $key ?>][status]" value="<?= $value->status ?>">
+                                                            <div class="invalid-tooltip">អនុញ្ញាត ខ្ចី​និងសងសៀវភៅ</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                         <?php
                         }
                     } else {

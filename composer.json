@@ -30,7 +30,8 @@
         "phpoffice/phpspreadsheet": "^2.1",
         "edofre/yii2-fullcalendar": "*",
         "mpdf/mpdf": "^8.2",
-        "kartik-v/yii2-date-range": "^1.7"
+        "kartik-v/yii2-date-range": "^1.7",
+        "amoracr/yii2-backup": "^1.4"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

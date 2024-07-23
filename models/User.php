@@ -4,17 +4,15 @@ namespace app\models;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-use yii\base\InvalidArgumentException;
-use yii\helpers\ArrayHelper;
+
 
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_INACTIVE = 2;
     const STATUS_ACTIVE = 1;
-    const USER_TYPE = 1;
+    const USER_TYPE = [1];
 
     // public $created_at, $updated_at;
 
@@ -269,19 +267,6 @@ class User extends ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
 
-    public function getProfile()
-    {
-        return $this->hasOne(UserProfile::class, ['user_id' => 'id']);
-    }
-
-    public function getName()
-    {
-        if (!empty($this->profile)) {
-            $profile = $this->profile;
-            return $profile->first_name . ' ' . $profile->last_name;
-        }
-        return '';
-    }
     public function getRole()
     {
         return $this->hasOne(UserRole::class, ['id' => 'role_id']);
@@ -289,24 +274,33 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function getUserPermission($controller)
     {
-        $permission = UserRolePermission::find()
+        $roleId = Yii::$app->user->identity->role_id;
+        $permissions = UserRolePermission::find()
             ->select('user_role_action.action')
             ->innerJoin('user_role_action', 'user_role_action.id = user_role_permission.action_id')
             ->innerJoin('user_role', 'user_role.id = user_role_permission.user_role_id')
-            ->where(['user_role.id' => Yii::$app->user->identity->role_id])
+            ->where(['user_role.id' => $roleId])
             ->andWhere(['user_role_action.controller' => $controller])
             ->asArray()
             ->all();
-        $array = ['dependent', 'validation'];
-        foreach ($permission as $row) {
-            $extra_actions =  explode(",", $row["action"]);
-            foreach ($extra_actions as $ex) {
-                array_push($array, $ex);
+        $allowedActions = ['dependent', 'validation']; // Default actions, if any
+
+        foreach ($permissions as $permission) {
+            $extraActions = explode(',', $permission['action']);
+            foreach ($extraActions as $action) {
+                $allowedActions[] = trim($action);
             }
         }
 
-        return $array;
+        // Remove duplicates and ensure no empty actions
+        $allowedActions = array_filter(array_unique($allowedActions));
+
+        // Log the allowed actions for debugging
+        Yii::debug('Allowed actions for role ' . $roleId . ' and controller ' . $controller . ': ' . implode(', ', $allowedActions), __METHOD__);
+
+        return $allowedActions;
     }
+
 
     /**
      * this function using to get all action from table "user_type_action" and then store it in instance, 

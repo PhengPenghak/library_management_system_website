@@ -55,20 +55,19 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
                         </div>
                         <div class="col-md-4">
                             <?= $form->field($model, 'gender')->dropDownList(
-                                ['male' => 'Male', 'female' => 'Female'],
+                                ['male' => 'ប្រុស', 'female' => 'ស្រី'],
                                 ['class' => 'form-control form-control-lg']
                             ) ?>
                         </div>
                         <div class="col-md-4">
                             <?= $form->field($model, 'grade_id',)->widget(Select2::class, [
                                 'data' => ArrayHelper::map(Grade::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title'),
-                                'options' => ['placeholder' => 'Select a Grade...', 'class' => 'custom-select'],
+                                'options' => ['placeholder' => 'ជ្រើសរើសថ្នាក់...', 'class' => 'custom-select'],
                                 'pluginOptions' => [
                                     'allowClear' => true
                                 ],
                             ]); ?>
                         </div>
-
 
                         <div class="col-lg-3">
                             <div class="card">

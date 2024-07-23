@@ -15,6 +15,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\MemberJoinedLibrary;
+use Codeception\Lib\Connector\Yii2;
 use DateTime;
 
 class SiteController extends Controller
@@ -129,6 +130,60 @@ class SiteController extends Controller
         );
     }
 
+    public function actionChartData()
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $query = (new \yii\db\Query())
+            ->select(['MONTH(start) AS month', 'YEAR(start) AS year', 'COUNT(*) AS count'])
+            ->from('borrow_book')
+            ->groupBy(['YEAR(start)', 'MONTH(start)'])
+            ->orderBy(['YEAR(start)' => SORT_ASC, 'MONTH(start)' => SORT_ASC]);
+
+        $data = $query->all();
+
+        $months = [];
+        $counts = [];
+
+        $fixedMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        // $fixedMonths = [
+        //     'មករា',   // January
+        //     'កុម្ភៈ',  // February
+        //     'មាមា',   // March
+        //     'មេសា',   // April
+        //     'ឧសភា',  // May
+        //     'មិថុនា', // June
+        //     'កក្កដា',  // July
+        //     'សីហា',   // August
+        //     'តុលា',   // September
+        //     'វិច្ឆិកា', // October
+        //     'វិច្ឆិកា', // November
+        //     'ធ្នូ',    // December
+        // ];
+        $monthToCount = [];
+        foreach ($data as $row) {
+            $monthName = date('F', strtotime($row['year'] . '-' . $row['month'] . '-01'));
+            $monthKey = array_search($monthName, $fixedMonths);
+            if ($monthKey !== false) {
+                $monthToCount[$monthKey] = $row['count'];
+            }
+        }
+
+        // Fill in missing months with zero counts
+        foreach ($fixedMonths as $index => $month) {
+            $months[] = $month;
+            $counts[] = isset($monthToCount[$index]) ? $monthToCount[$index] : 0;
+        }
+
+        return [
+            'months' => $months,
+            'counts' => $counts,
+        ];
+    }
+
+
+
+
     /**
      * Login action.
      *
@@ -164,27 +219,27 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    public function actionCalendar()
+    public function actionBackup()
     {
-        return $this->render('calendar');
-    }
-
-    public function actionSendNotifications()
-    {
-        $currentDateTime = date('Y-m-d H:i:s');
-        $notifications = BorrowBook::find()
-            ->where(['<=', '2024-07-11 19:22:00', $currentDateTime])
-            ->andWhere(['>=', '2024-07-08 09:32:00', $currentDateTime])
-            ->all();
-
-        echo "<pre>";
-        print_r($notifications);
-        echo "</pre>";
-        exit;
-
-        foreach ($notifications as $notification) {
-            Yii::$app->session->setFlash('alert', $notification->id);
-            echo "Notification sent: {$notification->id}" . PHP_EOL;
+        $dbName = 'library_management_system';
+        $backupFile = Yii::getAlias('@app/backups') . '/library_management_system_' . date('Ymd_His') . '.sql';
+        if (!is_dir(Yii::getAlias('@app/backups'))) {
+            mkdir(Yii::getAlias('@app/backups'), 0777, true);
         }
+
+        $mysqldumpPath = 'C:\\laragon\\bin\\mysql\\mysql-8.0.30-winx64\\bin\\mysqldump';
+
+        $command = "$mysqldumpPath -h localhost -u root --routines --triggers --databases $dbName > $backupFile 2>&1";
+        exec($command, $output, $returnVar);
+
+        if ($returnVar === 0) {
+            Yii::info('Backup successfully created: ' . $backupFile, 'backup');
+            Yii::$app->session->setFlash('success', 'Backup was successful! Backup file: ' . basename($backupFile));
+        } else {
+            Yii::error('Failed to create backup with mysqldump. Output: ' . implode("\n", $output), 'backup');
+            Yii::$app->session->setFlash('error', 'Backup failed. Please try again.');
+        }
+
+        return $this->redirect(Yii::$app->request->referrer);
     }
 }
