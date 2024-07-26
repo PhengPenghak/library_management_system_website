@@ -10,7 +10,7 @@ $khmer_months = array(
 );
 $view = new Formater();
 
-$selectDate = Yii::$app->request->get("selectMonth");
+$selectDate = Yii::$app->request->get("selectedDate");
 $scheduleType = Yii::$app->request->get("scheduleType");
 if (empty($scheduleType)) {
     $scheduleType = 0;
@@ -25,9 +25,13 @@ if ($selectDate) {
 
 $totalSet = MemberJoinedLibrary::find()
     ->with('grade')
-    ->where(['MONTH(dateTime)' => $currentMonth, 'YEAR(dateTime)' => $currentYear])
+    ->andWhere(['MONTH(dateTime)' => $currentMonth])
+    ->andWhere(['YEAR(dateTime)' => 2024])
     ->andWhere(['member_joined_library.status' => $scheduleType])
     ->all();
+// echo "<pre>";
+// print_r($totalSet);
+// exit;
 $totalSetYearItem = MemberJoinedLibrary::find()
     ->with('grade')
     ->andWhere(['YEAR(dateTime)' => $currentYear])
@@ -249,6 +253,120 @@ foreach ($totalSet as $member) {
 $daysInMonth = date('t');
 // print_r($totalMemberMonth0);
 // exit;
+
+$totalSetYearItem = MemberJoinedLibrary::find()
+    ->with('grade')
+    ->andWhere(['YEAR(dateTime)' => $currentYear])
+    ->andWhere(['member_joined_library.status' => $scheduleType])
+    ->all();
+
+$startMonth = 1;
+$endMonth = 12;
+$year =   date('Y', strtotime($selectDate));
+
+$monthlyData = [];
+for ($month = $startMonth; $month <= $endMonth; $month++) {
+    $monthName = date('F', mktime(0, 0, 0, $month, 1, $year));
+    $monthlyData[$monthName] = [
+        'total_member' => 0,
+        'total_member_female' => 0,
+        'count' => 0,
+        'total_member0' => 0,
+        'total_member_female0' => 0,
+        'count0' => 0,
+        'total_member1' => 0,
+        'total_member_female1' => 0,
+        'count1' => 0,
+        'total_member2' => 0,
+        'total_member_female2' => 0,
+        'count2' => 0,
+        'total_member3' => 0,
+        'total_member_female3' => 0,
+        'count3' => 0,
+        'total_member4' => 0,
+        'total_member_female4' => 0,
+        'count4' => 0,
+        'total_member5' => 0,
+        'total_member_female5' => 0,
+        'count5' => 0,
+        'total_member6' => 0,
+        'total_member_female6' => 0,
+        'count6' => 0,
+        'total_member7' => 0,
+        'total_member_female7' => 0,
+        'count7' => 0,
+        'total_member8' => 0,
+        'total_member_female8' => 0,
+        'count8' => 0,
+        'total_member9' => 0,
+        'total_member_female9' => 0,
+        'count9' => 0,
+    ];
+}
+
+$totalMembers = 0;
+$totalCount = 0;
+
+foreach ($totalSetYearItem as $item) {
+    $month = date('n', strtotime($item->dateTime));
+    $monthKey = date('F', mktime(0, 0, 0, $month, 1, $year));
+    if (isset($monthlyData[$monthKey])) {
+        $monthlyData[$monthKey]['total_member9'] += $item->total_member;
+        $monthlyData[$monthKey]['total_member_female9'] += $item->total_member_female;
+        if ($item->grade !== null) {
+            if (preg_match('/^មត្តេយ្យ/', $item->grade->title)) {
+                $monthlyData[$monthKey]['total_member0'] += $item->total_member;
+                $monthlyData[$monthKey]['total_member_female0'] += $item->total_member_female;
+                $monthlyData[$monthKey]['count0']++;
+            }
+            if (preg_match('/^ថ្នាក់ទី\s*១/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*1/', $item->grade->title)) {
+                $monthlyData[$monthKey]['total_member1'] += $item->total_member;
+                $monthlyData[$monthKey]['total_member_female1'] += $item->total_member_female;
+                $monthlyData[$monthKey]['count1']++;
+            }
+            if (preg_match('/^ថ្នាក់ទី\s*២/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*2/', $item->grade->title)) {
+                $monthlyData[$monthKey]['total_member2'] += $item->total_member;
+                $monthlyData[$monthKey]['total_member_female2'] += $item->total_member_female;
+                $monthlyData[$monthKey]['count2']++;
+            }
+            if (preg_match('/^ថ្នាក់ទី\s*៣/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*3/', $item->grade->title)) {
+                $monthlyData[$monthKey]['total_member3'] += $item->total_member;
+                $monthlyData[$monthKey]['total_member_female3'] += $item->total_member_female;
+                $monthlyData[$monthKey]['count3']++;
+            }
+            if (preg_match('/^ថ្នាក់ទី\s*៤/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*4/', $item->grade->title)) {
+                $monthlyData[$monthKey]['total_member4'] += $item->total_member;
+                $monthlyData[$monthKey]['total_member_female4'] += $item->total_member_female;
+                $monthlyData[$monthKey]['count4']++;
+            }
+            if (preg_match('/^ថ្នាក់ទី\s*៥/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*5/', $item->grade->title)) {
+                $monthlyData[$monthKey]['total_member5'] += $item->total_member;
+                $monthlyData[$monthKey]['total_member_female5'] += $item->total_member_female;
+                $monthlyData[$monthKey]['count5']++;
+            }
+            if (preg_match('/^ថ្នាក់ទី\s*៦/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*6/', $item->grade->title)) {
+                $monthlyData[$monthKey]['total_member6'] += $item->total_member;
+                $monthlyData[$monthKey]['total_member_female6'] += $item->total_member_female;
+                $monthlyData[$monthKey]['count6']++;
+            }
+        }
+        if ($item->type_joined !== null) {
+            if ($item->type_joined == 2) {
+                $monthlyData[$monthKey]['total_member7'] += $item->total_member;
+                $monthlyData[$monthKey]['total_member_female7'] += $item->total_member_female;
+                $monthlyData[$monthKey]['count7']++;
+            }
+            if ($item->type_joined == 3) {
+                $monthlyData[$monthKey]['total_member8'] += $item->total_member;
+                $monthlyData[$monthKey]['total_member_female8'] += $item->total_member_female;
+                $monthlyData[$monthKey]['count8']++;
+            }
+        }
+        $monthlyData[$monthKey]['total_member'] += $item->total_member;
+        $monthlyData[$monthKey]['total_member_female'] += $item->total_member_female;
+        $monthlyData[$monthKey]['count']++;
+    }
+}
 ?>
 
 <style>
@@ -316,9 +434,9 @@ $daysInMonth = date('t');
         <table class="table table-sm mb-0" style="border: none;">
             <thead class="thead-table">
                 <tr class="text-center">
-                    <th rowspan="4" style="vertical-align: middle;font-family: 'khmerOS';width: 10px;">ខែ</th>
+                    <th rowspan="4" style="vertical-align: middle;font-family: 'khmerOS';width: 40px;">ខែ</th>
                 <tr>
-                    <th colspan="20" class="text-center">ចំនួនសិស្សចូលអានតាមកាលវិភាគ</th>
+                    <th colspan="20" class="text-center">ចំនួនសិស្សចូលអាន<?= $scheduleType == 1 ? 'តាមកាលវិភាគ' : 'សេរី' ?> </th>
                 </tr>
                 <tr class="text-center">
                     <th colspan="2">មតេ្តយ្យ</th>
@@ -359,122 +477,10 @@ $daysInMonth = date('t');
             <tbody class="text-center">
                 <?php
 
-                $totalSetYearItem = MemberJoinedLibrary::find()
-                    ->with('grade')
-                    ->andWhere(['YEAR(dateTime)' => $currentYear])
-                    ->andWhere(['member_joined_library.status' => $scheduleType])
-                    ->all();
 
-                $startMonth = 1;
-                $endMonth = 12;
-                $year =   date('Y', strtotime($selectDate));;
-
-                $monthlyData = [];
-                for ($month = $startMonth; $month <= $endMonth; $month++) {
-                    $monthName = date('F', mktime(0, 0, 0, $month, 1, $year));
-                    $monthlyData[$monthName] = [
-                        'total_member' => 0,
-                        'total_member_female' => 0,
-                        'count' => 0,
-                        'total_member0' => 0,
-                        'total_member_female0' => 0,
-                        'count0' => 0,
-                        'total_member1' => 0,
-                        'total_member_female1' => 0,
-                        'count1' => 0,
-                        'total_member2' => 0,
-                        'total_member_female2' => 0,
-                        'count2' => 0,
-                        'total_member3' => 0,
-                        'total_member_female3' => 0,
-                        'count3' => 0,
-                        'total_member4' => 0,
-                        'total_member_female4' => 0,
-                        'count4' => 0,
-                        'total_member5' => 0,
-                        'total_member_female5' => 0,
-                        'count5' => 0,
-                        'total_member6' => 0,
-                        'total_member_female6' => 0,
-                        'count6' => 0,
-                        'total_member7' => 0,
-                        'total_member_female7' => 0,
-                        'count7' => 0,
-                        'total_member8' => 0,
-                        'total_member_female8' => 0,
-                        'count8' => 0,
-                        'total_member9' => 0,
-                        'total_member_female9' => 0,
-                        'count9' => 0,
-                    ];
-                }
-
-                $totalMembers = 0;
-                $totalCount = 0;
-
-                foreach ($totalSetYearItem as $item) {
-                    $month = date('n', strtotime($item->dateTime));
-                    $monthKey = date('F', mktime(0, 0, 0, $month, 1, $year));
-                    if (isset($monthlyData[$monthKey])) {
-                        $monthlyData[$monthKey]['total_member9'] += $item->total_member;
-                        $monthlyData[$monthKey]['total_member_female9'] += $item->total_member_female;
-                        if ($item->grade !== null) {
-                            if (preg_match('/^មត្តេយ្យ/', $item->grade->title)) {
-                                $monthlyData[$monthKey]['total_member0'] += $item->total_member;
-                                $monthlyData[$monthKey]['total_member_female0'] += $item->total_member_female;
-                                $monthlyData[$monthKey]['count0']++;
-                            }
-                            if (preg_match('/^ថ្នាក់ទី\s*១/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*1/', $item->grade->title)) {
-                                $monthlyData[$monthKey]['total_member1'] += $item->total_member;
-                                $monthlyData[$monthKey]['total_member_female1'] += $item->total_member_female;
-                                $monthlyData[$monthKey]['count1']++;
-                            }
-                            if (preg_match('/^ថ្នាក់ទី\s*២/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*2/', $item->grade->title)) {
-                                $monthlyData[$monthKey]['total_member2'] += $item->total_member;
-                                $monthlyData[$monthKey]['total_member_female2'] += $item->total_member_female;
-                                $monthlyData[$monthKey]['count2']++;
-                            }
-                            if (preg_match('/^ថ្នាក់ទី\s*៣/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*3/', $item->grade->title)) {
-                                $monthlyData[$monthKey]['total_member3'] += $item->total_member;
-                                $monthlyData[$monthKey]['total_member_female3'] += $item->total_member_female;
-                                $monthlyData[$monthKey]['count3']++;
-                            }
-                            if (preg_match('/^ថ្នាក់ទី\s*៤/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*4/', $item->grade->title)) {
-                                $monthlyData[$monthKey]['total_member4'] += $item->total_member;
-                                $monthlyData[$monthKey]['total_member_female4'] += $item->total_member_female;
-                                $monthlyData[$monthKey]['count4']++;
-                            }
-                            if (preg_match('/^ថ្នាក់ទី\s*៥/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*5/', $item->grade->title)) {
-                                $monthlyData[$monthKey]['total_member5'] += $item->total_member;
-                                $monthlyData[$monthKey]['total_member_female5'] += $item->total_member_female;
-                                $monthlyData[$monthKey]['count5']++;
-                            }
-                            if (preg_match('/^ថ្នាក់ទី\s*៦/', $item->grade->title) || preg_match('/^ថ្នាក់ទី\s*6/', $item->grade->title)) {
-                                $monthlyData[$monthKey]['total_member6'] += $item->total_member;
-                                $monthlyData[$monthKey]['total_member_female6'] += $item->total_member_female;
-                                $monthlyData[$monthKey]['count6']++;
-                            }
-                        }
-                        if ($item->type_joined !== null) {
-                            if ($item->type_joined == 2) {
-                                $monthlyData[$monthKey]['total_member7'] += $item->total_member;
-                                $monthlyData[$monthKey]['total_member_female7'] += $item->total_member_female;
-                                $monthlyData[$monthKey]['count7']++;
-                            }
-                            if ($item->type_joined == 3) {
-                                $monthlyData[$monthKey]['total_member8'] += $item->total_member;
-                                $monthlyData[$monthKey]['total_member_female8'] += $item->total_member_female;
-                                $monthlyData[$monthKey]['count8']++;
-                            }
-                        }
-                        $monthlyData[$monthKey]['total_member'] += $item->total_member;
-                        $monthlyData[$monthKey]['total_member_female'] += $item->total_member_female;
-                        $monthlyData[$monthKey]['count']++;
-                    }
-                }
                 foreach ($monthlyData as $month => $data) { ?>
                     <tr>
-                        <td><?= $view->maskMonthKHmer($month) ?></td>
+                        <td style="text-align: start;"><?= $view->maskMonthKHmer($month) ?></td>
                         <td><?= $data['total_member0'] == 0 ? '' : $data['total_member0'] ?></td>
                         <td><?= $data['total_member_female0'] == 0 ? '' : $data['total_member_female0'] ?></td>
                         <td><?= $data['total_member1'] == 0 ? '' : $data['total_member1'] ?></td>
@@ -494,7 +500,7 @@ $daysInMonth = date('t');
                         <td><?= $data['total_member8'] == 0 ? '' : $data['total_member8'] ?></td>
                         <td><?= $data['total_member_female8'] == 0 ? '' : $data['total_member_female8'] ?></td>
                         <td><?= $data['total_member9'] == 0 ? '' : $data['total_member9'] ?></td>
-                        <td><?= $data['total_member_female9'] == 0 ? '' : $data['total_member_female9'] ?></td>
+                        <td style="height: 40px;"><?= $data['total_member_female9'] == 0 ? '' : $data['total_member_female9'] ?></td>
 
                     </tr>
 
@@ -574,7 +580,7 @@ $daysInMonth = date('t');
                 <tr class="text-center">
                     <th rowspan="4" style="vertical-align: middle;font-family: 'khmerOS';width: 10px;">ថ្ងៃ​</th>
                 <tr>
-                    <th colspan="20" class="text-center">ចំនួនសិស្សចូលអានតាមកាលវិភាគ</th>
+                    <th colspan="20" class="text-center">ចំនួនសិស្សចូលអាន<?= $scheduleType == 1 ? 'តាមកាលវិភាគ' : 'សេរី' ?></th>
                 </tr>
                 <tr class="text-center">
                     <th colspan="2">មតេ្តយ្យ</th>
