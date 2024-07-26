@@ -6,6 +6,7 @@ use app\models\Book;
 use app\models\BookDistributionByGrade;
 use app\models\InfomationBookDistributionByGrade;
 use app\models\InfomationBookDistributionByGradeSearch;
+use app\models\User;
 use Exception;
 use Yii;
 use yii\filters\VerbFilter;
@@ -22,6 +23,15 @@ class BookDistributionController extends \yii\web\Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => User::getUserPermission(Yii::$app->controller->id),
+                            'allow' => true,
+                        ]
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -30,6 +40,14 @@ class BookDistributionController extends \yii\web\Controller
                 ],
             ]
         );
+    }
+
+    public function beforeAction($action)
+    {
+        Yii::$app->view->params['controller_group'] = 'book-distribution';
+        Yii::$app->view->params['controller_group'] = 'borrower-book';
+
+        return parent::beforeAction($action);
     }
 
     public function actionIndex()

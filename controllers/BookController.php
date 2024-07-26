@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Book;
 use app\models\BookSearch;
 use app\models\CategoryBook;
+use app\models\User;
 use Yii;
 use Exception;
 use Mpdf\Mpdf;
@@ -25,6 +26,15 @@ class BookController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => User::getUserPermission(Yii::$app->controller->id),
+                            'allow' => true,
+                        ]
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -39,6 +49,12 @@ class BookController extends Controller
      * Lists all Blog models.
      * @return mixed
      */
+
+    public function beforeAction($action)
+    {
+        Yii::$app->view->params['controller_group'] = 'book';
+        return parent::beforeAction($action);
+    }
     public function actionIndex()
     {
         $searchModel = new BookSearch();

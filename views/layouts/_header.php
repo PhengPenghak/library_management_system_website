@@ -34,16 +34,15 @@ foreach ($borrowBooks as $borrowBook) {
     $borrowerUrl = Url::to(['borrower-book/detail', 'id' => $borrower->id]);
 
     if ($borrower) {
-        $message = "<a class='dropdown-item' href='{$borrowerUrl}'> រំលឹក៖ អ្នកបានខ្ចីសៀវភៅជិតដល់ថ្ងែផុតកំណត់. <br>
-    
-        ឈ្មោះ៖: {$username}.
-        <br>
-        សៀវភៅ៖: {$bookTitle}.
-        <br>  
-        ថ្ងៃផុតកំណត់៖ {$endDate}.
-
-        </a>
-        ";
+        $message = "
+        <a href='{$borrowerUrl}' class='dropdown-item unread'>
+            <div class='dropdown-item-body'>
+                <p class='text'>
+                    ឈ្មោះ៖ {$username}.<br>
+                    ថ្ងៃផុតកំណត់៖ {$endDate}.
+                </p>
+            </div>
+        </a>";
         $reminders[] = $message;
     }
 }
@@ -83,18 +82,16 @@ $formater = Yii::$app->formater;
             </div>
             <div class="top-bar-item top-bar-item-right px-0">
                 <ul class="header-nav nav">
-                    <li class="nav-item dropdown header-nav-dropdown">
+                    <li class="nav-item dropdown header-nav-dropdown has-notified">
 
                         <a class="nav-link" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <div class="oi oi-lg oi-envelope-open text-white" style="font-size:medium">
                             </div>
-
-                            <div class="badge badge-warning" style="font-size: small;"> <?= $reminderCount ?></div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-rich dropdown-menu-right">
                             <div class="dropdown-arrow"></div>
                             <h6 class="dropdown-header stop-propagation">
-                                <span>Messages</span> <a href="#">Mark all as read</a>
+                                <p>អ្នកបានខ្ចីសៀវភៅជិតដល់ថ្ងែផុតកំណត់</p>
                             </h6>
                             <div class="dropdown-scroll perfect-scrollbar ps">
 
@@ -121,7 +118,7 @@ $formater = Yii::$app->formater;
                             <img src="<?= Yii::getAlias("@web"); ?>/img/profile_holder.jpeg" alt="">
                         </span>
                         <span class="account-summary pr-lg-4 d-none d-lg-block text-white">
-                            <span class="account-name"><?= Yii::$app->user->identity->username ?></span>
+                            <span class="account-name"><?= Yii::$app->user->identity->name ?></span>
                             <span class="account-description"><?= Yii::$app->user->identity->role->name ?></span>
                         </span>
                     </button>

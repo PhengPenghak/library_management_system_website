@@ -76,7 +76,7 @@ $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['
                                                 <div class="row">
                                                     <div class="col-lg-4">
                                                         <label>សៀវភៅ</label>
-                                                        <input type="text" class="form-control form-control-lg mb-3" id="tpye_social_media_<?= $key ?>" value="<?= $value->book_id ?>" disabled></input>
+                                                        <input type="text" class="form-control form-control-lg mb-3" id="tpye_social_media_<?= $key ?>" value="<?= $value->book->title ?>" disabled></input>
                                                     </div>
                                                     <div class="col-lg-3">
                                                         <div class="form-group field-borrowbook-code<?= $key ?> has-success">
@@ -189,28 +189,28 @@ $js = <<< JS
                             <div class="col-lg-11">
                                 <div class="row">
                                     <div class="col-lg-4">
-                                        <label>សៀវភៅ</label>
-                                        <select type="text" name="BorrowBook[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}">
+                                        <label>សៀវភៅ<abbr title="Required">*</abbr></label>
+                                        <select type="text" name="BorrowBook[book_id][]" class="form-control form-control-lg mb-3" id="tpye_social_media_\${key}" required="">
                                         \${options}
                                         </select>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group field-borrowbook-code\${key} has-success">
-                                            <label>លេខសារពើភ័ណ្ខ</label>
-                                            <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg" name="BorrowBook[code][]" placeholder="បញ្ចូលលេខសារពើភ័ណ្ខ">
+                                            <label>លេខសារពើភ័ណ្ខ<abbr title="Required">*</abbr></label>
+                                            <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg" name="BorrowBook[code][]" placeholder="បញ្ចូលលេខសារពើភ័ណ្ខ" required="">
                                         </div>
                                     </div>
                                     <div class="col-lg-2">
                                         <div class="form-group field-borrowbook-quantity has-success">
-                                            <label>ចំនួន</label>
-                                            <input type="number" id="borrowbook-quantity\${key}" class="form-control form-control-lg quantity-input" name="BorrowBook[quantity][]" value="1" min="1" max="1">
+                                            <label>ចំនួន<abbr title="Required">*</abbr></label>
+                                            <input type="number" id="borrowbook-quantity\${key}" class="form-control form-control-lg quantity-input" name="BorrowBook[quantity][]" value="1" min="1" max="1" required="">
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
-                                        <label for="dateRange\${key}">កាលបរិច្ឆេទ</label>
+                                        <label for="dateRange\${key}">កាលបរិច្ឆេទ<abbr title="Required">*</abbr></label>
                                         <input type="text" id="dateRange\${key}" name="dateRange" class="form-control form-control-lg">
-                                        <input type="hidden" id="start\${key}" name="BorrowBook[start][]">
-                                        <input type="hidden" id="end\${key}" name="BorrowBook[end][]">
+                                        <input type="hidden" id="start\${key}" name="BorrowBook[start][]" required="">
+                                        <input type="hidden" id="end\${key}" name="BorrowBook[end][]" required="">
                                     </div>
                                     <div class="col-lg-2">
                                             <div class="custom-control custom-checkbox mb-3">
@@ -234,9 +234,23 @@ $js = <<< JS
             </div>` 
 
         );
-
-        
-
+        $('form').on('submit', function(e) {
+            var isValid = true;
+            $('input[required]').each(function() {
+                if ($(this).val() === '') {
+                    isValid = false;
+                    $(this).addClass('is-invalid');
+                    $(this).siblings('.error-message').remove();
+                    $(this).after('<div class="error-message" style="color: red;">This field is required</div>');
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).siblings('.error-message').remove();
+                }
+            });
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
         $(document).ready(function() {
             $('#dateRange' + key).daterangepicker({
                 timePicker: false,

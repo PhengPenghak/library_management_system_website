@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Grade;
 use app\models\GradeSearch;
+use app\models\User;
 use Exception;
 use Yii;
 use yii\web\Controller;
@@ -23,6 +24,15 @@ class GradeController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => User::getUserPermission(Yii::$app->controller->id),
+                            'allow' => true,
+                        ]
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -35,9 +45,7 @@ class GradeController extends Controller
 
     public function beforeAction($action)
     {
-        Yii::$app->view->params['controller_group'] = 'setting';
-        Yii::$app->view->params['controller_action_group'] = 'setting-base';
-
+        Yii::$app->view->params['controller_group'] = 'grade';
         if (in_array($action->id, ['view'])) {
             $this->layout = '_profile_detail';
         }
@@ -64,13 +72,11 @@ class GradeController extends Controller
     public function actionCreate()
     {
         $model = new Grade();
-        $master = Yii::$app->master;
-
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $transaction_exception = Yii::$app->db->beginTransaction();
                 try {
-                    if (!$model->save()) throw new Exception($master->errToString($model->getErrors()));
+                    if (!$model->save()) throw new Exception("Failed to Save! Code #001");
 
 
                     $transaction_exception->commit();
@@ -95,13 +101,12 @@ class GradeController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $master = Yii::$app->master;
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $transaction_exception = Yii::$app->db->beginTransaction();
                 try {
-                    if (!$model->save()) throw new Exception($master->errToString($model->getErrors()));
+                    if (!$model->save()) throw new Exception("Failed to Save! Code #001");
 
                     $transaction_exception->commit();
                     Yii::$app->session->setFlash('success', "Record has been updated successfully");

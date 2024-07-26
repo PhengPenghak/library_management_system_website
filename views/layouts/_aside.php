@@ -3,22 +3,16 @@
 use yii\helpers\Url;
 use yii\helpers\Html;
 
-/** @var \app\components\Master $master */
-$master = Yii::$app->master;
 
 
 
-// $user_role_id = Yii::$app->user->identity->role_id;
-// $userRole = Yii::$app->db->createCommand("SELECT user_role_action.controller, user_role_action.action
-//     FROM user_role_permission
-//     INNER JOIN user_role_action ON user_role_action.id = user_role_permission.action_id
-//     WHERE user_role_id = :user_role_id", [
-//     ':user_role_id' => $user_role_id
-// ])->queryAll();
-
-
-
-
+$user_role_id = Yii::$app->user->identity->role_id;
+$userRole = Yii::$app->db->createCommand("SELECT user_role_action.controller, user_role_action.action
+    FROM user_role_permission
+    INNER JOIN user_role_action ON user_role_action.id = user_role_permission.action_id
+    WHERE user_role_id = :user_role_id", [
+    ':user_role_id' => $user_role_id
+])->queryAll();
 
 $controller = Yii::$app->controller->id;
 $action = Yii::$app->controller->action->id;
@@ -30,8 +24,8 @@ $module_controller_action = $module . '-' . $controller . '-' . $action;
 
 $controller_group = empty($this->params['controller_group']) ? '' : $this->params['controller_group'];
 $controller_action_group = empty($this->params['controller_action_group']) ? '' : $this->params['controller_action_group'];
-$menu_group =  empty($this->params['menu_group']) ? '' : $this->params['menu_group'];
-$menu_group_type = empty($this->params['menu_group_type']) ? '' : $this->params['menu_group_type'];
+
+
 ?>
 
 <aside class="app-aside app-aside-expand-md app-aside-light">
@@ -73,7 +67,7 @@ $menu_group_type = empty($this->params['menu_group_type']) ? '' : $this->params[
                         </a>
                     </li>
 
-                    <li class="menu-item py-1 <?= $controller_group == 'category-book' ? 'has-active' : ''; ?>">
+                    <li class="menu-item py-1 <?= $controller_group == 'borrower-book' ? 'has-active' : ''; ?>">
                         <a href="<?= Url::toRoute(['borrower-book/index']) ?>" class="menu-link">
                             <span class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 31 28" fill="none">
@@ -85,7 +79,7 @@ $menu_group_type = empty($this->params['menu_group_type']) ? '' : $this->params[
                             <span class="menu-text">ខ្ចី/សងសៀវភៅ</span>
                         </a>
                     </li>
-                    <li class="menu-item py-1 <?= $controller_group == 'category-book' ? 'has-active' : ''; ?>">
+                    <li class="menu-item py-1 <?= $controller_group == 'member-joined-library' ? 'has-active' : ''; ?>">
                         <a href="<?= Url::toRoute(['member-joined-library/index']) ?>" class="menu-link">
                             <span class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 31 28" fill="none">
@@ -120,7 +114,7 @@ $menu_group_type = empty($this->params['menu_group_type']) ? '' : $this->params[
                             <span class="menu-text">ទីតាំងដាក់សៀវភៅ</span>
                         </a>
                     </li>
-                    <li class="menu-item py-1 <?= $controller_group == 'location-book' ? 'has-active' : ''; ?>">
+                    <li class="menu-item py-1 <?= $controller_group == 'grade' ? 'has-active' : ''; ?>">
                         <a href="<?= Url::toRoute(['grade/index']) ?>" class="menu-link">
                             <span class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 31 28" fill="none">
@@ -149,20 +143,32 @@ $menu_group_type = empty($this->params['menu_group_type']) ? '' : $this->params[
                         </a>
                     </li>
 
-                    <li class="menu-item py-1 <?= $controller_group == 'page-template' ? 'has-active' : ''; ?>">
-                        <a href="<?= Url::toRoute(['page-template/index']) ?>" class="menu-link">
+                    <li class="menu-item py-1 <?= $controller_group == 'report' ? 'has-active' : ''; ?> has-child">
+                        <a href="<?= Yii::getAlias("@web/admin/inspire") ?>" class="menu-link">
                             <span class="menu-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 27 32" fill="none">
-                                    <path d="M5.78571 3.46427H3.85714C1.7269 3.46427 0 5.19117 0 7.32141V27.5714C0 29.7017 1.7269 31.4286 3.85714 31.4286H23.1429C25.2731 31.4286 27 29.7017 27 27.5714V7.32141C27 5.19117 25.2731 3.46427 23.1429 3.46427H21.2143V5.39284H23.1429C24.208 5.39284 25.0714 6.25629 25.0714 7.32141V27.5714C25.0714 28.6365 24.208 29.5 23.1429 29.5H3.85714C2.79202 29.5 1.92857 28.6365 1.92857 27.5714V7.32141C1.92857 6.25629 2.79202 5.39284 3.85714 5.39284H5.78571V3.46427Z" fill="black" />
-                                    <path d="M16.3929 2.49998C16.9254 2.49998 17.3571 2.93171 17.3571 3.46427V5.39284C17.3571 5.9254 16.9254 6.35713 16.3929 6.35713H10.6071C10.0746 6.35713 9.64286 5.9254 9.64286 5.39284V3.46427C9.64286 2.93171 10.0746 2.49998 10.6071 2.49998H16.3929ZM10.6071 0.571411C9.00946 0.571411 7.71429 1.86659 7.71429 3.46427V5.39284C7.71429 6.99052 9.00946 8.2857 10.6071 8.2857H16.3929C17.9905 8.2857 19.2857 6.99052 19.2857 5.39284V3.46427C19.2857 1.86659 17.9905 0.571411 16.3929 0.571411H10.6071Z" fill="black" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="26" viewBox="0 0 20 26" fill="none">
+                                    <path d="M16.9231 0.666992H6.15385C4.45451 0.666992 3.07692 2.04458 3.07692 3.74392C1.37759 3.74392 0 5.1215 0 6.82084V22.2055C0 23.9048 1.37759 25.2824 3.07692 25.2824H13.8462C15.5455 25.2824 16.9231 23.9048 16.9231 22.2055C18.6224 22.2055 20 20.8279 20 19.1285V3.74392C20 2.04458 18.6224 0.666992 16.9231 0.666992ZM16.9231 20.667V6.82084C16.9231 5.1215 15.5455 3.74392 13.8462 3.74392H4.61538C4.61538 2.89425 5.30418 2.20545 6.15385 2.20545H16.9231C17.7727 2.20545 18.4615 2.89425 18.4615 3.74392V19.1285C18.4615 19.9782 17.7727 20.667 16.9231 20.667ZM1.53846 6.82084C1.53846 5.97117 2.22725 5.28238 3.07692 5.28238H13.8462C14.6958 5.28238 15.3846 5.97117 15.3846 6.82084V22.2055C15.3846 23.0551 14.6958 23.7439 13.8462 23.7439H3.07692C2.22725 23.7439 1.53846 23.0551 1.53846 22.2055V6.82084Z" fill="#3E3939" />
                                 </svg>
-                            </span>
-                            <span class="menu-text">របាយការណ៍</span>
+                            </span> <span class="menu-text"><?= Yii::t('app', 'របាយការណ៍') ?></span>
                         </a>
+                        <ul class="menu">
+                            <li class="menu-item <?= $module_controller == 'borrower-book' ? 'has-active' : ''; ?> py-1">
+                                <a href="<?= Yii::getAlias("@web/report/borrower-book") ?>" class="menu-link">
+                                    <span class="menu-text">របាយការណ៏អ្នកខ្ចីសៀបភៅ</span>
+                                </a>
+                            </li>
+
+                            <li class="menu-item <?= $module_controller == 'library' ? 'has-active' : ''; ?> py-1">
+                                <a href="<?= Yii::getAlias("@web/report/library") ?>" class="menu-link">
+                                    <span class="menu-text">របាយការណ៏អ្នកចូលបណ្ណាល័យ</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
-                    <li class="menu-item py-1 has-child <?= $controller_group == 'website' ? 'has-active' : ''; ?>">
-                        <a href="<?= Url::toRoute(['page-template/index']) ?>" class="menu-link">
+
+                    <li class="menu-item py-1 has-child <?= $controller_group == 'setting' ? 'has-active' : ''; ?>">
+                        <a href="<?= Url::toRoute(['user/index']) ?>" class="menu-link">
                             <span class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 29 28" fill="none">
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M20.8438 2.21875C19.3422 2.21875 18.125 3.43598 18.125 4.9375C18.125 6.43902 19.3422 7.65625 20.8438 7.65625C22.3453 7.65625 23.5625 6.43902 23.5625 4.9375C23.5625 3.43598 22.3453 2.21875 20.8438 2.21875ZM16.4031 4.03125C16.823 1.96297 18.6516 0.40625 20.8438 0.40625C23.0359 0.40625 24.8645 1.96297 25.2844 4.03125H29V5.84375H25.2844C24.8645 7.91203 23.0359 9.46875 20.8438 9.46875C18.6516 9.46875 16.823 7.91203 16.4031 5.84375H0V4.03125H16.4031ZM8.15625 11.2812C6.65473 11.2812 5.4375 12.4985 5.4375 14C5.4375 15.5015 6.65473 16.7188 8.15625 16.7188C9.65777 16.7188 10.875 15.5015 10.875 14C10.875 12.4985 9.65777 11.2812 8.15625 11.2812ZM3.71564 13.0938C4.13548 11.0255 5.96407 9.46875 8.15625 9.46875C10.3484 9.46875 12.177 11.0255 12.5969 13.0938H29V14.9062H12.5969C12.177 16.9745 10.3484 18.5312 8.15625 18.5312C5.96407 18.5312 4.13548 16.9745 3.71564 14.9062H0V13.0938H3.71564ZM20.8438 20.3438C19.3422 20.3438 18.125 21.561 18.125 23.0625C18.125 24.564 19.3422 25.7812 20.8438 25.7812C22.3453 25.7812 23.5625 24.564 23.5625 23.0625C23.5625 21.561 22.3453 20.3438 20.8438 20.3438ZM16.4031 22.1562C16.823 20.088 18.6516 18.5312 20.8438 18.5312C23.0359 18.5312 24.8645 20.088 25.2844 22.1562H29V23.9688H25.2844C24.8645 26.037 23.0359 27.5938 20.8438 27.5938C18.6516 27.5938 16.823 26.037 16.4031 23.9688H0V22.1562H16.4031Z" fill="#4A4A4A" />

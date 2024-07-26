@@ -181,7 +181,36 @@ class SiteController extends Controller
         ];
     }
 
+    // In your controller (e.g., SiteController.php)
 
+    public function actionPieChartData()
+    {
+        $data = Yii::$app->db->createCommand("
+        SELECT 
+            type_joined, 
+            SUM(total_member) AS total_members 
+        FROM member_joined_library 
+        GROUP BY type_joined
+    ")->queryAll();
+        $typeLabels = [
+            1 => 'សិស្ស',
+            2 => 'គ្រូ',
+            3 => 'សមាគមន៏',
+        ];
+
+        $labels = [];
+        $values = [];
+        foreach ($data as $row) {
+            $type = (int) $row['type_joined'];
+            $labels[] = isset($typeLabels[$type]) ? $typeLabels[$type] : 'Unknown';
+            $values[] = (int) $row['total_members'];
+        }
+
+        return $this->asJson([
+            'labels' => $labels,
+            'values' => $values,
+        ]);
+    }
 
 
     /**

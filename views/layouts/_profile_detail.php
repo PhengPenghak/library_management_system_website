@@ -14,7 +14,6 @@ $formater = Yii::$app->formater;
 $controller = Yii::$app->controller->id;
 $action = Yii::$app->controller->action->id;
 $controller_action = $controller . '-' . $action;
-$master = Yii::$app->master;
 
 AppAsset::register($this);
 SweetAlert2Asset::register($this);
