@@ -69,6 +69,13 @@ $this->title = 'Library - Management System Dashboard';
     .border-icon-cus svg path {
         fill: #ffffff;
     }
+
+    #pieChart {
+
+        width: 270px !important;
+        height: 270px !important;
+        margin: 0 auto !important;
+    }
 </style>
 <div class="row">
     <div class="col-lg-4">
@@ -192,27 +199,8 @@ $this->title = 'Library - Management System Dashboard';
             </div>
         </div>
     </div>
-</div>
-<hr class="border-0">
-<div class="row">
-    <div class="col-lg-6">
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="alert alert-info" role="alert">
-                        តារាងទិន្នន័យប្រចាំខែ
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <canvas id="borrowBookChart" width="400" height="200"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="container mt-5">
+    <div class="col-lg-4">
+        <div class="container">
             <div class="row">
                 <div class="col-md-12">
                     <div class="alert alert-info" role="alert">
@@ -222,15 +210,83 @@ $this->title = 'Library - Management System Dashboard';
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <?= Html::a('ទិន្នន័យបម្រុងទុក', ['site/backup'], ['class' => 'btn btn-lg btn-primary']) ?>
+                    <div class="card">
+                        <div class="card-body">
+                            <?= Html::a('ទិន្នន័យបម្រុងទុក', ['site/backup'], ['class' => 'btn btn-lg btn-primary']) ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <hr class="border-0">
-<h5 class="mt-5 mb-4">បញ្ចីអ្នកខ្ចីសៀវភៅមិនទាន់សង</h5>
-
+<div class="row">
+    <div class="col-lg-6">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info" role="alert">
+                        តារាងទិន្នន័យសិស្សខ្ចីសៀវភៅប្រចាំខែ
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <canvas id="borrowBookChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info" role="alert">
+                        តារាងទិន្នន័យសមាជិតចូលបណ្ណាល័យ
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <canvas id="pieChart" width="250" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info" role="alert">
+                        កាវិភាគសម្រាប់សិស្សចូលបណ្ណាល័យ
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <?= $this->render('./event') ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr class="border-0">
+<div class="alert alert-info" role="alert">
+    បញ្ចីអ្នកខ្ចីសៀវភៅមិនទាន់សង
+</div>
 <div class="card card-bg-default">
     <div class="card-body">
 
@@ -341,7 +397,8 @@ $this->title = 'Library - Management System Dashboard';
 </div>
 
 <hr class="border-0">
-<h5 class="mt-5 mb-4">បញ្ចីអ្នកខ្ចីសៀវភៅ</h5>
+<div class="alert alert-info" role="alert">
+    បញ្ចីអ្នកខ្ចីសៀវភៅ</div>
 <div class="card card-bg-default">
     <div class="card-body">
 
@@ -439,7 +496,7 @@ $this->registerJsFile('https://code.jquery.com/jquery-3.5.1.min.js', ['position'
 $baseUrl = Yii::getAlias("@web");
 
 
-$js = <<< JS
+$script = <<< JS
 $(document).ready(function() {
     $.ajax({
         url: '/library_management_system_website/site/chart-data', // URL to the action that provides chart data
@@ -503,6 +560,38 @@ $(document).ready(function() {
         }
     });
 });
+
+
+$(document).ready(function () {
+    $.getJSON('/library_management_system_website/site/pie-chart-data', function (data) {
+        var ctx = $('#pieChart')[0].getContext('2d');
+        var pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    data: data.values,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+});
 JS;
-$this->registerJs($js);
+$this->registerJs($script);
 ?>

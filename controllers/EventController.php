@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Event;
+use app\models\User;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -13,14 +14,35 @@ class EventController extends Controller
 {
     public function behaviors()
     {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
+        return array_merge(
+            parent::behaviors(),
+            [
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => User::getUserPermission(Yii::$app->controller->id),
+                            'allow' => true,
+                        ]
+                    ],
                 ],
-            ],
-        ];
+                'verbs' => [
+                    'class' => VerbFilter::class,
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    public function beforeAction($action)
+    {
+        Yii::$app->view->params['controller_group'] = 'event';
+        if (in_array($action->id, ['view'])) {
+            $this->layout = '_profile_detail';
+        }
+        return parent::beforeAction($action);
     }
 
     public function actionIndex()

@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\MemberJoinedLibrary;
 use app\models\MemberJoinedLibrarySearch;
+use app\models\User;
 use Exception;
 use Yii;
 use yii\web\Controller;
@@ -23,8 +24,17 @@ class MemberJoinedLibraryController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => User::getUserPermission(Yii::$app->controller->id),
+                            'allow' => true,
+                        ]
+                    ],
+                ],
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -32,6 +42,14 @@ class MemberJoinedLibraryController extends Controller
             ]
         );
     }
+
+
+    public function beforeAction($action)
+    {
+        Yii::$app->view->params['controller_group'] = 'member-joined-library';
+        return parent::beforeAction($action);
+    }
+
 
     /**
      * Lists all MemberJoinedLibrary models.
@@ -71,15 +89,12 @@ class MemberJoinedLibraryController extends Controller
     public function actionForm($id = '')
     {
         $model = !empty($id) ? MemberJoinedLibrary::findOne($id) : new MemberJoinedLibrary();
-        $master = Yii::$app->master;
-
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $transaction_exception = Yii::$app->db->beginTransaction();
                 try {
-                    // print_r($model->grade_id);
-                    // exit;
-                    if (!$model->save()) throw new Exception($master->errToString($model->getErrors()));
+
+                    if (!$model->save()) throw new Exception("Failed to Save! Code #001");
 
                     $transaction_exception->commit();
                     Yii::$app->session->setFlash('success', "Record has been created successfully");

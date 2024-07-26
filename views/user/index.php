@@ -68,17 +68,35 @@ $this->params['pageTitle'] = $this->title;
 
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'header' => 'Actions',
+                        'header' => Yii::t('app', 'Actions'),
                         'headerOptions' => ['class' => 'text-center'],
                         'contentOptions' => ['class' => 'text-center'],
                         'template' => '{update} {delete}',
                         'buttons' => [
+
                             'update' => function ($url, $model) {
-                                return Html::a('<i class="bi bi-pencil-square"></i>', ['user/update', 'id' => $model->id], ['class' => 'btn btn-sm btn-icon btn-secondary']);
+                                return Html::a('<i class="fas fa-pen"></i>', $url, [
+                                    'class' => 'btn btn-sm btn-icon btn-secondary',
+                                    'title' => 'Update this item',
+                                    'data' => [
+                                        'pjax' => 0,
+                                        'toggle' => 'tooltip',
+                                    ],
+                                ]);
                             },
                             'delete' => function ($url, $model) {
-                                return Html::a('<i class="bi bi-trash2"></i>', '#', ['class' => 'btn btn-sm btn-icon btn-secondary']);
-                            }
+                                return Html::a('<i class="fas fa-trash"></i>', Yii::getAlias("@web/user/"), [
+                                    'class' => 'btn btn-sm btn-icon btn-secondary button-delete',
+                                    'title' => 'Delete this item',
+                                    'data' => [
+                                        'pjax' => 0,
+                                        'confirm' => 'Are you sure?',
+                                        'value' => Url::toRoute(['user/delete', 'id' => $model->id]),
+                                        'method' => 'post',
+                                        'toggle' => 'tooltip',
+                                    ],
+                                ]);
+                            },
                         ],
 
                     ],

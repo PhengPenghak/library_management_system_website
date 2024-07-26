@@ -19,14 +19,11 @@ $this->title = 'សៀវភៅ';
 </style>
 <div class="blog-index">
     <nav class="page-navs mb-5 px-0" style="background: none;">
-        <!-- .nav-scroller -->
         <div class="nav-scroller">
-            <!-- .nav -->
             <div class="nav nav-tabs">
                 <a class="nav-link active" href="<?= Url::to(['book/index']) ?>">សៀវភៅទាំងអស់ <span class="badge badge-pill ml-2 badge-secondary-color text-light"><?= !empty($totalCount) ? $totalCount : '' ?></span></a>
-                <a class="nav-link" href="user-activities.html">Activities <span class="badge">16</span></a>
-            </div><!-- /.nav -->
-        </div><!-- /.nav-scroller -->
+            </div>
+        </div>
     </nav>
     <?php Pjax::begin(['id' => 'book']); ?>
     <?= $this->render('_search', ['model' => $searchModel, 'categories' => $categories]); ?>

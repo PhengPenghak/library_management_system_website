@@ -10,6 +10,7 @@ use app\models\GradeSearch;
 use app\models\InfomationBorrowerBookSearch;
 use app\models\MemberJoinedLibrary;
 use app\models\MemberJoinedLibrarySearch;
+use app\models\User;
 use DateTime;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
@@ -36,6 +37,15 @@ class ReportController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                // 'access' => [
+                //     'class' => \yii\filters\AccessControl::class,
+                //     'rules' => [
+                //         [
+                //             'actions' => User::getUserPermission(Yii::$app->controller->id),
+                //             'allow' => true,
+                //         ]
+                //     ],
+                // ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -46,6 +56,11 @@ class ReportController extends Controller
         );
     }
 
+    public function beforeAction($action)
+    {
+        Yii::$app->view->params['controller_group'] = 'report';
+        return parent::beforeAction($action);
+    }
     /**
      * Lists all Blog models.
      * @return mixed
@@ -152,8 +167,31 @@ class ReportController extends Controller
     ")
             ->bindParam('gradeId', $id)
             ->queryAll();
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
+
+        // Add title
+        $title = 'របាយការណ៏អ្នកខ្ចីសៀវភៅ';
+        $sheet->setCellValue('A1', $title);
+        $sheet->mergeCells('A1:I1');
+
+        // Apply title styles
+        $titleStyleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 16,
+                'name' => 'KhmerOS',
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('A1')->applyFromArray($titleStyleArray);
+        $sheet->getRowDimension('1')->setRowHeight(40);
+
+        // Headers
         $header = [
             'លេខរៀង',
             'ឈ្មោះសិស្ស',
@@ -165,7 +203,7 @@ class ReportController extends Controller
             'ថ្ងៃ​ចាប់ផ្តើមកាលបរិច្ឆេទ',
             'កាលបរិច្ឆេទបញ្ចប់',
         ];
-        $sheet->fromArray([$header], NULL, 'A1');
+        $sheet->fromArray([$header], NULL, 'A2');
 
         // Apply header styles
         $headerStyleArray = [
@@ -189,8 +227,8 @@ class ReportController extends Controller
                 ],
             ],
         ];
-        $sheet->getStyle('A1:I1')->applyFromArray($headerStyleArray);
-        $sheet->getRowDimension('1')->setRowHeight(30);
+        $sheet->getStyle('A2:I2')->applyFromArray($headerStyleArray);
+        $sheet->getRowDimension('2')->setRowHeight(30);
 
         $dataRows = [];
         foreach ($reportBorrowerBook as $borrowerBook) {
@@ -206,7 +244,7 @@ class ReportController extends Controller
                 $borrowerBook['end'],
             ];
         }
-        $sheet->fromArray($dataRows, NULL, 'A2');
+        $sheet->fromArray($dataRows, NULL, 'A3');
 
         // Apply data rows styles
         $dataStyleArray = [
@@ -219,7 +257,7 @@ class ReportController extends Controller
                 'vertical' => Alignment::VERTICAL_CENTER,
             ],
         ];
-        $sheet->getStyle('A2:I' . (count($dataRows) + 1))->applyFromArray($dataStyleArray);
+        $sheet->getStyle('A3:I' . (count($dataRows) + 2))->applyFromArray($dataStyleArray);
 
         // Auto size columns
         foreach (range('A', 'I') as $columnID) {
@@ -227,7 +265,7 @@ class ReportController extends Controller
         }
 
         $writer = new Xlsx($spreadsheet);
-        $filename = 'របាយការណ៏អ្នកខ្ចីសៀបភៅ.xlsx';
+        $filename = 'របាយការណ៏អ្នកខ្ចីសៀវភៅ.xlsx';
         $writer->save($filename);
         Yii::$app->response->sendFile($filename, $filename, [
             'mimeType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

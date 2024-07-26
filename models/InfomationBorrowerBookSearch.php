@@ -15,14 +15,17 @@ class InfomationBorrowerBookSearch extends InfomationBorrowerBook
     /**
      * {@inheritdoc}
      */
-    public $globalSearch, $gradeTitle;
+    public $gradeTitle;
+    public $globalSearch, $from_date, $to_date;
+
 
     public function rules()
     {
         return [
             [['id', 'grade_id', 'status', 'created_by', 'updated_by'], 'integer'],
             [['username', 'gender', 'created_at', 'updated_at'], 'safe'],
-            [['globalSearch'], 'safe'],
+            [['globalSearch', 'from_date', 'to_date'], 'safe']
+
 
         ];
     }
@@ -45,35 +48,23 @@ class InfomationBorrowerBookSearch extends InfomationBorrowerBook
      */
     public function search($params)
     {
-        $query = InfomationBorrowerBook::find()->joinWith('grade');
+        $query = InfomationBorrowerBook::find();
+        $query->joinWith('grade');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => ['defaultOrder' => ['username' => SORT_ASC]]
         ]);
-
-        $dataProvider->sort->attributes['gradeTitle'] = [
-            'asc' => ['grade.title' => SORT_ASC],
-            'desc' => ['grade.title' => SORT_DESC],
-        ];
-
         $this->load($params);
 
         if (!$this->validate()) {
             return $dataProvider;
         }
-
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'grade_id' => $this->grade_id,
-            'status' => $this->status,
-            // Add other filters here
-        ]);
-
-        $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'gender', $this->gender])
-            ->andFilterWhere(['like', 'grade.title', $this->gradeTitle]); // Add filter condition for grade title
-
+        $query->andFilterWhere(['between', 'DATE(infomation_borrower_book.created_at)', $this->from_date, $this->to_date])
+            ->andFilterWhere([
+                'OR',
+                ['like', 'infomation_borrower_book.username', $this->globalSearch],
+            ]);
         return $dataProvider;
     }
 

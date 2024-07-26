@@ -6,6 +6,7 @@ use app\models\Book;
 use app\models\BorrowBook;
 use app\models\InfomationBorrowerBook;
 use app\models\InfomationBorrowerBookSearch;
+use app\models\User;
 use Exception;
 use Yii;
 use yii\db\Query;
@@ -23,6 +24,15 @@ class BorrowerBookController extends \yii\web\Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => User::getUserPermission(Yii::$app->controller->id),
+                            'allow' => true,
+                        ]
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -31,6 +41,12 @@ class BorrowerBookController extends \yii\web\Controller
                 ],
             ]
         );
+    }
+
+    public function beforeAction($action)
+    {
+        Yii::$app->view->params['controller_group'] = 'borrower-book';
+        return parent::beforeAction($action);
     }
 
     public function actionIndex()

@@ -38,7 +38,7 @@ class BorrowBook extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['book_id', 'information_borrower_book_id', 'code'], 'required'],
+            [['book_id', 'information_borrower_book_id', 'code', 'start', 'end',], 'required'],
             [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'missing_books', 'created_by', 'updated_by'], 'integer'],
             [['start', 'end', 'created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 255],

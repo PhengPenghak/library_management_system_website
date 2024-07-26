@@ -11,35 +11,36 @@ use Yii;
 use Exception;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 class UserController extends Controller
 {
   /**
    * @inheritDoc
    */
-  // public function behaviors()
-  // {
-  //   return array_merge(
-  //     parent::behaviors(),
-  //     [
-  //       'access' => [
-  //         'class' => \yii\filters\AccessControl::class,
-  //         'rules' => [
-  //           [
-  //             'actions' => User::getUserPermission(Yii::$app->controller->id),
-  //             'allow' => true,
-  //           ]
-  //         ],
-  //       ],
-  //       'verbs' => [
-  //         'class' => VerbFilter::class,
-  //         'actions' => [
-  //           'delete' => ['POST'],
-  //         ],
-  //       ],
-  //     ]
-  //   );
-  // }
+  public function behaviors()
+  {
+    return array_merge(
+      parent::behaviors(),
+      [
+        'access' => [
+          'class' => \yii\filters\AccessControl::class,
+          'rules' => [
+            [
+              'actions' => User::getUserPermission(Yii::$app->controller->id),
+              'allow' => true,
+            ]
+          ],
+        ],
+        'verbs' => [
+          'class' => VerbFilter::class,
+          'actions' => [
+            'delete' => ['POST'],
+          ],
+        ],
+      ]
+    );
+  }
 
   public function beforeAction($action)
   {
@@ -59,8 +60,6 @@ class UserController extends Controller
     $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
     $total_items = $dataProvider->getTotalCount();
 
-
-
     return $this->render('role', [
       'page_size' => 15,
       'searchModel' => $searchModel,
@@ -72,9 +71,7 @@ class UserController extends Controller
   {
     Yii::$app->view->params['controller_action_group'] = 'setting_role';
     $model = new UserRole();
-
     if ($this->request->isPost && $model->load($this->request->post())) {
-
       $transaction_exception = Yii::$app->db->beginTransaction();
 
       try {
@@ -109,7 +106,7 @@ class UserController extends Controller
         return $this->redirect(Yii::$app->request->referrer);
       }
     }
-    $user_role_id = NULL;
+    $user_role_id = $model->id;
     $userRoleAction = Yii::$app->db->createCommand("SELECT 
         user_role_group.`name` group_name,
         user_role_action.*,
@@ -222,28 +219,22 @@ class UserController extends Controller
     $model = new User();
     $model->scenario = "profile";
     $model->user_type_id = 1;
-    $master = Yii::$app->master;
 
     if ($this->request->isPost && $model->load($this->request->post())) {
 
-      $transaction_exception = Yii::$app->db->beginTransaction();
+      if ($model->password != "") {
+        $model->setPassword($model->password);
+        $model->generateAuthKey($model->auth_key);
+      }
 
-      try {
-
-        if ($model->password != "") {
-          $model->setPassword($model->password);
-          $model->generateAuthKey($model->auth_key);
-        }
-
-        if (!$model->save()) throw new Exception($master->errToString($model->getErrors()));
-
-        $transaction_exception->commit();
+      if ($model->save()) {
         Yii::$app->session->setFlash('success', "User saved successfully");
-        return $this->redirect(['update', ['id' => $model->id]]);
-      } catch (Exception $ex) {
-        Yii::$app->session->setFlash('warning', $ex->getMessage());
-        $transaction_exception->rollBack();
         return $this->redirect(Yii::$app->request->referrer);
+      } else {
+        echo "<pre>";
+        print_r($model->getErrors());
+        echo "</pre>";
+        exit;
       }
     }
 
@@ -258,30 +249,32 @@ class UserController extends Controller
     $model->scenario = "profile";
 
     if ($this->request->isPost && $model->load($this->request->post())) {
+      if ($model->password != "") {
+        $model->setPassword($model->password);
+        $model->generateAuthKey($model->auth_key);
+      }
 
-      $transaction_exception = Yii::$app->db->beginTransaction();
-
-      try {
-        if ($model->password != "") {
-          $model->setPassword($model->password);
-          $model->generateAuthKey($model->auth_key);
-        }
-
-        if (!$model->save()) throw new Exception(Yii::$app->master->errToString($model->getErrors()));
-
-        $transaction_exception->commit();
+      if ($model->save()) {
         Yii::$app->session->setFlash('success', "User saved successfully");
         return $this->redirect(Yii::$app->request->referrer);
-      } catch (Exception $ex) {
-        Yii::$app->session->setFlash('warning', $ex->getMessage());
-        $transaction_exception->rollBack();
-        return $this->redirect(Yii::$app->request->referrer);
+      } else {
+        echo "<pre>";
+        print_r($model->getErrors());
+        echo "</pre>";
+        exit;
       }
     }
 
     return $this->render('form', [
       'model' => $model,
     ]);
+  }
+
+  public function actionDelete($id)
+  {
+    $this->findModel($id)->delete();
+
+    return $this->redirect(Yii::$app->request->referrer);
   }
 
   public function actionValidation($id = null)
@@ -292,5 +285,15 @@ class UserController extends Controller
       Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
       return \yii\widgets\ActiveForm::validate($model);
     }
+  }
+
+
+  protected function findModel($id)
+  {
+    if (($model = User::findOne($id)) !== null) {
+      return $model;
+    }
+
+    throw new NotFoundHttpException('The requested page does not exist.');
   }
 }
