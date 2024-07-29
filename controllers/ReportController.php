@@ -273,19 +273,19 @@ class ReportController extends Controller
     }
     public function actionLibrary()
     {
-        $selectedDate = empty(Yii::$app->request->get('selectedDate')) ? date("m-Y") : Yii::$app->request->get('selectedDate');
+        $selectedDate = Yii::$app->request->get('selectedDate');
         $gradeSearchModel = new MemberJoinedLibrarySearch();
         $gradeDataProvider = $gradeSearchModel->search(Yii::$app->request->queryParams);
         $grades = Grade::find()->all();
         $gradeList = ArrayHelper::map($grades, 'id', 'title');
         $searchModel = new MemberJoinedLibrarySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        if ($dataProvider->getCount() === 0) {
-            throw new NotFoundHttpException('No records found.');
-        }
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        // if ($dataProvider->getCount() === 0) {
+        //     throw new NotFoundHttpException('No records found.');
+        // }
         $scheduleType = Yii::$app->request->getQueryParam('scheduleType', 0);
 
-        $activityProvider = new ActiveDataProvider([
+        !empty($selectedDate) ? $activityProvider = new ActiveDataProvider([
             'query' => MemberJoinedLibrarySearch::find()
                 ->andWhere(['like', 'DATE(dateTime)', $selectedDate])
                 ->andWhere(['status' => $scheduleType]),
@@ -297,8 +297,7 @@ class ReportController extends Controller
                     'dateTime' => SORT_DESC, // Replace 'id' with the column you want to sort by
                 ]
             ],
-        ]);
-
+        ]) : $activityProvider = $dataProvider;
 
         return $this->render('library/index', [
             'searchModel' => $searchModel,

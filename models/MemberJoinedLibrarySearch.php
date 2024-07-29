@@ -14,12 +14,12 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
     /**
      * {@inheritdoc}
      */
-    public $globalSearch, $scheduleType;
+    public $globalSearch, $scheduleType, $selectedDate;
     public function rules()
     {
         return [
             [['id', 'total_member', 'total_member_female', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['type_member', 'dateTime', 'created_at', 'updated_at', 'globalSearch'], 'safe'],
+            [['type_member', 'dateTime', 'created_at', 'updated_at', 'globalSearch', 'selectedDate', 'scheduleType'], 'safe'],
         ];
     }
 
@@ -60,7 +60,8 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
         }
 
         $query->andFilterWhere(['like', 'grade.title', $this->globalSearch])
-            ->andFilterWhere(['=', 'member_joined_library.status', $this->scheduleType]);
+            ->andFilterWhere(['=', 'member_joined_library.status', $this->scheduleType])
+            ->andFilterWhere(['like', 'member_joined_library.dateTime', $this->selectedDate]);
 
         return $dataProvider;
     }
