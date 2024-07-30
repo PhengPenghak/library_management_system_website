@@ -6,9 +6,6 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\BorrowBook;
 
-/**
- * BorrowBookSearch represents the model behind the search form of `app\models\BorrowBook`.
- */
 class BorrowBookSearch extends BorrowBook
 {
     public $from_date;
@@ -21,15 +18,14 @@ class BorrowBookSearch extends BorrowBook
     public function rules()
     {
         return [
-            [['information_borrower_book_id', 'book_id', 'quantity', 'status'], 'required'],
-            [['id', 'information_borrower_book_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
+            [['information_borrower_book_id', 'book_id', 'quantity', 'status'], 'integer'],
+            [['id', 'created_by', 'updated_by'], 'integer'],
             [['code', 'start', 'end', 'created_at', 'updated_at', 'username', 'grade_title', 'book_title', 'borrower_name', 'information_borrower_grade_title', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -48,21 +44,24 @@ class BorrowBookSearch extends BorrowBook
             return $dataProvider;
         }
 
+        // Filters
         $query->andFilterWhere([
-            'like', 'grade.title', $this->grade_title,
-        ])
-            ->andFilterWhere([
-                'like', 'book.title', $this->book_title,
-            ])
-            ->andFilterWhere([
-                'like', 'information_borrower_book.name', $this->borrower_name,
-            ])
-            ->andFilterWhere([
-                'like', 'information_borrower_book.grade_title', $this->information_borrower_grade_title,
-            ]);
+            'information_borrower_book_id' => $this->information_borrower_book_id,
+            'book_id' => $this->book_id,
+            'quantity' => $this->quantity,
+            'status' => $this->status,
+        ]);
 
-        $query->andFilterWhere(['between', 'DATE(borrow_book.created_at)', $this->from_date, $this->to_date]);
+        // Date range filter
+        if ($this->from_date && $this->to_date) {
+            $query->andFilterWhere(['between', 'DATE(borrow_book.created_at)', $this->from_date, $this->to_date]);
+        }
 
+        // Other filters
+        $query->andFilterWhere(['like', 'grade.title', $this->grade_title])
+            ->andFilterWhere(['like', 'book.title', $this->book_title])
+            ->andFilterWhere(['like', 'information_borrower_book.name', $this->borrower_name])
+            ->andFilterWhere(['like', 'information_borrower_book.grade_title', $this->information_borrower_grade_title]);
 
         return $dataProvider;
     }

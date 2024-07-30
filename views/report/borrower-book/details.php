@@ -15,16 +15,35 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-6">
             <div class="d-md-flex align-items-md-start mr-auto">
                 <div class="">
-                    <?= Html::a('<i class="fas fa-file-pdf"></i> Export PDF', ['report/create-pdf', 'id' => $id], [
+                    <?php
+                    $borrowBookSearch = Yii::$app->request->get('BorrowBookSearch');
+                    $from_date = isset($borrowBookSearch['from_date']) ? $borrowBookSearch['from_date'] : '';
+                    $to_date = isset($borrowBookSearch['to_date']) ? $borrowBookSearch['to_date'] : '';
+                    ?>
+                    <?= Html::a('<i class="fas fa-file-pdf"></i> Export PDF', [
+                        'report/create-pdf', 'id' => $id,
+                        'BorrowBookSearch[from_date]' => $from_date,
+                        'BorrowBookSearch[to_date]' => $to_date,
+                    ], [
                         'class' => 'btn btn-lg btn-outline-danger pr-3',
                     ]) ?>
 
-                    <?= Html::a('<i class="fas fa-file-excel"></i> Export Excel', ['report/export-excel', 'id' => $id], [
-                        'class' => 'btn btn-lg btn-outline-primary',
+                    <?php
+                    $borrowBookSearch = Yii::$app->request->get('BorrowBookSearch');
+                    $from_date = isset($borrowBookSearch['from_date']) ? $borrowBookSearch['from_date'] : '';
+                    $to_date = isset($borrowBookSearch['to_date']) ? $borrowBookSearch['to_date'] : '';
+                    ?>
+                    <?= Html::a('<i class="fas fa-file-pdf"></i> Export PDF', [
+                        'report/export-excel', 'id' => $id,
+                        'BorrowBookSearch[from_date]' => $from_date,
+                        'BorrowBookSearch[to_date]' => $to_date,
+                    ], [
+                        'class' => 'btn btn-lg btn-outline-danger pr-3',
                     ]) ?>
                 </div>
             </div>
         </div>
+
     </div>
 
     <?php Pjax::begin(['id' => 'borrow-book']); ?>
@@ -63,54 +82,46 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 'code',
 
-                // [
-                //     'attribute' => 'borrower_id',
-                //     'label' => 'Borrower Name',
-                //     'value' => function ($model) {
-                //         return $model->informationBorrowerBook ? $model->informationBorrowerBook->username : 'N/A';
-                //     },
-                // ],
+                [
+                    'attribute' => 'borrower_id',
+                    'label' => 'Borrower Name',
+                    'value' => function ($model) {
+                        return $model->informationBorrowerBook ? $model->informationBorrowerBook->username : 'N/A';
+                    },
+                ],
 
-                // [
-                //     'attribute' => 'grade_title',
-                //     'label' => 'Grade Title',
-                //     'value' => function ($model) {
-                //         return $model->informationBorrowerBook && $model->informationBorrowerBook->grade ? $model->informationBorrowerBook->grade->title : 'N/A';
-                //     },
-                // ],
+                [
+                    'attribute' => 'grade_title',
+                    'label' => 'Grade Title',
+                    'value' => function ($model) {
+                        return $model->informationBorrowerBook && $model->informationBorrowerBook->grade ? $model->informationBorrowerBook->grade->title : 'N/A';
+                    },
+                ],
 
-                // [
-                //     'attribute' => 'book_id',
-                //     'label' => 'Book Title',
-                //     'value' => function ($model) {
-                //         return $model->book ? $model->book->title : 'N/A';
-                //     },
-                // ],
+                [
+                    'attribute' => 'book_id',
+                    'label' => 'Book Title',
+                    'value' => function ($model) {
+                        return $model->book ? $model->book->title : 'N/A';
+                    },
+                ],
 
                 'quantity',
 
-                // [
-                //     'attribute' => 'start',
-                //     'format' => ['date', 'php:d/m/Y'],
-                //     'headerOptions' => ['style' => 'text-align: left;'],
-                //     'contentOptions' => ['style' => 'text-align: left;'],
-                // ],
-
-
-                // [
-                //     'attribute' => 'end',
-                //     'format' => ['date', 'php:d/m/Y'],
-                //     'headerOptions' => ['style' => 'text-align: left;'],
-                //     'contentOptions' => ['style' => 'text-align: left;'],
-                // ],
-
                 [
-                    'attribute' => 'created_at',
+                    'attribute' => 'start',
                     'format' => ['date', 'php:d/m/Y'],
                     'headerOptions' => ['style' => 'text-align: left;'],
                     'contentOptions' => ['style' => 'text-align: left;'],
                 ],
 
+
+                [
+                    'attribute' => 'end',
+                    'format' => ['date', 'php:d/m/Y'],
+                    'headerOptions' => ['style' => 'text-align: left;'],
+                    'contentOptions' => ['style' => 'text-align: left;'],
+                ],
             ],
         ]); ?>
 

@@ -1,26 +1,18 @@
 <?php
 
-use app\models\InfomationBorrowerBookSearch;
 use yii\helpers\Html;
+use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $searchModel app\models\InformationBorrowerBookSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Report Borrower Books';
+$this->title = 'របាយការណ៍ខ្ចីសៀវភៅតាមថ្នាក់';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
-<div class="row">
-    <div class="col-md-12">
-        <?php if ($dataProvider->getCount() === 0) : ?>
-            <div class="alert alert-info" role="alert">
-                មិនមានទិន្នន័យ
-            </div>
-        <?php else : ?>
+<div>
+    <h3><?= Html::encode($this->title) ?></h3>
+    <hr class="border-0">
+    <div class="card card-bg-default">
+        <div class="card-body">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'tableOptions' => [
@@ -29,26 +21,50 @@ $this->params['breadcrumbs'][] = $this->title;
                     'width' => '100%',
                 ],
                 'layout' => "
-                <div class='table-responsive'>
-                    {items}
+            <div class='table-responsive'>
+                {items}
+            </div>
+            <hr>
+            <div class='row'>
+                <div class='col-md-6'>
+                    {summary}
                 </div>
-                <hr>
-                <div class='row'>
-                    <div class='col-md-6'>
-                        {summary}
-                    </div>
-                    <div class='col-md-6'>
-                        {pager}
-                    </div>
+                <div class='col-md-6'>
+                    {pager}
                 </div>
-            ",
+            </div>
+        ",
+
                 'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
                     [
                         'attribute' => 'grade_id',
                         'value' => function ($model) {
                             return $model->grade ? $model->grade->title : null;
                         },
+                    ],
+
+                    [
+                        'attribute' => 'created_at',
+                        'label' => 'កាលបរិច្ឆេទបង្កើត',
+                        'value' => function ($model) {
+                            return Yii::$app->formater->maskDateKH($model->created_at);
+                        }
+                    ],
+
+                    [
+                        'attribute' => 'created_by',
+                        'label' => 'បង្កើត​ឡើង​ដោយ',
+                        'value' => function ($model) {
+                            return $model->createdBy ? $model->createdBy->username : 'N/A';
+                        },
+                    ],
+
+                    [
+                        'attribute' => 'status',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            return $model->getStatusTemp();
+                        }
                     ],
 
                     [
@@ -74,6 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
             ]); ?>
-        <?php endif; ?>
+        </div>
     </div>
+
 </div>
