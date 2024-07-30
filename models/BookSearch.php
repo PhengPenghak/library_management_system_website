@@ -15,12 +15,14 @@ class BookSearch extends Book
      * {@inheritdoc}
      */
     public $globalSearch, $categorySearch;
+    public $from_date, $to_date;
+
     public function rules()
     {
         return [
             [['id', 'category_book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
             [['title', 'sponse', 'img_url', 'created_at', 'updated_at'], 'safe'],
-            [['globalSearch', 'categorySearch'], 'safe']
+            [['globalSearch', 'categorySearch', 'from_date', 'to_date'], 'safe']
 
         ];
     }
@@ -61,6 +63,8 @@ class BookSearch extends Book
             ->andFilterWhere(['like', 'category_book_id', $this->categorySearch])
             ->andFilterWhere(['like', 'status', $this->status]);
 
+
+        $query->andFilterWhere(['between', 'DATE(book.created_at)', $this->from_date, $this->to_date]);
 
         return $dataProvider;
     }

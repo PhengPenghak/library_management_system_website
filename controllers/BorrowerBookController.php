@@ -130,12 +130,14 @@ class BorrowerBookController extends \yii\web\Controller
         $modelHeader = $this->findModel($id);
         $borrowBooks = BorrowBook::find()->where(['information_borrower_book_id' => $modelHeader->id, 'status' => 1])->all();
 
-
         if (Yii::$app->request->isPost) {
             $postData = Yii::$app->request->post('BorrowBook', []);
             $transaction = Yii::$app->db->beginTransaction();
             try {
                 $modelData = [];
+                $currentDateTime = date('Y-m-d H:i:s');
+                $currentUser = Yii::$app->user->identity->id;
+
                 foreach ($postData['information_borrower_book_id'] as $key => $informationBorrowerBookID) {
                     $modelData[] = [
                         $informationBorrowerBookID,
@@ -145,6 +147,10 @@ class BorrowerBookController extends \yii\web\Controller
                         $postData['start'][$key],
                         $postData['end'][$key],
                         $postData['status'][$key],
+                        $currentDateTime, // created_at
+                        $currentUser,     // created_by
+                        $currentDateTime, // updated_at
+                        $currentUser      // updated_by
                     ];
                 }
 
@@ -155,7 +161,11 @@ class BorrowerBookController extends \yii\web\Controller
                     'quantity',
                     'start',
                     'end',
-                    'status'
+                    'status',
+                    'created_at',
+                    'created_by',
+                    'updated_at',
+                    'updated_by'
                 ], $modelData)->execute();
 
                 $transaction->commit();
@@ -175,6 +185,7 @@ class BorrowerBookController extends \yii\web\Controller
             'modelHeader' => $modelHeader
         ]);
     }
+
 
     public function actionUpdateBorrowBook($id)
     {

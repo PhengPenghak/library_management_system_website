@@ -55,8 +55,10 @@ class BookController extends Controller
         Yii::$app->view->params['controller_group'] = 'book';
         return parent::beforeAction($action);
     }
+
     public function actionIndex()
     {
+
         $searchModel = new BookSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
         $dataProvider->pagination->pageSize = Yii::$app->setupdata->pageSize();
@@ -79,6 +81,7 @@ class BookController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
 
         return $this->render('view', [
             'model' => $this->findModel($id),

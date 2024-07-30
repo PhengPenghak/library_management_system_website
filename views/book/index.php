@@ -5,8 +5,9 @@ use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
+
 $this->title = 'សៀវភៅ';
-// $this->params['pageTitle'] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => 'សៀវភៅ', 'url' => ['index']];
 ?>
 <style>
     .active {
@@ -17,15 +18,11 @@ $this->title = 'សៀវភៅ';
         background-color: #346cb0;
     }
 </style>
+
 <div class="blog-index">
-    <nav class="page-navs mb-5 px-0" style="background: none;">
-        <div class="nav-scroller">
-            <div class="nav nav-tabs">
-                <a class="nav-link active" href="<?= Url::to(['book/index']) ?>">សៀវភៅទាំងអស់ <span class="badge badge-pill ml-2 badge-secondary-color text-light"><?= !empty($totalCount) ? $totalCount : '' ?></span></a>
-            </div>
-        </div>
-    </nav>
+
     <?php Pjax::begin(['id' => 'book']); ?>
+
     <?= $this->render('_search', ['model' => $searchModel, 'categories' => $categories]); ?>
     <hr class="border-0">
 

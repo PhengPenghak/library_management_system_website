@@ -75,9 +75,6 @@ class ReportController extends Controller
         $gradeList = ArrayHelper::map($grades, 'id', 'title');
         $searchModel = new InfomationBorrowerBookSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        // if ($dataProvider->getCount() === 0) {
-        //     throw new NotFoundHttpException('No records found.');
-        // }
 
         return $this->render('borrower-book/index', [
             'searchModel' => $searchModel,
@@ -101,30 +98,44 @@ class ReportController extends Controller
         ]);
     }
 
-
     public function actionCreatePdf($id)
     {
-        $reportBorrowerBook = Yii::$app->db->createCommand("SELECT
-        borrow_book.id AS ID,
-        borrow_book.code,
-        borrow_book.quantity,
-        borrow_book.start,
-        borrow_book.end,
-        infomation_borrower_book.username,
-        infomation_borrower_book.gender,
-        grade.title AS grade_title,
-        book.title AS bookTitle
-    FROM
-        borrow_book
-        INNER JOIN infomation_borrower_book ON infomation_borrower_book.id = borrow_book.information_borrower_book_id
-        INNER JOIN grade ON grade.id = infomation_borrower_book.grade_id
-        INNER JOIN book ON book.id = borrow_book.book_id
-    WHERE
-        infomation_borrower_book.grade_id = :gradeId
-")
-            ->bindParam('gradeId', $id)
-            ->queryAll();
+        $params = Yii::$app->request->queryParams;
+        $from_date = isset($params['BorrowBookSearch']['from_date']) ? $params['BorrowBookSearch']['from_date'] : null;
+        $to_date = isset($params['BorrowBookSearch']['to_date']) ? $params['BorrowBookSearch']['to_date'] : null;
 
+        $query = "SELECT
+            borrow_book.id AS ID,
+            borrow_book.code,
+            borrow_book.quantity,
+            borrow_book.start,
+            borrow_book.end,
+            infomation_borrower_book.username,
+            infomation_borrower_book.gender,
+            grade.title AS grade_title,
+            book.title AS bookTitle
+        FROM
+            borrow_book
+            INNER JOIN infomation_borrower_book ON infomation_borrower_book.id = borrow_book.information_borrower_book_id
+            INNER JOIN grade ON grade.id = infomation_borrower_book.grade_id
+            INNER JOIN book ON book.id = borrow_book.book_id
+        WHERE
+            infomation_borrower_book.grade_id = :gradeId
+    ";
+
+        if ($from_date && $to_date) {
+            $query .= " AND DATE(borrow_book.created_at) BETWEEN :from_date AND :to_date";
+        }
+
+        $command = Yii::$app->db->createCommand($query);
+        $command->bindParam(':gradeId', $id);
+
+        if ($from_date && $to_date) {
+            $command->bindValue(':from_date', $from_date);
+            $command->bindValue(':to_date', $to_date);
+        }
+
+        $reportBorrowerBook = $command->queryAll();
 
         $mpdf = new Mpdf([
             'orientation' => 'L',
@@ -146,9 +157,12 @@ class ReportController extends Controller
         ]);
 
         $mpdf->WriteHTML($html);
-
         $mpdf->Output('របាយការណ៏អ្នកខ្ចីសៀបភៅ.pdf', \Mpdf\Output\Destination::INLINE);
     }
+
+
+
+
 
     public function actionExportExcel($id)
     {
