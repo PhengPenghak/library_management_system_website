@@ -6,26 +6,23 @@ use yii\helpers\Url;
 ?>
 
 <?php $form = ActiveForm::begin([
-  'action' => ['agent-type'],
+  'action' => ['index'],
   'method' => 'get',
 ]); ?>
 
 
-<div class="row">
-  <div class="col-lg-3 offset-lg-6">
-    <?= $form->field($model, 'globalSearch')->textInput(['class' => 'form-control pull-right', 'placeholder' => 'Search'])->label(false) ?>
-  </div>
-  <div class="col-lg-3">
-    <div class="float-right">
-      <button class="btn btn-success rounded-pill">
-        Search <i class="bi bi-search"></i>
-      </button>
+<div class="d-flex px-0 justify-content-between col-12">
 
-      <a class="btn btn-warning rounded-pill" href="<?= Url::toRoute(['user/create']) ?>">
-        Add New <i class="bi bi-plus-circle"></i>
-      </a>
-    </div>
+  <?= $form->field($model, 'globalSearch')->textInput(['class' => 'form-control pull-right', 'placeholder' => 'Search'])->label(false) ?>
+
+
+  <div class="float-right">
+
+    <a class="btn btn-warning" href="<?= Url::toRoute(['user/create']) ?>">
+      <i class="bi bi-plus-square mr-2"></i>បង្កើតអ្នកប្រើប្រាស់ថ្មី
+    </a>
   </div>
+
 </div>
 
 

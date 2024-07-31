@@ -6,4 +6,10 @@ return [
     'senderEmail' => 'noreply@example.com',
     'senderName' => 'Example.com mailer',
     'bsVersion' => '4.x',
+    'breadcrumbs' => [
+        'homeLink' => [
+            'label' => 'Dashboard',
+            'url' => ['/dashboard/index'],
+        ],
+    ],
 ];

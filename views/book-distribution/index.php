@@ -1,11 +1,20 @@
 <?php
 
+use app\widgets\Breadcrumbs;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap4\Modal;
 use yii\grid\GridView;
 
-$this->title = "អ្នកខ្ចីសៀវភៅ";
+$this->title = "ចែលសៀវភៅតាមថ្នាក់";
+
+echo Breadcrumbs::widget([
+    'homeLink' => Yii::$app->params['breadcrumbs']['homeLink'],
+    'links' => [
+        ['label' => 'ព័ត៌មានទូទៅ', 'url' =>  Yii::$app->homeUrl],
+        ['label' => 'ចែលសៀវភៅតាមថ្នាក់'],
+    ],
+]);
 
 /** @var \app\components\Formter $formater */
 $formater = Yii::$app->formater;

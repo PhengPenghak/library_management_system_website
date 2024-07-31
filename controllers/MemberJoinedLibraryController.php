@@ -100,6 +100,9 @@ class MemberJoinedLibraryController extends Controller
                     Yii::$app->session->setFlash('success', "Record has been created successfully");
                     return $this->redirect(Yii::$app->request->referrer);
                 } catch (Exception $ex) {
+                    echo "<pre>";
+                    print_r($ex->getMessage());
+                    exit;
                     Yii::$app->session->setFlash('warning', $ex->getMessage());
                     $transaction_exception->rollBack();
                 }

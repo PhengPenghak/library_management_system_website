@@ -33,9 +33,8 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
   <?= $form->field($model, 'total_member_female')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសិស្សស្រី់​​​', 'class' => 'form-control-lg form-control'])->label("ចំនួនសិស្សស្រី") ?>
 
   <div class="form-group field-model-end">
-    <?= $form->field($model, 'dateTime')->textInput(['autofocus' => true, 'placeholder' => 'ចំនួនសរុប', "type" => "datetime-local", "id" => "model-end", 'class' => 'form-control-lg form-control'])->label("កាលបរិច្ឆេទ") ?>
+    <?= $form->field($model, 'dateTime')->textInput(['autofocus' => true, 'placeholder' => '', "id" => "model-date", 'class' => 'form-control-lg form-control'])->label("កាលបរិច្ឆេទ") ?>
   </div>
-
   <div class="my-3">
     <?= Html::submitButton('<i class="fas fa-save mr-2"></i>រក្សាទុក', ['class' => 'btn btn-lg  btn-primary px-5']) ?>
   </div>
@@ -45,6 +44,17 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
 </div>
 <?php
 $script = <<<JS
+
+  $('#model-date').daterangepicker({
+    singleDatePicker: true,
+    timePicker: true,
+    startDate: moment().startOf('hour'),
+    drops: 'up',
+    opens:'center',
+    locale: {
+      format: 'YYYY-MM-DD hh:mm'
+    },
+  });
   $("#memberJoinLibrary").change(function(){
     if($(this).is(":checked")){
         $("#memberJoinLibrary-status").val(1);

@@ -2,6 +2,7 @@
 
 use app\assets\EditorAsset;
 use app\models\Book;
+use app\widgets\Breadcrumbs;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use kartik\select2\Select2;
@@ -12,9 +13,15 @@ use yii\web\View;
 EditorAsset::register($this);
 
 $this->title = 'អ្នកខ្ចីសៀវភៅ';
-$this->params['breadcrumbs'][] = ['label' => 'អ្នកខ្ចីសៀវភៅ', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
-
+echo Breadcrumbs::widget([
+    'homeLink' => Yii::$app->params['breadcrumbs']['homeLink'],
+    'links' => [
+        ['label' => 'ព័ត៌មានទូទៅ', 'url' =>  Yii::$app->homeUrl],
+        ['label' => 'អ្នកខ្ចីសៀវភៅ', 'url' => ['index']],
+        ['label' => 'ខ្ចីសៀវភៅ'],
+    ],
+]);
+echo '<hr class="pb-1 border-0">';
 
 $base_url =  Yii::getAlias('@web');
 

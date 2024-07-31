@@ -15,13 +15,13 @@ class GradeSearch extends Grade
      * {@inheritdoc}
      */
 
-    public $globalSearch;
+    public $globalSearch, $from_date, $to_date;
 
     public function rules()
     {
         return [
             [['id',  'status', 'created_by', 'updated_by'], 'integer'],
-            [['title', 'created_at', 'updated_at', 'globalSearch'], 'safe'],
+            [['title', 'created_at', 'updated_at', 'globalSearch', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -55,8 +55,9 @@ class GradeSearch extends Grade
             return $dataProvider;
         }
 
-        $query->orFilterWhere(['like', 'title', $this->globalSearch]);
 
+        $query->orFilterWhere(['like', 'title', $this->globalSearch]);
+        $query->andFilterWhere(['between', 'DATE(grade.created_at)', $this->from_date, $this->to_date]);
         return $dataProvider;
     }
 }

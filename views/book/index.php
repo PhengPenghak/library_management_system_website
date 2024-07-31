@@ -1,5 +1,6 @@
 <?php
 
+use app\widgets\Breadcrumbs;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
@@ -7,8 +8,16 @@ use yii\widgets\Pjax;
 
 
 $this->title = 'សៀវភៅ';
-$this->params['breadcrumbs'][] = ['label' => 'សៀវភៅ', 'url' => ['index']];
+
+
 ?>
+<?= Breadcrumbs::widget([
+    'homeLink' => Yii::$app->params['breadcrumbs']['homeLink'],
+    'links' => [
+        ['label' => 'ព័ត៌មានទូទៅ', 'url' =>  Yii::$app->homeUrl],
+        ['label' => 'សៀវភៅ'],
+    ],
+]); ?>
 <style>
     .active {
         border-color: #346cb0 !important;

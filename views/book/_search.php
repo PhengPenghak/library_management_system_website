@@ -28,7 +28,7 @@ DateRangePickerAsset::register($this);
 
     <div class="row">
         <div class="col-lg-4">
-            <label>Date Range</label>
+            <label> កាលបរិច្ឆេទ</label>
             <div id="order__date__range" style="cursor: pointer;" class="form-control form-control-lg">
                 <i class="fas fa-calendar text-muted"></i>&nbsp;
                 <span></span> <i class="fa fa-caret-down text-muted float-right"></i>
@@ -37,25 +37,14 @@ DateRangePickerAsset::register($this);
             <?= $form->field($model, 'to_date')->hiddenInput()->label(false) ?>
         </div>
         <div class="col-lg-2">
-            <label>Date Range</label>
+            <label>ស្វែងរក</label>
 
             <?= $form->field($model, 'globalSearch')->textInput(['class' => 'form-control form-control-lg globalSearch', 'placeholder' => 'ស្វែងដោយរកចំណងជើង'])->label(false) ?>
         </div>
-        <div class="col-lg-2">
-            <label>Date Range</label>
 
-            <?= $form->field($model, 'categorySearch')->widget(Select2::class, [
-                'data' => ArrayHelper::map(CategoryBook::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title'),
-                'options' => ['placeholder' => 'ស្វែងដោយរកប្រភេទ', 'id' => 'searchByCategory', 'class' => 'custom-select', 'label' => false],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-
-            ])->label(false); ?>
-        </div>
 
         <div class="col-lg-2">
-            <label>Date Range</label>
+            <label>ស្ថានភាព</label>
 
             <?= $form->field($model, 'status')->widget(Select2::class, [
                 'data' => [0 => "មិនទំនេរ", 1 => "នៅទំនេរ"],
@@ -69,7 +58,7 @@ DateRangePickerAsset::register($this);
             ])->label(false); ?>
         </div>
 
-        <div class="col-lg-2">
+        <div class="col-lg-4">
             <div class="float-right">
                 <div class="blank_space_label"></div>
                 <?= Html::a('<i class="bi bi-plus-square mr-2"></i> បញ្ចូលសៀវភៅថ្មី', ['book/create'], ['class' => 'btn btn-lg btn-primary']) ?>

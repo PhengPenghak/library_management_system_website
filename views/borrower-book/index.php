@@ -1,5 +1,6 @@
 <?php
 
+use app\widgets\Breadcrumbs;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap4\Modal;
@@ -10,6 +11,13 @@ $this->title = "អ្នកខ្ចីសៀវភៅ";
 /** @var \app\components\Formter $formater */
 $formater = Yii::$app->formater;
 ?>
+<?= Breadcrumbs::widget([
+    'homeLink' => Yii::$app->params['breadcrumbs']['homeLink'],
+    'links' => [
+        ['label' => 'ព័ត៌មានទូទៅ', 'url' =>  Yii::$app->homeUrl],
+        ['label' => 'អ្នកខ្ចីសៀវភៅ'],
+    ],
+]); ?>
 
 <style>
     .active {
