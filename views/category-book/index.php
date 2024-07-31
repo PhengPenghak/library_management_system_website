@@ -1,12 +1,19 @@
 <?php
 
+use app\widgets\Breadcrumbs;
 use yii\helpers\Html;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Url;
 
 $this->title = 'ប្រភេទសៀវភៅ';
-$this->params['breadcrumbs'][] = $this->title;
+echo Breadcrumbs::widget([
+    'homeLink' => Yii::$app->params['breadcrumbs']['homeLink'],
+    'links' => [
+        ['label' => 'ព័ត៌មានទូទៅ', 'url' =>  Yii::$app->homeUrl],
+        ['label' => 'ប្រភេទសៀវភៅ'],
+    ],
+]);
 ?>
 <div>
 

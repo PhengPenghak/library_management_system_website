@@ -2,6 +2,7 @@
 
 use app\assets\EditorAsset;
 use app\models\Grade;
+use app\widgets\Breadcrumbs;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -9,15 +10,20 @@ use kartik\select2\Select2;
 
 EditorAsset::register($this);
 
-$this->title = 'ព័ត៌មានអ្នកខ្ចីសៀវភៅ';
-$this->params['breadcrumbs'][] = ['label' => 'អ្នកខ្ចីសៀវភៅ', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
-$this->params['breadcrumbs'][] = empty($model->name) ? 'បង្កើត អ្នកខ្ចីសៀវភៅ' : $model->name;
-
+$this->title = 'ព័ត៌មានអ្នកចែកសៀវភៅ';
+echo Breadcrumbs::widget([
+    'homeLink' => Yii::$app->params['breadcrumbs']['homeLink'],
+    'links' => [
+        ['label' => 'ព័ត៌មានទូទៅ', 'url' =>  Yii::$app->homeUrl],
+        ['label' => 'ចែកសៀវភៅតាមថ្នាក់', 'url' => ['index']],
+        'label' => empty($model->username) ? 'បង្កើត ការចែកថ្មី' : $model->username
+    ],
+]);
 $base_url =  Yii::getAlias('@web');
 $model->status = $model->isNewRecord ? 1 : $model->status;
 
 ?>
+<hr class="border-0 pb-1">
 <style>
     .select2-selection--multiple .select2-selection__rendered {
         max-height: unset !important;

@@ -106,7 +106,7 @@ class SeedController extends Controller
 
                 [12, 4, 'Index', 'book-distribution', 'index,detail', 1],
                 [13, 4, 'Create', 'book-distribution', 'create-information-book-distribution,detail', 1],
-                [14, 4, 'Update', 'book-distribution', 'update-book-distribution', 1],
+                [14, 4, 'Update', 'book-distribution', 'update-book-distribution,create-book-distribution', 1],
 
                 [15, 5, 'View', 'category-book', 'view,index', 1],
                 [16, 5, 'Create', 'category-book', 'create', 1],
@@ -119,8 +119,8 @@ class SeedController extends Controller
                 [22, 6, 'Delete', 'member-joined-library', 'delete', 1],
 
                 [23, 7, 'View', 'location-book', 'index,form', 1],
-                [24, 7, 'Create', 'location-book', 'form', 1],
-                [25, 7, 'Update', 'location-book', 'form', 1],
+                [24, 7, 'Create', 'location-book', 'create', 1],
+                [25, 7, 'Update', 'location-book', 'update', 1],
                 [26, 7, 'Delete', 'location-book', 'delete', 1],
 
                 [27, 8, 'View', 'event', 'view,index', 1],

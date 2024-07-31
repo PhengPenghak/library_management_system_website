@@ -1,11 +1,18 @@
 <?php
 
+use app\widgets\Breadcrumbs;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
 
-$this->title = 'Role';
-$this->params['pageTitle'] = $this->title;
+$this->title = 'ការកំណត់សិទ្ធ';
+echo Breadcrumbs::widget([
+  'homeLink' => Yii::$app->params['breadcrumbs']['homeLink'],
+  'links' => [
+    ['label' => 'ព័ត៌មានទូទៅ', 'url' =>  Yii::$app->homeUrl],
+    ['label' => 'ការកំណត់សិទ្ធ'],
+  ],
+]);
 ?>
 
 
@@ -14,8 +21,8 @@ $this->params['pageTitle'] = $this->title;
   <div class="row mb-3">
     <div class="col-lg-3 offset-lg-9">
       <div class="float-right">
-        <a class="btn btn-warning rounded-pill" href="<?= Url::toRoute(['user/role-create']) ?>">
-          Add New <i class="bi bi-plus-circle"></i>
+        <a class="btn btn-primary btn-lg" href="<?= Url::toRoute(['user/role-create']) ?>">
+          <i class="bi bi-plus-square mr-2"></i>បញ្ចូលសិទ្ធអ្នកប្រើប្រាស់ថ្មី
         </a>
       </div>
     </div>
@@ -53,11 +60,14 @@ $this->params['pageTitle'] = $this->title;
 
         'columns' => [
           ['class' => 'yii\grid\SerialColumn'],
-          'name',
+          [
+            'attribute' => 'name',
+            'label' => 'ឈ្មោះសិទ្ធ'
+          ],
 
           [
             'class' => 'yii\grid\ActionColumn',
-            'header' => 'Actions',
+            'header' => 'កែប្រែ',
             'headerOptions' => ['class' => 'text-center'],
             'contentOptions' => ['class' => 'text-center'],
             'template' => '{update}',

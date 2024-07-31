@@ -1,5 +1,6 @@
 <?php
 
+use app\widgets\Breadcrumbs;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
@@ -7,9 +8,15 @@ use yii\helpers\Html;
 
 $this->title = 'បញ្ចូលសៀវភៅថ្មី';
 
-$this->params['breadcrumbs'][] = ['label' => 'សៀវភៅ', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
+<?= Breadcrumbs::widget([
+    'homeLink' => Yii::$app->params['breadcrumbs']['homeLink'],
+    'links' => [
+        ['label' => 'ព័ត៌មានទូទៅ', 'url' =>  Yii::$app->homeUrl],
+        ['label' => 'សៀវភៅ', 'url' => ['index']],
+        ['label' => 'បញ្ចូលសៀវភៅថ្មី'],
+    ],
+]); ?>
 <div class="book-create">
 
     <h4><?= Html::encode($this->title) ?></h4>
