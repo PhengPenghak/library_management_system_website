@@ -20,7 +20,6 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\NotFoundHttpException;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -35,15 +34,15 @@ class ReportController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                // 'access' => [
-                //     'class' => \yii\filters\AccessControl::class,
-                //     'rules' => [
-                //         [
-                //             'actions' => User::getUserPermission(Yii::$app->controller->id),
-                //             'allow' => true,
-                //         ]
-                //     ],
-                // ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => User::getUserPermission(Yii::$app->controller->id),
+                            'allow' => true,
+                        ]
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -63,7 +62,6 @@ class ReportController extends Controller
      * Lists all Blog models.
      * @return mixed
      */
-
 
     public function actionBorrowerBook()
     {
@@ -96,30 +94,30 @@ class ReportController extends Controller
         ]);
     }
 
-    public function actionCreatePdf($id)
+    public function actionExportPdfBorrowBook($id)
     {
         $params = Yii::$app->request->queryParams;
         $from_date = isset($params['BorrowBookSearch']['from_date']) ? $params['BorrowBookSearch']['from_date'] : null;
         $to_date = isset($params['BorrowBookSearch']['to_date']) ? $params['BorrowBookSearch']['to_date'] : null;
 
         $query = "SELECT
-            borrow_book.id AS ID,
-            borrow_book.code,
-            borrow_book.quantity,
-            borrow_book.start,
-            borrow_book.end,
-            infomation_borrower_book.username,
-            infomation_borrower_book.gender,
-            grade.title AS grade_title,
-            book.title AS bookTitle
-        FROM
-            borrow_book
-            INNER JOIN infomation_borrower_book ON infomation_borrower_book.id = borrow_book.information_borrower_book_id
-            INNER JOIN grade ON grade.id = infomation_borrower_book.grade_id
-            INNER JOIN book ON book.id = borrow_book.book_id
-        WHERE
-            infomation_borrower_book.grade_id = :gradeId
-    ";
+                borrow_book.id AS ID,
+                borrow_book.code,
+                borrow_book.quantity,
+                borrow_book.start,
+                borrow_book.end,
+                infomation_borrower_book.username,
+                infomation_borrower_book.gender,
+                grade.title AS grade_title,
+                book.title AS bookTitle
+            FROM
+                borrow_book
+                INNER JOIN infomation_borrower_book ON infomation_borrower_book.id = borrow_book.information_borrower_book_id
+                INNER JOIN grade ON grade.id = infomation_borrower_book.grade_id
+                INNER JOIN book ON book.id = borrow_book.book_id
+            WHERE
+                infomation_borrower_book.grade_id = :gradeId
+        ";
 
         if ($from_date && $to_date) {
             $query .= " AND DATE(borrow_book.created_at) BETWEEN :from_date AND :to_date";
@@ -158,37 +156,29 @@ class ReportController extends Controller
         $mpdf->Output('របាយការណ៏អ្នកខ្ចីសៀបភៅ.pdf', \Mpdf\Output\Destination::INLINE);
     }
 
-
-
-
-
-    public function actionExportExcel($id)
+    public function actionExportExcelBorrowBook($id)
     {
         $reportBorrowerBook = Yii::$app->db->createCommand("SELECT
-            borrow_book.id AS ID, borrow_book.code, borrow_book.quantity, borrow_book.start, borrow_book.end,
-            infomation_borrower_book.username, infomation_borrower_book.gender,
-            grade.title,
-            book.title AS bookTitle
-        FROM
-            borrow_book
-            INNER JOIN infomation_borrower_book ON infomation_borrower_book.id = borrow_book.information_borrower_book_id
-            INNER JOIN grade ON grade.id = infomation_borrower_book.grade_id
-            INNER JOIN book ON book.id = borrow_book.book_id
-        WHERE
-            grade_id = :gradeId
-    ")
+                borrow_book.id AS ID, borrow_book.code, borrow_book.quantity, borrow_book.start, borrow_book.end,
+                infomation_borrower_book.username, infomation_borrower_book.gender,
+                grade.title,
+                book.title AS bookTitle
+            FROM
+                borrow_book
+                INNER JOIN infomation_borrower_book ON infomation_borrower_book.id = borrow_book.information_borrower_book_id
+                INNER JOIN grade ON grade.id = infomation_borrower_book.grade_id
+                INNER JOIN book ON book.id = borrow_book.book_id
+            WHERE
+                grade_id = :gradeId
+        ")
             ->bindParam('gradeId', $id)
             ->queryAll();
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-
-        // Add title
         $title = 'របាយការណ៏អ្នកខ្ចីសៀវភៅ';
         $sheet->setCellValue('A1', $title);
         $sheet->mergeCells('A1:I1');
-
-        // Apply title styles
         $titleStyleArray = [
             'font' => [
                 'bold' => true,
@@ -202,8 +192,6 @@ class ReportController extends Controller
         ];
         $sheet->getStyle('A1')->applyFromArray($titleStyleArray);
         $sheet->getRowDimension('1')->setRowHeight(40);
-
-        // Headers
         $header = [
             'លេខរៀង',
             'ឈ្មោះសិស្ស',
@@ -294,26 +282,21 @@ class ReportController extends Controller
         $gradeList = ArrayHelper::map($grades, 'id', 'title');
         $searchModel = new MemberJoinedLibrarySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        // if ($dataProvider->getCount() === 0) {
-        //     throw new NotFoundHttpException('No records found.');
-        // }
         $scheduleType = Yii::$app->request->getQueryParam('scheduleType', 0);
 
         !empty($selectedDate) ? $activityProvider = new ActiveDataProvider([
             'query' => MemberJoinedLibrarySearch::find()
                 ->andWhere(['like', 'DATE(dateTime)', $selectedDate])
                 ->andWhere(['status' => $scheduleType]),
-            // 'pagination' => [
-            //     'pageSize' => Yii::$app->params['pageSize']
-            // ],
+
             'sort' => [
                 'defaultOrder' => [
-                    'dateTime' => SORT_DESC, // Replace 'id' with the column you want to sort by
+                    'dateTime' => SORT_DESC,
                 ]
             ],
         ]) : $activityProvider = $dataProvider;
 
-        return $this->render('library/index', [
+        return $this->render('member-joind-library/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'gradeSearchModel' => $gradeSearchModel,
@@ -325,24 +308,21 @@ class ReportController extends Controller
 
         ]);
     }
-    public function actionReportLibrary()
+    public function actionExportPdfMemberJoinedLibrary()
     {
         Yii::$app->cache->flush();
 
-        // Ensure no output is sent before the PDF generation
         if (ob_get_contents()) ob_end_clean();
         $dateFromUrl = Yii::$app->request->get('selectMonth');
         if (empty($dateFromUrl)) {
             $dateFromUrl = date("Y-m-d");
         }
+
         $date = new DateTime($dateFromUrl);
         $daysInMonth = $date->format('t');
         $libraryItems = MemberJoinedLibrary::find()
             ->andWhere(['between', 'created_at', $date->format('Y-m-01'), $date->format('Y-m-t')])
             ->all();
-        // echo "<pre>";
-        // print_r($libraryItems);
-        // exit;
 
         $mpdf = new Mpdf([
             'format' => 'A4',
@@ -357,11 +337,122 @@ class ReportController extends Controller
                 ],
             ]),
         ]);
-        $html = $this->renderPartial('library/report_library', [
+        $html = $this->renderPartial('member-joind-library/pdf-template', [
             'daysInMonth' => $daysInMonth,
             'libraryItems' => $libraryItems,
         ]);
         $mpdf->WriteHTML($html);
         $mpdf->Output('report.pdf', \Mpdf\Output\Destination::INLINE);
+    }
+
+    public function actionExportExcelMemberJoinedLibrary($id)
+    {
+        $reportBorrowerBook = Yii::$app->db->createCommand("SELECT 
+            member_joined_library.grade_id AS gradeID, 
+            member_joined_library.type_joined,
+            member_joined_library.total_member, 
+            member_joined_library.total_member_female,
+            member_joined_library.dateTime,
+            grade.title AS gradeName
+        FROM member_joined_library
+        INNER JOIN grade ON grade.id = member_joined_library.grade_id
+        WHERE member_joined_library.grade_id = :gradeId
+        ")
+            ->bindValue(':gradeId', $id)
+            ->queryAll();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $title = 'របាយការណ៏អ្នកចូលបណ្ណាល័យ';
+        $sheet->setCellValue('A1', $title);
+        $sheet->mergeCells('A1:I1');
+        $titleStyleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 16,
+                'name' => 'KhmerOS',
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('A1')->applyFromArray($titleStyleArray);
+        $sheet->getRowDimension('1')->setRowHeight(40);
+
+        // Define the header
+        $header = [
+            'លេខរៀង',
+            'មត្តេយ្យ',
+            'ថ្នាក់ទី១',
+            'ថ្នាក់ទី២',
+            'ថ្នាក់ទី៣',
+            'ថ្នាក់ទី៤',
+            'ថ្នាក់ទី៥',
+            'ថ្នាក់ទី៦',
+            'គ្រូ',
+            'សហគមន៏',
+            'សរុប'
+        ];
+        $sheet->fromArray([$header], null, 'A2');
+        $headerStyleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => 'FFFFD700',
+                ],
+            ],
+        ];
+        $sheet->getStyle('A2:I2')->applyFromArray($headerStyleArray);
+        $sheet->getRowDimension('2')->setRowHeight(30);
+        $dataRows = [];
+        foreach ($reportBorrowerBook as $index => $borrowerBook) {
+            $dataRows[] = [
+                $index + 1,
+                $borrowerBook['gradeName'],  // This column might need adjustment based on actual data structure
+                $borrowerBook['type_joined'] == 1 ? $borrowerBook['total_member'] : 0,
+                $borrowerBook['type_joined'] == 2 ? $borrowerBook['total_member'] : 0,
+            ];
+        }
+        $sheet->fromArray($dataRows, null, 'A3');
+        $dataStyleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('A3:I' . (count($dataRows) + 2))->applyFromArray($dataStyleArray);
+        foreach (range('A', 'I') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $filename = 'របាយការណ៏អ្នកចូលបណ្ណាល័យ.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        $tempFile = tempnam(sys_get_temp_dir(), 'excel');
+        $writer->save($tempFile);
+
+        return Yii::$app->response->sendFile($tempFile, $filename, [
+            'mimeType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'inline' => false,
+        ])->on(\yii\web\Response::EVENT_AFTER_SEND, function ($event) {
+            unlink($event->data);
+        }, $tempFile);
     }
 }

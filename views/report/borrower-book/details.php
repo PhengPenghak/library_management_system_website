@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $to_date = isset($borrowBookSearch['to_date']) ? $borrowBookSearch['to_date'] : '';
                     ?>
                     <?= Html::a('<i class="fas fa-file-pdf"></i> Export PDF', [
-                        'report/create-pdf', 'id' => $id,
+                        'report/export-pdf-borrow-book', 'id' => $id,
                         'BorrowBookSearch[from_date]' => $from_date,
                         'BorrowBookSearch[to_date]' => $to_date,
                     ], [
@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $to_date = isset($borrowBookSearch['to_date']) ? $borrowBookSearch['to_date'] : '';
                     ?>
                     <?= Html::a('<i class="fas fa-file-pdf"></i> Export PDF', [
-                        'report/export-excel', 'id' => $id,
+                        'report/export-excel-borrow-book', 'id' => $id,
                         'BorrowBookSearch[from_date]' => $from_date,
                         'BorrowBookSearch[to_date]' => $to_date,
                     ], [
@@ -56,14 +56,16 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
 
 
-        <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'tableOptions' => [
-                'class' => 'table table-hover',
-                'cellspacing' => '0',
-                'width' => '100%',
-            ],
-            'layout' => "
+        <div class="card card-bg-default">
+            <div class="card-body">
+                <?= GridView::widget([
+                    'dataProvider' => $dataProvider,
+                    'tableOptions' => [
+                        'class' => 'table table-hover',
+                        'cellspacing' => '0',
+                        'width' => '100%',
+                    ],
+                    'layout' => "
                 <div class='table-responsive'>
                     {items}
                 </div>
@@ -77,53 +79,58 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
             ",
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
 
-                'code',
+                        'code',
 
-                [
-                    'attribute' => 'borrower_id',
-                    'label' => 'Borrower Name',
-                    'value' => function ($model) {
-                        return $model->informationBorrowerBook ? $model->informationBorrowerBook->username : 'N/A';
-                    },
-                ],
+                        [
+                            'attribute' => 'borrower_id',
+                            'label' => 'Borrower Name',
+                            'value' => function ($model) {
+                                return $model->informationBorrowerBook ? $model->informationBorrowerBook->username : 'N/A';
+                            },
+                        ],
 
-                [
-                    'attribute' => 'grade_title',
-                    'label' => 'Grade Title',
-                    'value' => function ($model) {
-                        return $model->informationBorrowerBook && $model->informationBorrowerBook->grade ? $model->informationBorrowerBook->grade->title : 'N/A';
-                    },
-                ],
+                        [
+                            'attribute' => 'grade_title',
+                            'label' => 'Grade Title',
+                            'value' => function ($model) {
+                                return $model->informationBorrowerBook && $model->informationBorrowerBook->grade ? $model->informationBorrowerBook->grade->title : 'N/A';
+                            },
+                        ],
 
-                [
-                    'attribute' => 'book_id',
-                    'label' => 'Book Title',
-                    'value' => function ($model) {
-                        return $model->book ? $model->book->title : 'N/A';
-                    },
-                ],
+                        [
+                            'attribute' => 'book_id',
+                            'label' => 'Book Title',
+                            'value' => function ($model) {
+                                return $model->book ? $model->book->title : 'N/A';
+                            },
+                        ],
 
-                'quantity',
+                        'quantity',
 
-                [
-                    'attribute' => 'start',
-                    'format' => ['date', 'php:d/m/Y'],
-                    'headerOptions' => ['style' => 'text-align: left;'],
-                    'contentOptions' => ['style' => 'text-align: left;'],
-                ],
+                        [
+                            'attribute' => 'start',
+                            'format' => ['date', 'php:d/m/Y'],
+                            'headerOptions' => ['style' => 'text-align: left;'],
+                            'contentOptions' => ['style' => 'text-align: left;'],
+                        ],
 
 
-                [
-                    'attribute' => 'end',
-                    'format' => ['date', 'php:d/m/Y'],
-                    'headerOptions' => ['style' => 'text-align: left;'],
-                    'contentOptions' => ['style' => 'text-align: left;'],
-                ],
-            ],
-        ]); ?>
+                        [
+                            'attribute' => 'end',
+                            'format' => ['date', 'php:d/m/Y'],
+                            'headerOptions' => ['style' => 'text-align: left;'],
+                            'contentOptions' => ['style' => 'text-align: left;'],
+                        ],
+                    ],
+                ]); ?>
+            </div>
+        </div>
+
+
+
 
         <?php ActiveForm::end(); ?>
     </div>
