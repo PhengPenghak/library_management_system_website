@@ -2,7 +2,6 @@
 
 use app\components\Formater;
 use app\models\MemberJoinedLibrary;
-use PhpOffice\PhpSpreadsheet\Chart\Title;
 
 $khmer_months = array(
     "មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា",
@@ -26,7 +25,7 @@ if ($selectDate) {
 $totalSet = MemberJoinedLibrary::find()
     ->with('grade')
     ->andWhere(['MONTH(dateTime)' => $currentMonth])
-    ->andWhere(['YEAR(dateTime)' => 2024])
+    ->andWhere(['YEAR(dateTime)' =>  $currentYear])
     ->andWhere(['member_joined_library.status' => $scheduleType])
     ->all();
 // echo "<pre>";

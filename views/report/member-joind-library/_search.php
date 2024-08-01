@@ -74,7 +74,9 @@ use yii\widgets\ActiveForm;
             $scheduleType = Yii::$app->request->get('MemberJoinedLibrarySearch')['scheduleType'] ?? 0;
             $reportType = Yii::$app->request->get('reportType') ?? 0;
             ?>
-            <?= Html::a(' <i class="bi bi-printer"></i> Report to PDF', ['report/report-library', 'selectedDate' => $selectedDate, 'scheduleType' => $scheduleType, 'reportType' => $reportType], ['class' => 'btn btn-lg btn-danger btn-reportType']) ?>
+            <?= Html::a(' <i class="bi bi-printer"></i> Report to PDF', ['report/export-pdf-member-joined-library', 'selectedDate' => $selectedDate, 'scheduleType' => $scheduleType, 'reportType' => $reportType], ['class' => 'btn btn-lg btn-danger btn-reportType']) ?>
+            <?= Html::a('Export to Excel', ['report/export-excel-member-joined-library'], ['class' => 'btn btn-lg btn-success']) ?>
+
         </div>
     </div>
     <?php ActiveForm::end(); ?>
