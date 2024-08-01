@@ -178,13 +178,13 @@ $controller_action_group = empty($this->params['controller_action_group']) ? '' 
                         </a>
                         <ul class="menu">
                             <li class="menu-item <?= $controller == 'user' ? 'has-active' : ''; ?> py-1 has-child">
-                                <a href="#" class="menu-link"><?= Yii::t('app', 'User & Role') ?></a>
+                                <a href="#" class="menu-link"><?= Yii::t('app', 'អ្នកប្រើប្រាស់ & សិទ្ធ') ?></a>
                                 <ul class="menu">
                                     <li class="menu-item <?= $controller_action_group == 'setting_user' ? 'has-active' : ''; ?> py-1">
-                                        <a href="<?= Yii::getAlias("@web/user/index") ?>" class="menu-link">User</a>
+                                        <a href="<?= Yii::getAlias("@web/user/index") ?>" class="menu-link">អ្នកប្រើប្រាស់</a>
                                     </li>
                                     <li class="menu-item <?= $controller_action_group == 'setting_role' ? 'has-active' : ''; ?> py-1">
-                                        <a href="<?= Yii::getAlias("@web/user/role") ?>" class="menu-link">Role</a>
+                                        <a href="<?= Yii::getAlias("@web/user/role") ?>" class="menu-link">សិទ្ធ</a>
                                     </li>
                                 </ul>
                             </li>

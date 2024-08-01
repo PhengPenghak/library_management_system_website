@@ -26,7 +26,7 @@ DateRangePickerAsset::register($this);
 <div class="row">
     <div class="col-lg-4">
         <label>កាលបរិច្ឆេទ</label>
-        <div id="order__date__range" style="cursor: pointer;" class="form-control">
+        <div id="order__date__range" style="cursor: pointer;" class="form-control form-control-lg">
             <i class="fas fa-calendar text-muted"></i>&nbsp;
             <span></span> <i class="fa fa-caret-down text-muted float-right"></i>
         </div>
@@ -34,12 +34,12 @@ DateRangePickerAsset::register($this);
         <?= $form->field($model, 'to_date')->hiddenInput()->label(false) ?>
     </div>
     <div class="col-lg-4">
-        <?= $form->field($model, 'globalSearch')->textInput(['placeholder' => 'ស្វែងរកឈ្មោះអ្នកប្រើប្រាស់ ...............'])->label('ស្វែងរក') ?>
+        <?= $form->field($model, 'globalSearch')->textInput(['placeholder' => 'ស្វែងរកឈ្មោះខ្ចីសៀវភៅ ...............', 'class' => 'form-control form-control-lg'])->label('ស្វែងរក') ?>
     </div>
     <div class="col-lg-4">
         <div class="float-right">
             <div class="blank_space_label"></div>
-            <a data-title="Add Borrow Book" href="<?= Url::to(['create-information-borrower-book']) ?>" class="btn btn-primary"><i class="bi bi-plus-square mr-2"></i>បង្កើត​<span class="d-none d-lg-inline">អ្នកខ្ចីសៀវភៅ</span></a>
+            <a data-title="Add Borrow Book" href="<?= Url::to(['create-information-borrower-book']) ?>" class="btn btn-lg btn-primary"><i class="bi bi-plus-square mr-2"></i>បង្កើត​<span class="d-none d-lg-inline">អ្នកខ្ចីសៀវភៅ</span></a>
         </div>
     </div>
 </div>

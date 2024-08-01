@@ -60,11 +60,11 @@ class UserSearch extends User
       return $dataProvider;
     }
 
-    $query->orFilterWhere(['like', 'user.email', $this->globalSearch])
-      ->orFilterWhere(['like', 'user.username', $this->globalSearch])
-      ->orFilterWhere(['like', 'user_profile.first_name', $this->globalSearch])
-      ->orFilterWhere(['like', 'user_profile.last_name', $this->globalSearch])
-      ->orFilterWhere(['like', 'user_profile.phone_number', $this->globalSearch]);
+    $query->andFilterWhere(['like', 'user.email', $this->globalSearch])
+      ->andFilterWhere(['like', 'user.username', $this->globalSearch])
+      ->andFilterWhere(['like', 'user_profile.first_name', $this->globalSearch])
+      ->andFilterWhere(['like', 'user_profile.last_name', $this->globalSearch])
+      ->andFilterWhere(['like', 'user_profile.phone_number', $this->globalSearch]);
 
     return $dataProvider;
   }

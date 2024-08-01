@@ -1,11 +1,19 @@
 <?php
 
+use app\widgets\Breadcrumbs;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
 
 $this->title = 'User List';
-$this->params['pageTitle'] = $this->title;
+// $this->params['pageTitle'] = $this->title;
+echo Breadcrumbs::widget([
+    'homeLink' => Yii::$app->params['breadcrumbs']['homeLink'],
+    'links' => [
+        ['label' => 'ព័ត៌មានទូទៅ', 'url' =>  Yii::$app->homeUrl],
+        ['label' => 'អ្នកប្រើប្រាស់'],
+    ],
+]);
 
 ?>
 <div class="<?= Yii::$app->controller->action->id; ?>">
@@ -44,9 +52,13 @@ $this->params['pageTitle'] = $this->title;
 
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
-                    'username' => 'username',
                     [
-                        'label' => 'Role',
+                        'attribute' => 'username',
+                        'label' => 'ឈ្មោះ​អ្នកប្រើប្រាស់',
+
+                    ],
+                    [
+                        'label' => 'សិទ្ធអ្នកប្រើប្រាស់',
                         'attribute' => 'role_id',
                         'value' => function ($model) {
                             return !empty($model->role) ? $model->role->name : 'not set';
@@ -57,19 +69,20 @@ $this->params['pageTitle'] = $this->title;
                         'contentOptions' => ['class' => 'text-center'],
                         'headerOptions' => ['class' => 'text-center', 'style' => 'min-width: 100px;'],
                         'format' => 'raw',
+                        'label' => 'ស្ថានភាព',
                         'value' => function ($model) {
                             if ($model->status == 1) {
-                                return '<span class="badge badge-info">Active</span>';
+                                return '<span class="badge badge-info">នៅប្រើប្រាស់</span>';
                             } else {
-                                return '<span class="badge badge-warning">Inactive</span>';
+                                return '<span class="badge badge-warning">ឈប់ប្រើប្រាស់</span>';
                             }
                         },
                     ],
 
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'header' => Yii::t('app', 'Actions'),
-                        'headerOptions' => ['class' => 'text-center'],
+                        'header' => Yii::t('app', 'កែប្រែ'),
+                        'headerOptions' => ['class' => 'text-center text-primary'],
                         'contentOptions' => ['class' => 'text-center'],
                         'template' => '{update} {delete}',
                         'buttons' => [

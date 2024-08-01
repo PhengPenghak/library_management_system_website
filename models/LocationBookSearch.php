@@ -15,12 +15,12 @@ class LocationBookSearch extends LocationBook
      * {@inheritdoc}
      */
 
-    public $globalSearch;
+    public $globalSearch, $from_date, $to_date;
     public function rules()
     {
         return [
             [['id', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['title', 'created_at', 'updated_at', 'globalSearch'], 'safe'],
+            [['title', 'created_at', 'updated_at', 'globalSearch', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -55,7 +55,7 @@ class LocationBookSearch extends LocationBook
         }
 
         $query->orFilterWhere(['like', 'title', $this->globalSearch]);
-
+        $query->andFilterWhere(['between', 'DATE(location_book.created_at)', $this->from_date, $this->to_date]);
         return $dataProvider;
     }
 }
