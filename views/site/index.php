@@ -499,7 +499,7 @@ $baseUrl = Yii::getAlias("@web");
 $script = <<< JS
 $(document).ready(function() {
     $.ajax({
-        url: '/site/chart-data',
+        url: '{$baseUrl}/site/chart-data',
         type: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -563,7 +563,7 @@ $(document).ready(function() {
 
 
 $(document).ready(function () {
-    $.getJSON('/site/pie-chart-data', function (data) {
+    $.getJSON('{$baseUrl}/site/pie-chart-data', function (data) {
         var ctx = $('#pieChart')[0].getContext('2d');
         var pieChart = new Chart(ctx, {
             type: 'pie',
