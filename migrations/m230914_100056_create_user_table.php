@@ -13,7 +13,7 @@ class m230914_100056_create_user_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%user}}', [
-            'id' => $this->char(36),
+            'id' => $this->primaryKey(),
             'role_id' => $this->integer(),
             'username' => $this->string()->notNull(),
             'auth_key' => $this->string(),
@@ -24,7 +24,6 @@ class m230914_100056_create_user_table extends Migration
             'email' => $this->string(),
             'status' => $this->tinyInteger()
         ]);
-        $this->addPrimaryKey('pk_user_id', '{{%user}}', 'id');
     }
 
     /**

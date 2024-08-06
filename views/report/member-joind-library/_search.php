@@ -1,115 +1,132 @@
 <?php
 
-use app\assets\DateRangePickerAsset;
-use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\assets\DateRangePickerAsset;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\BorrowBookSearch */
-/* @var $form yii\widgets\ActiveForm */
+DateRangePickerAsset::register($this);
+
+
+$fromDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['from_date'] ?? '';
+$toDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['to_date'] ?? '';
+$typeJoined = Yii::$app->request->get('MemberJoinedLibrarySearch')['type_joined'] ?? '';
+
+
+
+
 ?>
+<style>
+    .blank_space_label {
+        padding-top: 32px;
+    }
+</style>
+<div class="order-search">
 
-<div class="borrow-book-search">
-
-    <?php
-    $form = ActiveForm::begin([
+    <?php $form = ActiveForm::begin([
         'action' => ['report/library'],
+        'options' => ['data-pjax' => true, 'id' => 'formblogexperienceSearch'],
         'method' => 'get',
-        'options' => ['data-pjax' => true, 'id' => 'formActivitySearch'],
-    ]);
-    ?>
-    <div class="d-flex">
-        <div class="d-flex">
+    ]); ?>
 
-            <div class="position-relative" style="width: 200px;">
-                <?= $form->field($model, 'selectedDate')->textInput(['class' => 'form-control form-control-lg ', 'placeholder' => 'ស្វែងរកថ្នាក់...', 'id' => 'selectedDate'])->label(false) ?>
-
+    <div class="row">
+        <div class="col-lg-3">
+            <label> កាលបរិច្ឆេទ</label>
+            <div id="order__date__range" style="cursor: pointer;" class="form-control form-control-lg">
+                <i class="fas fa-calendar text-muted"></i>&nbsp;
+                <span></span> <i class="fa fa-caret-down text-muted float-right"></i>
             </div>
-            <div>
-                <div class="ml-3" style="width: 200px;">
-
-                    <?= Select2::widget([
-                        'name' => 'reportType',
-                        'data' => [
-                            0 => "របាយការណ៍ប្រចាំខែ",
-                            1 => "របាយការណ៍ប្រចាំឆ្នាំ"
-                        ],
-                        'value' => $reportType,
-                        'options' => [
-                            'placeholder' => 'ប្រភេទរបាយការណ៍',
-                            'id' => 'reportType',
-                            'class' => 'reportType',
-                            'style' => 'width:300px'
-                        ],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ]); ?>
-
-                </div>
-            </div>
-            <div>
-                <div class="ml-3" style="width: 200px;">
-                    <?= $form->field($model, 'scheduleType')->widget(Select2::class, [
-                        'data' => [
-                            0 => "ចូលសេរី",
-                            1 => "ចូលតាមកាលវិភាគ"
-                        ],
-                        'options' => [
-                            'placeholder' => 'ស្ថានភាព',
-                            'id' => 'scheduleType',
-                            'class' => 'scheduleType',
-                        ],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ])->label(false); ?>
-                </div>
-            </div>
+            <?= $form->field($model, 'from_date')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'to_date')->hiddenInput()->label(false) ?>
         </div>
-        <div class="ml-auto">
-            <?php
-            $selectedDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['selectedDate'] ?? date('Y-m');
-            $scheduleType = Yii::$app->request->get('MemberJoinedLibrarySearch')['scheduleType'] ?? 0;
-            $reportType = Yii::$app->request->get('reportType') ?? 0;
-            ?>
-            <?= Html::a(' <i class="bi bi-printer"></i> Report to PDF', ['report/export-pdf-member-joined-library', 'selectedDate' => $selectedDate, 'scheduleType' => $scheduleType, 'reportType' => $reportType], ['class' => 'btn btn-lg btn-danger btn-reportType']) ?>
-            <?= Html::a('Export to Excel', ['report/export-excel-member-joined-library'], ['class' => 'btn btn-lg btn-success']) ?>
+        <div class="col-lg-3">
+            <label> កាលបរិច្ឆេទ</label>
 
+            <?= $form->field($model, 'type_joined')->dropDownList([
+                0 => 'ចូលអានសេរី',
+                1 => 'ចូលអានតាមកាលវិភាគ'
+            ], ['prompt' => 'Select Type', 'class' => 'form-control form-control-lg'])->label(false) ?>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="float-right">
+                <div class="blank_space_label"></div>
+                <?= Html::a(
+                    ' <i class="bi bi-printer"></i> Report to PDF',
+                    ['report/export-pdf-member-joined-library', 'MemberJoinedLibrarySearch[from_date]' => $fromDate, 'MemberJoinedLibrarySearch[to_date]' => $toDate, 'MemberJoinedLibrarySearch[type_joined]' => $typeJoined],
+                    ['class' => 'btn btn-lg btn-danger btn-reportType']
+                ) ?>
+
+                <?= Html::a(
+                    'Export to Excel test',
+                    ['report/export-excel-member-joined-librarys', 'MemberJoinedLibrarySearch[from_date]' => $fromDate, 'MemberJoinedLibrarySearch[to_date]' => $toDate, 'MemberJoinedLibrarySearch[type_joined]' => $typeJoined],
+                    ['class' => 'btn btn-lg btn-success']
+                ) ?>
+
+            </div>
         </div>
     </div>
+
     <?php ActiveForm::end(); ?>
 
 </div>
 
-
 <?php
 $script = <<<JS
-    pjaxInit();
-    function pjaxInit(){
-         flatpickr("#selectedDate", {
-             altInput: true,
-             altFormat: "F j, Y",
-             dateFormat: "Y-m-d",
-            maxDate: 'today',
-         });    
+
+    var is_filter = $("#memberjoinedlibrarysearch-from_date").val() != '' ? true : false;
+
+    if (!is_filter) {
+        var start = moment().startOf('month'); // Default to start of the current month
+        var end = moment().endOf('month'); // Default to end of the current month
+    } else {
+        var start = moment($("#memberjoinedlibrarysearch-from_date").val());
+        var end = moment($("#memberjoinedlibrarysearch-to_date").val());
     }
-    $(document).on("change","#countrysearch-globalsearch", function(){
+
+    function cb(start, end) {
+        $('#order__date__range span').html(start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY'));
+        $("#memberjoinedlibrarysearch-from_date").val(start.format('YYYY-MM-DD'));
+        $("#memberjoinedlibrarysearch-to_date").val(end.format('YYYY-MM-DD'));
+    }
+
+    $('#order__date__range').daterangepicker({
+        startDate: start,
+        endDate: end,
+        opens: 'left',
+        showDropdowns: true,
+        locale: {
+            format: 'YYYY-MM-DD',
+            separator: ' to ',
+            applyLabel: 'Apply',
+            cancelLabel: 'Cancel',
+            fromLabel: 'From',
+            toLabel: 'To',
+            customRangeLabel: 'Custom Range'
+        },
+        ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'This Year': [moment().startOf('year'), moment().endOf('year')],
+            'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+        }
+    }, cb);
+
+    cb(start, end);
+
+    $('#order__date__range').on('apply.daterangepicker', function(ev, picker) {
         $('#formblogexperienceSearch').trigger('submit');
     });
-    $(".triggerModal").click(function(){
-        $("#modal").modal("show")
-            .find("#modalContent")
-            .load($(this).attr("value"));
-        $("#modal").find("#modal-label").text($(this).data("title"));
+
+    $(document).on("change", "#memberjoinedlibrarysearch-globalsearch", function() {
+        $('#formblogexperienceSearch').trigger('submit');
     });
-    $("#selectedDate, #scheduleType, #reportType").on("change",function(){
-        pjaxClear();
-    })
-    function pjaxClear(){
-        $("#formActivitySearch").submit();
-    }
+
+
+    $('#formblogexperienceSearch').on('change', function() {
+        $(this).submit();
+    });
 
 JS;
 $this->registerJs($script);

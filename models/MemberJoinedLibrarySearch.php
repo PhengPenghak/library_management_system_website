@@ -6,9 +6,6 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\MemberJoinedLibrary;
 
-/**
- * MemberJoinedLibrarySearch represents the model behind the search form of `app\models\MemberJoinedLibrary`.
- */
 class MemberJoinedLibrarySearch extends MemberJoinedLibrary
 {
     /**
@@ -19,7 +16,7 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
     {
         return [
             [['id', 'total_member', 'total_member_female', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['type_member', 'dateTime', 'created_at', 'updated_at', 'globalSearch', 'selectedDate', 'scheduleType', 'from_date', 'to_date'], 'safe'],
+            [['type_member', 'type_joined', 'dateTime', 'created_at', 'updated_at', 'globalSearch', 'selectedDate', 'scheduleType', 'from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -44,8 +41,6 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
         $query = MemberJoinedLibrary::find()
             ->joinWith('grade');
 
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => ['defaultOrder' => ['created_at' => SORT_DESC]]
@@ -54,15 +49,18 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
+        $query->andFilterWhere([
+            'type_joined' => $this->type_joined,
+        ]);
+
         $query->andFilterWhere(['like', 'grade.title', $this->globalSearch])
             ->andFilterWhere(['=', 'member_joined_library.status', $this->scheduleType])
-            ->andFilterWhere(['like', 'member_joined_library.status', $this->status])
-            ->andFilterWhere(['like', 'member_joined_library.dateTime', $this->selectedDate]);
+            ->andFilterWhere(['like', 'member_joined_library.status', $this->status]);
+
+
         $query->andFilterWhere(['between', 'DATE(member_joined_library.dateTime)', $this->from_date, $this->to_date]);
         return $dataProvider;
     }

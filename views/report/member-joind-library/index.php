@@ -32,8 +32,9 @@ $reportType = Yii::$app->request->getQueryParam('reportType', 0);
 </style>
 <div>
 
-    <?= $this->render('_search', ['model' => $searchModel, 'scheduleType' => $scheduleType, 'reportType' => $reportType, 'selectedDate' => $selectedDate]);
-    ?>
+    <?= $this->render('_search', [
+        'model' => $searchModel,
+    ]); ?>
 
     <hr class="border-0">
 

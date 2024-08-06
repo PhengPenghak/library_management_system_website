@@ -276,184 +276,160 @@ class ReportController extends Controller
     }
     public function actionLibrary()
     {
-        $selectedDate = Yii::$app->request->get('selectedDate');
-        $gradeSearchModel = new MemberJoinedLibrarySearch();
-        $gradeDataProvider = $gradeSearchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new MemberJoinedLibrarySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         $grades = Grade::find()->all();
         $gradeList = ArrayHelper::map($grades, 'id', 'title');
-        $searchModel = new MemberJoinedLibrarySearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        $scheduleType = Yii::$app->request->getQueryParam('scheduleType', 0);
-
-        !empty($selectedDate) ? $activityProvider = new ActiveDataProvider([
-            'query' => MemberJoinedLibrarySearch::find()
-                ->andWhere(['like', 'DATE(dateTime)', $selectedDate])
-                ->andWhere(['status' => $scheduleType]),
-
-            'sort' => [
-                'defaultOrder' => [
-                    'dateTime' => SORT_DESC,
-                ]
-            ],
-        ]) : $activityProvider = $dataProvider;
 
         return $this->render('member-joind-library/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'gradeSearchModel' => $gradeSearchModel,
-            'gradeDataProvider' => $gradeDataProvider,
-            'selectedDate' => $selectedDate,
-            'activityProvider' => $activityProvider,
-
             'gradeList' => $gradeList
-
         ]);
     }
+
+
+
     public function actionExportPdfMemberJoinedLibrary()
     {
-        Yii::$app->cache->flush();
+        $fromDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['from_date'] ?? null;
+        $toDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['to_date'] ?? null;
 
-        if (ob_get_contents()) ob_end_clean();
-        $dateFromUrl = Yii::$app->request->get('selectMonth');
-        if (empty($dateFromUrl)) {
-            $dateFromUrl = date("Y-m-d");
+        if ($fromDate && $toDate) {
+            $fromDate = date('Y-m-d', strtotime($fromDate));
+            $toDate = date('Y-m-d', strtotime($toDate));
+        } else {
+            throw new \yii\web\BadRequestHttpException('Invalid date parameters.');
         }
 
-        $date = new DateTime($dateFromUrl);
-        $daysInMonth = $date->format('t');
-        $libraryItems = MemberJoinedLibrary::find()
-            ->andWhere(['between', 'created_at', $date->format('Y-m-01'), $date->format('Y-m-t')])
-            ->all();
+        $reportBorrowerBook = Yii::$app->db->createCommand("SELECT member_joined_library.type_joined AS typeJoined,
+                CASE 
+                    WHEN grade.title LIKE 'ថ្នាក់ទី 1%' THEN 'ថ្នាក់ទី 1'
+                    WHEN grade.title LIKE 'ថ្នាក់ទី 2%' THEN 'ថ្នាក់ទី 2'
+                    WHEN grade.title LIKE 'ថ្នាក់ទី 3%' THEN 'ថ្នាក់ទី 3'
+                    WHEN grade.title LIKE 'ថ្នាក់ទី 4%' THEN 'ថ្នាក់ទី 4'
+                    WHEN grade.title LIKE 'ថ្នាក់ទី 5%' THEN 'ថ្នាក់ទី 5'
+                    WHEN grade.title LIKE 'ថ្នាក់ទី 6%' THEN 'ថ្នាក់ទី 6'
+                    ELSE grade.title 
+                END AS gradeName,
+                DATE_FORMAT(member_joined_library.dateTime, '%d') AS day,
+                SUM(member_joined_library.total_member) AS total_member,
+                SUM(member_joined_library.total_member_female) AS total_member_female
+            FROM member_joined_library
+            LEFT JOIN grade ON grade.id = member_joined_library.grade_id
+            WHERE member_joined_library.dateTime BETWEEN :fromDate AND :toDate
+            GROUP BY day, member_joined_library.type_joined, gradeName
+            ORDER BY day, member_joined_library.type_joined
+        ")
+            ->bindValue(':fromDate', $fromDate)
+            ->bindValue(':toDate', $toDate)
+            ->queryAll();
 
+        $totalMembersAllDays = 0;
+        $totalMembersFemaleAllDays = 0;
+        $gradeNames = ["មត្តេយ្យ", "ថ្នាក់ទី 1", "ថ្នាក់ទី 2", "ថ្នាក់ទី 3", "ថ្នាក់ទី 4", "ថ្នាក់ទី 5", "ថ្នាក់ទី 6", "គ្រូ", "សហគមន៏",];
+        $gradeTotals = array_fill_keys($gradeNames, ['total_member' => 0, 'total_member_female' => 0]);
+
+        $formattedData = [];
+        foreach ($reportBorrowerBook as $entry) {
+            $day = intval($entry['day']);
+            if (!isset($formattedData[$day])) {
+                $formattedData[$day] = [];
+            }
+            $formattedData[$day][] = $entry;
+        }
+
+
+        // Initialize mPDF
+        $config = new \Mpdf\Config\ConfigVariables();
+        $fontDirs = $config->getDefaults()['fontDir'];
+        $fontData = (new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'];
         $mpdf = new Mpdf([
             'format' => 'A4',
             'default_font' => 'khmerOS',
-            'fontDir' => array_merge((new ConfigVariables())->getDefaults()['fontDir'], [
+            'fontDir' => array_merge($fontDirs, [
                 Yii::getAlias('@webroot') . '/fonts',
             ]),
-            'fontdata' => array_merge((new FontVariables())->getDefaults()['fontdata'], [
+            'fontdata' => array_merge($fontData, [
                 'khmerOS' => [
                     'R' => 'khmerOS.ttf',
                     'B' => 'khmerOS.ttf',
                 ],
             ]),
         ]);
-        $html = $this->renderPartial('member-joind-library/pdf-template', [
-            'daysInMonth' => $daysInMonth,
-            'libraryItems' => $libraryItems,
+        $html = $this->renderPartial('member-joind-library/_pdf_template', [
+
+            'formattedData' => $formattedData,
+            'gradeNames' => $gradeNames,
+            'gradeTotals' => $gradeTotals,
+            'totalMembersAllDays' => $totalMembersAllDays,
+            'totalMembersFemaleAllDays' => $totalMembersFemaleAllDays,
         ]);
         $mpdf->WriteHTML($html);
         $mpdf->Output('report.pdf', \Mpdf\Output\Destination::INLINE);
     }
 
-    public function actionExportExcelMemberJoinedLibrary($id)
+    public function actionExportExcelMemberJoinedLibrarys()
     {
-        $reportBorrowerBook = Yii::$app->db->createCommand("SELECT 
-            member_joined_library.grade_id AS gradeID, 
-            member_joined_library.type_joined,
-            member_joined_library.total_member, 
-            member_joined_library.total_member_female,
-            member_joined_library.dateTime,
-            grade.title AS gradeName
+        $fromDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['from_date'] ?? null;
+        $toDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['to_date'] ?? null;
+        $typeJoined = Yii::$app->request->get('MemberJoinedLibrarySearch')['type_joined'] ?? 'default_type_joined';
+
+
+        if ($fromDate && $toDate) {
+            $fromDate = date('Y-m-d', strtotime($fromDate));
+            $toDate = date('Y-m-d', strtotime($toDate));
+        } else {
+            throw new \yii\web\BadRequestHttpException('Invalid date parameters.');
+        }
+
+        $reportBorrowerBook = Yii::$app->db->createCommand("SELECT member_joined_library.type_joined AS typeJoined,
+        CASE 
+            WHEN grade.title LIKE 'ថ្នាក់ទី 1%' THEN 'ថ្នាក់ទី 1'
+            WHEN grade.title LIKE 'ថ្នាក់ទី 2%' THEN 'ថ្នាក់ទី 2'
+            WHEN grade.title LIKE 'ថ្នាក់ទី 3%' THEN 'ថ្នាក់ទី 3'
+            WHEN grade.title LIKE 'ថ្នាក់ទី 4%' THEN 'ថ្នាក់ទី 4'
+            WHEN grade.title LIKE 'ថ្នាក់ទី 5%' THEN 'ថ្នាក់ទី 5'
+            WHEN grade.title LIKE 'ថ្នាក់ទី 6%' THEN 'ថ្នាក់ទី 6'
+            ELSE grade.title 
+        END AS gradeName,
+        DATE_FORMAT(member_joined_library.dateTime, '%d') AS day,
+        SUM(member_joined_library.total_member) AS total_member,
+        SUM(member_joined_library.total_member_female) AS total_member_female
         FROM member_joined_library
-        INNER JOIN grade ON grade.id = member_joined_library.grade_id
-        WHERE member_joined_library.grade_id = :gradeId
+        LEFT JOIN grade ON grade.id = member_joined_library.grade_id
+        WHERE member_joined_library.dateTime BETWEEN :fromDate AND :toDate
+        GROUP BY day, member_joined_library.type_joined, gradeName
+        ORDER BY day, member_joined_library.type_joined
         ")
-            ->bindValue(':gradeId', $id)
+            ->bindValue(':fromDate', $fromDate)
+            ->bindValue(':toDate', $toDate)
             ->queryAll();
 
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $title = 'របាយការណ៏អ្នកចូលបណ្ណាល័យ';
-        $sheet->setCellValue('A1', $title);
-        $sheet->mergeCells('A1:I1');
-        $titleStyleArray = [
-            'font' => [
-                'bold' => true,
-                'size' => 16,
-                'name' => 'KhmerOS',
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-            ],
-        ];
-        $sheet->getStyle('A1')->applyFromArray($titleStyleArray);
-        $sheet->getRowDimension('1')->setRowHeight(40);
+        $totalMembersAllDays = 0;
+        $totalMembersFemaleAllDays = 0;
+        $gradeNames = ["មត្តេយ្យ", "ថ្នាក់ទី 1", "ថ្នាក់ទី 2", "ថ្នាក់ទី 3", "ថ្នាក់ទី 4", "ថ្នាក់ទី 5", "ថ្នាក់ទី 6", "គ្រូ", "សហគមន៏",];
+        $gradeTotals = array_fill_keys($gradeNames, ['total_member' => 0, 'total_member_female' => 0]);
 
-        // Define the header
-        $header = [
-            'លេខរៀង',
-            'មត្តេយ្យ',
-            'ថ្នាក់ទី១',
-            'ថ្នាក់ទី២',
-            'ថ្នាក់ទី៣',
-            'ថ្នាក់ទី៤',
-            'ថ្នាក់ទី៥',
-            'ថ្នាក់ទី៦',
-            'គ្រូ',
-            'សហគមន៏',
-            'សរុប'
-        ];
-        $sheet->fromArray([$header], null, 'A2');
-        $headerStyleArray = [
-            'font' => [
-                'bold' => true,
-                'size' => 12,
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-            ],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                ],
-            ],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => [
-                    'argb' => 'FFFFD700',
-                ],
-            ],
-        ];
-        $sheet->getStyle('A2:I2')->applyFromArray($headerStyleArray);
-        $sheet->getRowDimension('2')->setRowHeight(30);
-        $dataRows = [];
-        foreach ($reportBorrowerBook as $index => $borrowerBook) {
-            $dataRows[] = [
-                $index + 1,
-                $borrowerBook['gradeName'],  // This column might need adjustment based on actual data structure
-                $borrowerBook['type_joined'] == 1 ? $borrowerBook['total_member'] : 0,
-                $borrowerBook['type_joined'] == 2 ? $borrowerBook['total_member'] : 0,
-            ];
-        }
-        $sheet->fromArray($dataRows, null, 'A3');
-        $dataStyleArray = [
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                ],
-            ],
-            'alignment' => [
-                'vertical' => Alignment::VERTICAL_CENTER,
-            ],
-        ];
-        $sheet->getStyle('A3:I' . (count($dataRows) + 2))->applyFromArray($dataStyleArray);
-        foreach (range('A', 'I') as $columnID) {
-            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        $formattedData = [];
+        foreach ($reportBorrowerBook as $entry) {
+            $day = intval($entry['day']);
+            if (!isset($formattedData[$day])) {
+                $formattedData[$day] = [];
+            }
+            $formattedData[$day][] = $entry;
         }
 
-        $filename = 'របាយការណ៏អ្នកចូលបណ្ណាល័យ.xlsx';
-        $writer = new Xlsx($spreadsheet);
-        $tempFile = tempnam(sys_get_temp_dir(), 'excel');
-        $writer->save($tempFile);
 
-        return Yii::$app->response->sendFile($tempFile, $filename, [
-            'mimeType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'inline' => false,
-        ])->on(\yii\web\Response::EVENT_AFTER_SEND, function ($event) {
-            unlink($event->data);
-        }, $tempFile);
+        $file_name = 'hak';
+        return $this->renderPartial('member-joind-library/_excel_template', [
+            'formattedData' => $formattedData,
+            'gradeNames' => $gradeNames,
+            'gradeTotals' => $gradeTotals,
+            'totalMembersAllDays' => $totalMembersAllDays,
+            'totalMembersFemaleAllDays' => $totalMembersFemaleAllDays,
+            'file_name' => $file_name
+        ]);
     }
 }
