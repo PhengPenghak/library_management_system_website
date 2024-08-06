@@ -204,7 +204,8 @@ $js = <<< JS
                                     <div class="col-lg-3">
                                         <div class="form-group field-borrowbook-code\${key} has-success">
                                             <label>លេខសារពើភ័ណ្ខ<abbr title="Required">*</abbr></label>
-                                            <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg" name="BorrowBook[code][]" placeholder="បញ្ចូលលេខសារពើភ័ណ្ខ" required="">
+                                            <input type="text" id="borrowbook-code\${key}" class="form-control form-control-lg inventory" name="BorrowBook[code][]" placeholder="បញ្ចូលលេខសារពើភ័ណ្ខ" required="">
+                                            <span class="error-message-invetory text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="col-lg-2">
@@ -241,6 +242,36 @@ $js = <<< JS
             </div>` 
 
         );
+
+
+        let inventoryValues = [];
+
+$(document).on("change", ".inventory", function() {
+    var inventoryId = $(this).val();
+    var inventoryValue = $(this).val();
+    var appendText=$(this).closest('.form-group').find('span.error-message-invetory');
+    var dataKey = $(this).closest('.form-group').find('input[type="hidden"]').data('key');
+
+    $.ajax({
+        url: "",
+        type: 'POST',
+        data: {
+            'action': 'inventoryId',
+            inventoryId: inventoryId,
+        },
+        success: function(res) {
+            var data = JSON.parse(res);
+        if (data.status === 1) {
+            appendText.text('លេខសារពើភ័ណ្ខស្ទួន');  
+        }else{
+            appendText.text(''); 
+        }
+        },
+        error: function(xhr, status, error) {
+            console.log(error);
+        }
+    });
+});
         $('form').on('submit', function(e) {
             var isValid = true;
             $('input[required]').each(function() {
@@ -248,7 +279,7 @@ $js = <<< JS
                     isValid = false;
                     $(this).addClass('is-invalid');
                     $(this).siblings('.error-message').remove();
-                    $(this).after('<div class="error-message" style="color: red;">This field is required</div>');
+                    $(this).after('<div class="error-message text-danger" >ជ្រើសរើសកាលបរិច្ឆេទ</div>');
                 } else {
                     $(this).removeClass('is-invalid');
                     $(this).siblings('.error-message').remove();

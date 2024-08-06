@@ -176,6 +176,20 @@ class BorrowerBookController extends \yii\web\Controller
                 Yii::$app->session->setFlash('error', 'Failed to create borrowed books. ' . $e->getMessage());
             }
         }
+        if (Yii::$app->request->post('action') == 'inventoryId') {
+            $inventoryId = Yii::$app->request->post('inventoryId');
+
+
+            $modelItems = BorrowBook::find()
+                ->andWhere(['code' => $inventoryId])
+                ->one();
+            $status = 0;
+            if (!empty($modelItems)) {
+                $status = 1;
+            }
+            return json_encode(['status' => $status]);
+        }
+
 
         $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title');
         return $this->render('_form_borrow_book', [
