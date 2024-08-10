@@ -12,11 +12,13 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
      * {@inheritdoc}
      */
     public $globalSearch, $scheduleType, $selectedDate, $from_date, $to_date;
+    public $filter; // Add this property
     public function rules()
     {
         return [
             [['id', 'total_member', 'total_member_female', 'status', 'created_by', 'updated_by'], 'integer'],
             [['type_member', 'type_joined', 'dateTime', 'created_at', 'updated_at', 'globalSearch', 'selectedDate', 'scheduleType', 'from_date', 'to_date'], 'safe'],
+            [['filter'], 'safe'],
         ];
     }
 
@@ -62,6 +64,13 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
 
 
         $query->andFilterWhere(['between', 'DATE(member_joined_library.dateTime)', $this->from_date, $this->to_date]);
+
+        if ($this->filter === 'this_month') {
+            $query->andWhere(['between', 'dateTime', date('Y-m-01'), date('Y-m-t')]);
+        } elseif ($this->filter === 'this_year') {
+            $query->andWhere(['between', 'dateTime', date('Y-01-01'), date('Y-12-31')]);
+        }
+
         return $dataProvider;
     }
 }

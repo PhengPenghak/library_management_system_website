@@ -3,21 +3,30 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\assets\DateRangePickerAsset;
+use yii\helpers\Url;
 
 DateRangePickerAsset::register($this);
-
-
-$fromDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['from_date'] ?? '';
-$toDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['to_date'] ?? '';
-$typeJoined = Yii::$app->request->get('MemberJoinedLibrarySearch')['type_joined'] ?? '';
-
-
-
-
+$params = Yii::$app->request->get('MemberJoinedLibrarySearch', []);
+$from_date = isset($params['from_date']) ? $params['from_date'] : null;
+$to_date = isset($params['to_date']) ? $params['to_date'] : null;
+$status = isset($params['status']) ? $params['status'] : null;
+$month_and_year = isset($params['month_and_year']) ? $params['month_and_year'] : null;
 ?>
 <style>
     .blank_space_label {
         padding-top: 32px;
+    }
+
+    /* Custom dropdown styling */
+    .form-control {
+        border-radius: 0.25rem;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .125);
+    }
+
+    .btn-outline-danger,
+    .btn-outline-success {
+        border-radius: 0.25rem;
+        padding: 0.75rem 1.25rem;
     }
 </style>
 <div class="order-search">
@@ -30,7 +39,7 @@ $typeJoined = Yii::$app->request->get('MemberJoinedLibrarySearch')['type_joined'
 
     <div class="row">
         <div class="col-lg-3">
-            <label> កាលបរិច្ឆេទ</label>
+            <label>កាលបរិច្ឆេទ</label>
             <div id="order__date__range" style="cursor: pointer;" class="form-control form-control-lg">
                 <i class="fas fa-calendar text-muted"></i>&nbsp;
                 <span></span> <i class="fa fa-caret-down text-muted float-right"></i>
@@ -38,32 +47,48 @@ $typeJoined = Yii::$app->request->get('MemberJoinedLibrarySearch')['type_joined'
             <?= $form->field($model, 'from_date')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'to_date')->hiddenInput()->label(false) ?>
         </div>
-        <div class="col-lg-3">
-            <label> កាលបរិច្ឆេទ</label>
+        <div class="col-lg-2">
+            <label>ជ្រើសរើស​​ ប្រភេទចូលអាន</label>
 
-            <?= $form->field($model, 'type_joined')->dropDownList([
+            <?= $form->field($model, 'status')->dropDownList([
                 0 => 'ចូលអានសេរី',
                 1 => 'ចូលអានតាមកាលវិភាគ'
             ], ['prompt' => 'Select Type', 'class' => 'form-control form-control-lg'])->label(false) ?>
         </div>
 
+        <div class="col-lg-2">
+            <label>ជ្រើសរើស</label>
+
+            <?= $form->field($model, 'month_and_year')->dropDownList([
+                0 => 'month',
+                1 => 'year'
+            ], ['prompt' => 'Select Type', 'class' => 'form-control form-control-lg'])->label(false) ?>
+        </div>
         <div class="col-lg-4">
             <div class="float-right">
                 <div class="blank_space_label"></div>
-                <?= Html::a(
-                    ' <i class="bi bi-printer"></i> Report to PDF',
-                    ['report/export-pdf-member-joined-library', 'MemberJoinedLibrarySearch[from_date]' => $fromDate, 'MemberJoinedLibrarySearch[to_date]' => $toDate, 'MemberJoinedLibrarySearch[type_joined]' => $typeJoined],
-                    ['class' => 'btn btn-lg btn-danger btn-reportType']
-                ) ?>
+                <?= Html::a('<i class="fas fa-file-pdf"></i> Export PDF', [
+                    'report/export-pdf-member-joined-library',
+                    'from_date' => $from_date,
+                    'to_date' => $to_date,
+                    'month_and_year' => $month_and_year,
+                    'status' => $status,
+                ], [
+                    'class' => 'btn btn-lg btn-outline-danger pr-3',
+                ]) ?>
 
-                <?= Html::a(
-                    'Export to Excel test',
-                    ['report/export-excel-member-joined-librarys', 'MemberJoinedLibrarySearch[from_date]' => $fromDate, 'MemberJoinedLibrarySearch[to_date]' => $toDate, 'MemberJoinedLibrarySearch[type_joined]' => $typeJoined],
-                    ['class' => 'btn btn-lg btn-success']
-                ) ?>
-
+                <?= Html::a('<i class="fas fa-file-excel"></i> Export Excel', [
+                    'report/export-excel-member-joined-library',
+                    'from_date' => $from_date,
+                    'to_date' => $to_date,
+                    'month_and_year' => $month_and_year,
+                    'status' => $status,
+                ], [
+                    'class' => 'btn btn-lg btn-outline-success pr-3',
+                ]) ?>
             </div>
         </div>
+
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -76,8 +101,8 @@ $script = <<<JS
     var is_filter = $("#memberjoinedlibrarysearch-from_date").val() != '' ? true : false;
 
     if (!is_filter) {
-        var start = moment().startOf('month'); // Default to start of the current month
-        var end = moment().endOf('month'); // Default to end of the current month
+        var start = moment().startOf('month'); 
+        var end = moment().endOf('month');
     } else {
         var start = moment($("#memberjoinedlibrarysearch-from_date").val());
         var end = moment($("#memberjoinedlibrarysearch-to_date").val());

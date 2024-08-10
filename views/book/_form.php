@@ -65,7 +65,7 @@ EditorAsset::register($this);
                         <div class="col-lg-3">
                             <?= $form->field($model, 'quantity')->input('number', [
                                 'min' => 1,
-                                'max' => 100,
+                                'max' => 100000,
                                 'step' => 1,
                                 'class' => 'form-control form-control-lg limitNumber'
                             ])->label('ចំនួនសៀវភៅ') ?>

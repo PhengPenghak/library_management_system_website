@@ -289,59 +289,8 @@ class ReportController extends Controller
         ]);
     }
 
-
-
     public function actionExportPdfMemberJoinedLibrary()
     {
-        $fromDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['from_date'] ?? null;
-        $toDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['to_date'] ?? null;
-
-        if ($fromDate && $toDate) {
-            $fromDate = date('Y-m-d', strtotime($fromDate));
-            $toDate = date('Y-m-d', strtotime($toDate));
-        } else {
-            throw new \yii\web\BadRequestHttpException('Invalid date parameters.');
-        }
-
-        $reportBorrowerBook = Yii::$app->db->createCommand("SELECT member_joined_library.type_joined AS typeJoined,
-                CASE 
-                    WHEN grade.title LIKE 'ថ្នាក់ទី 1%' THEN 'ថ្នាក់ទី 1'
-                    WHEN grade.title LIKE 'ថ្នាក់ទី 2%' THEN 'ថ្នាក់ទី 2'
-                    WHEN grade.title LIKE 'ថ្នាក់ទី 3%' THEN 'ថ្នាក់ទី 3'
-                    WHEN grade.title LIKE 'ថ្នាក់ទី 4%' THEN 'ថ្នាក់ទី 4'
-                    WHEN grade.title LIKE 'ថ្នាក់ទី 5%' THEN 'ថ្នាក់ទី 5'
-                    WHEN grade.title LIKE 'ថ្នាក់ទី 6%' THEN 'ថ្នាក់ទី 6'
-                    ELSE grade.title 
-                END AS gradeName,
-                DATE_FORMAT(member_joined_library.dateTime, '%d') AS day,
-                SUM(member_joined_library.total_member) AS total_member,
-                SUM(member_joined_library.total_member_female) AS total_member_female
-            FROM member_joined_library
-            LEFT JOIN grade ON grade.id = member_joined_library.grade_id
-            WHERE member_joined_library.dateTime BETWEEN :fromDate AND :toDate
-            GROUP BY day, member_joined_library.type_joined, gradeName
-            ORDER BY day, member_joined_library.type_joined
-        ")
-            ->bindValue(':fromDate', $fromDate)
-            ->bindValue(':toDate', $toDate)
-            ->queryAll();
-
-        $totalMembersAllDays = 0;
-        $totalMembersFemaleAllDays = 0;
-        $gradeNames = ["មត្តេយ្យ", "ថ្នាក់ទី 1", "ថ្នាក់ទី 2", "ថ្នាក់ទី 3", "ថ្នាក់ទី 4", "ថ្នាក់ទី 5", "ថ្នាក់ទី 6", "គ្រូ", "សហគមន៏",];
-        $gradeTotals = array_fill_keys($gradeNames, ['total_member' => 0, 'total_member_female' => 0]);
-
-        $formattedData = [];
-        foreach ($reportBorrowerBook as $entry) {
-            $day = intval($entry['day']);
-            if (!isset($formattedData[$day])) {
-                $formattedData[$day] = [];
-            }
-            $formattedData[$day][] = $entry;
-        }
-
-
-        // Initialize mPDF
         $config = new \Mpdf\Config\ConfigVariables();
         $fontDirs = $config->getDefaults()['fontDir'];
         $fontData = (new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'];
@@ -358,78 +307,24 @@ class ReportController extends Controller
                 ],
             ]),
         ]);
-        $html = $this->renderPartial('member-joind-library/_pdf_template', [
-
-            'formattedData' => $formattedData,
-            'gradeNames' => $gradeNames,
-            'gradeTotals' => $gradeTotals,
-            'totalMembersAllDays' => $totalMembersAllDays,
-            'totalMembersFemaleAllDays' => $totalMembersFemaleAllDays,
-        ]);
+        $html = $this->renderPartial('member-joind-library/_pdf_template');
         $mpdf->WriteHTML($html);
         $mpdf->Output('report.pdf', \Mpdf\Output\Destination::INLINE);
     }
 
-    public function actionExportExcelMemberJoinedLibrarys()
+    public function actionExportExcelMemberJoinedLibrary()
     {
-        $fromDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['from_date'] ?? null;
-        $toDate = Yii::$app->request->get('MemberJoinedLibrarySearch')['to_date'] ?? null;
-        $typeJoined = Yii::$app->request->get('MemberJoinedLibrarySearch')['type_joined'] ?? 'default_type_joined';
-
-
-        if ($fromDate && $toDate) {
-            $fromDate = date('Y-m-d', strtotime($fromDate));
-            $toDate = date('Y-m-d', strtotime($toDate));
-        } else {
-            throw new \yii\web\BadRequestHttpException('Invalid date parameters.');
-        }
-
-        $reportBorrowerBook = Yii::$app->db->createCommand("SELECT member_joined_library.type_joined AS typeJoined,
-        CASE 
-            WHEN grade.title LIKE 'ថ្នាក់ទី 1%' THEN 'ថ្នាក់ទី 1'
-            WHEN grade.title LIKE 'ថ្នាក់ទី 2%' THEN 'ថ្នាក់ទី 2'
-            WHEN grade.title LIKE 'ថ្នាក់ទី 3%' THEN 'ថ្នាក់ទី 3'
-            WHEN grade.title LIKE 'ថ្នាក់ទី 4%' THEN 'ថ្នាក់ទី 4'
-            WHEN grade.title LIKE 'ថ្នាក់ទី 5%' THEN 'ថ្នាក់ទី 5'
-            WHEN grade.title LIKE 'ថ្នាក់ទី 6%' THEN 'ថ្នាក់ទី 6'
-            ELSE grade.title 
-        END AS gradeName,
-        DATE_FORMAT(member_joined_library.dateTime, '%d') AS day,
-        SUM(member_joined_library.total_member) AS total_member,
-        SUM(member_joined_library.total_member_female) AS total_member_female
-        FROM member_joined_library
-        LEFT JOIN grade ON grade.id = member_joined_library.grade_id
-        WHERE member_joined_library.dateTime BETWEEN :fromDate AND :toDate
-        GROUP BY day, member_joined_library.type_joined, gradeName
-        ORDER BY day, member_joined_library.type_joined
-        ")
-            ->bindValue(':fromDate', $fromDate)
-            ->bindValue(':toDate', $toDate)
-            ->queryAll();
-
-        $totalMembersAllDays = 0;
-        $totalMembersFemaleAllDays = 0;
-        $gradeNames = ["មត្តេយ្យ", "ថ្នាក់ទី 1", "ថ្នាក់ទី 2", "ថ្នាក់ទី 3", "ថ្នាក់ទី 4", "ថ្នាក់ទី 5", "ថ្នាក់ទី 6", "គ្រូ", "សហគមន៏",];
-        $gradeTotals = array_fill_keys($gradeNames, ['total_member' => 0, 'total_member_female' => 0]);
-
-        $formattedData = [];
-        foreach ($reportBorrowerBook as $entry) {
-            $day = intval($entry['day']);
-            if (!isset($formattedData[$day])) {
-                $formattedData[$day] = [];
-            }
-            $formattedData[$day][] = $entry;
-        }
-
 
         $file_name = 'hak';
         return $this->renderPartial('member-joind-library/_excel_template', [
-            'formattedData' => $formattedData,
-            'gradeNames' => $gradeNames,
-            'gradeTotals' => $gradeTotals,
-            'totalMembersAllDays' => $totalMembersAllDays,
-            'totalMembersFemaleAllDays' => $totalMembersFemaleAllDays,
             'file_name' => $file_name
         ]);
+
+        // return $this->render('member-joind-library/_excel_template');
+    }
+
+    public function actionTest()
+    {
+        return $this->render('member-joind-library/test');
     }
 }

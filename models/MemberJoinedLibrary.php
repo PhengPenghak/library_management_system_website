@@ -32,6 +32,7 @@ class MemberJoinedLibrary extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $month_and_year;
     public function rules()
     {
         return [

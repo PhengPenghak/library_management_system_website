@@ -21,7 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     $to_date = isset($borrowBookSearch['to_date']) ? $borrowBookSearch['to_date'] : '';
                     ?>
                     <?= Html::a('<i class="fas fa-file-pdf"></i> Export PDF', [
-                        'report/export-pdf-borrow-book', 'id' => $id,
+                        'report/export-pdf-borrow-book',
+                        'id' => $id,
                         'BorrowBookSearch[from_date]' => $from_date,
                         'BorrowBookSearch[to_date]' => $to_date,
                     ], [
@@ -34,7 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     $to_date = isset($borrowBookSearch['to_date']) ? $borrowBookSearch['to_date'] : '';
                     ?>
                     <?= Html::a('<i class="fas fa-file-pdf"></i> Export PDF', [
-                        'report/export-excel-borrow-book', 'id' => $id,
+                        'report/export-excel-borrow-book',
+                        'id' => $id,
                         'BorrowBookSearch[from_date]' => $from_date,
                         'BorrowBookSearch[to_date]' => $to_date,
                     ], [
