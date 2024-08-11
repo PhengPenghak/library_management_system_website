@@ -38,33 +38,31 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     [
                         'attribute' => 'grade_id',
+                        'label' => 'Grade ID', // Adjust label if needed
                         'value' => function ($model) {
-                            return $model->grade ? $model->grade->title : null;
+                            return Html::encode($model['grade_id']); // Use Html::encode for security
                         },
                     ],
-
                     [
-                        'attribute' => 'created_at',
-                        'label' => 'កាលបរិច្ឆេទបង្កើត',
+                        'attribute' => 'grade_title',
+                        'label' => 'Grade Title', // Adjust label if needed
                         'value' => function ($model) {
-                            return Yii::$app->formater->maskDateKH($model->created_at);
-                        }
-                    ],
-
-                    [
-                        'attribute' => 'created_by',
-                        'label' => 'បង្កើត​ឡើង​ដោយ',
-                        'value' => function ($model) {
-                            return $model->createdBy ? $model->createdBy->username : 'N/A';
+                            return Html::encode($model['grade_title']); // Use Html::encode for security
                         },
                     ],
-
                     [
-                        'attribute' => 'status',
-                        'format' => 'raw',
+                        'attribute' => 'total_books',
+                        'label' => 'Total Books',
                         'value' => function ($model) {
-                            return $model->getStatusTemp();
-                        }
+                            return Html::encode($model['total_books']); // Use Html::encode for security
+                        },
+                    ],
+                    [
+                        'attribute' => 'total_quantity',
+                        'label' => 'Total Quantity',
+                        'value' => function ($model) {
+                            return Html::encode($model['total_quantity']); // Use Html::encode for security
+                        },
                     ],
 
                     [
@@ -75,9 +73,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'template' => '{view}',
                         'buttons' => [
                             'view' => function ($url, $model, $id) {
-                                return Html::a('<i class="far fa-eye"></i>', Url::to(["report/details", 'id' => $model->id]), [
+                                return Html::a('<i class="far fa-eye"></i>', Url::to(["report/details", 'id' => $model['grade_id']]), [
                                     'class' => 'btn btn-sm btn-icon btn-secondary',
-                                    'target' => '_blank',
                                     'title' => 'View this item',
                                     'data' => [
                                         'pjax' => 0,

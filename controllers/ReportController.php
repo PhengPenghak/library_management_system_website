@@ -66,21 +66,38 @@ class ReportController extends Controller
 
     public function actionBorrowerBook()
     {
-        $gradeSearchModel = new GradeSearch();
-        $gradeDataProvider = $gradeSearchModel->search(Yii::$app->request->queryParams);
-        $grades = Grade::find()->all();
-        $gradeList = ArrayHelper::map($grades, 'id', 'title');
-        $searchModel = new InfomationBorrowerBookSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        // Define the SQL query
+        $sql = "
+             SELECT 
+                 `grade`.`id` AS `grade_id`,
+                 `grade`.`title` AS `grade_title`,
+                 COUNT(`borrow_book`.`id`) AS `total_books`,
+                 SUM(`borrow_book`.`quantity`) AS `total_quantity`
+             FROM
+                 `borrow_book`
+                 LEFT JOIN `book` ON `borrow_book`.`book_id` = `book`.`id`
+                 LEFT JOIN `infomation_borrower_book` ON `borrow_book`.`information_borrower_book_id` = `infomation_borrower_book`.`id`
+                 LEFT JOIN `grade` ON `infomation_borrower_book`.`grade_id` = `grade`.`id`
+             GROUP BY `grade`.`id`, `grade`.`title`
+         ";
+        $data = Yii::$app->db->createCommand($sql)->queryAll();
+        $dataProvider = new \yii\data\ArrayDataProvider([
+            'allModels' => $data,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'attributes' => ['grade_id', 'grade_title', 'total_books', 'total_quantity'],
+            ],
+        ]);
 
+        // Render the view
         return $this->render('borrower-book/index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'gradeSearchModel' => $gradeSearchModel,
-            'gradeDataProvider' => $gradeDataProvider,
-            'gradeList' => $gradeList,
         ]);
     }
+
+
 
     public function actionDetails($id)
     {
@@ -159,6 +176,7 @@ class ReportController extends Controller
 
     public function actionExportExcelBorrowBook($id)
     {
+
         $reportBorrowerBook = Yii::$app->db->createCommand("SELECT
                 borrow_book.id AS ID, borrow_book.code, borrow_book.quantity, borrow_book.start, borrow_book.end,
                 infomation_borrower_book.username, infomation_borrower_book.gender,
@@ -221,12 +239,7 @@ class ReportController extends Controller
                     'borderStyle' => Border::BORDER_THIN,
                 ],
             ],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => [
-                    'argb' => 'FFFFD700', // Gold color
-                ],
-            ],
+
         ];
         $sheet->getStyle('A2:I2')->applyFromArray($headerStyleArray);
         $sheet->getRowDimension('2')->setRowHeight(30);
@@ -247,7 +260,6 @@ class ReportController extends Controller
         }
         $sheet->fromArray($dataRows, NULL, 'A3');
 
-        // Apply data rows styles
         $dataStyleArray = [
             'borders' => [
                 'allBorders' => [
@@ -260,7 +272,6 @@ class ReportController extends Controller
         ];
         $sheet->getStyle('A3:I' . (count($dataRows) + 2))->applyFromArray($dataStyleArray);
 
-        // Auto size columns
         foreach (range('A', 'I') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }

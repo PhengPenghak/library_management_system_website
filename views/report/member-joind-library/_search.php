@@ -53,16 +53,16 @@ $month_and_year = isset($params['month_and_year']) ? $params['month_and_year'] :
             <?= $form->field($model, 'status')->dropDownList([
                 0 => 'ចូលអានសេរី',
                 1 => 'ចូលអានតាមកាលវិភាគ'
-            ], ['prompt' => 'Select Type', 'class' => 'form-control form-control-lg'])->label(false) ?>
+            ], ['class' => 'form-control form-control-lg'])->label(false) ?>
         </div>
 
         <div class="col-lg-2">
-            <label>ជ្រើសរើស</label>
+            <label>ជ្រើសរើស​ ប្រចាំខែនិងប្រចាំឆ្នាំ</label>
 
             <?= $form->field($model, 'month_and_year')->dropDownList([
-                0 => 'month',
-                1 => 'year'
-            ], ['prompt' => 'Select Type', 'class' => 'form-control form-control-lg'])->label(false) ?>
+                0 => 'ប្រចាំខែ',
+                1 => 'ប្រចាំឆ្នាំ'
+            ], ['class' => 'form-control form-control-lg'])->label(false) ?>
         </div>
         <div class="col-lg-4">
             <div class="float-right">

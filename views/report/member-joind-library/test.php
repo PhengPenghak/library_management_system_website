@@ -50,7 +50,6 @@
         $formattedData[$year][$month][$gradeName]['total_member'] += $entry['total_member'];
         $formattedData[$year][$month][$gradeName]['total_member_female'] += $entry['total_member_female'];
 
-        // Update total counts for all grade names
         $totalMembersAllYears += $entry['total_member'];
         $totalMembersFemaleAllYears += $entry['total_member_female'];
 
