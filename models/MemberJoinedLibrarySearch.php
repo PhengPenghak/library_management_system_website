@@ -41,15 +41,7 @@ class MemberJoinedLibrarySearch extends MemberJoinedLibrary
     public function search($params)
     {
         $query = MemberJoinedLibrary::find()
-            ->joinWith('grade') // Eager load the related `grade` model
-            ->select([
-                'member_joined_library.id', // Select fields you want to include
-                'member_joined_library.type_joined',
-                'member_joined_library.status',
-                'grade.title', // Include fields from the related `grade` model
-                'COUNT(member_joined_library.id) AS total_count', // Example aggregation
-            ])
-            ->groupBy(['member_joined_library.id', 'grade.title']); // Group by `id` and `title`
+            ->joinWith('grade');
 
 
         $dataProvider = new ActiveDataProvider([
