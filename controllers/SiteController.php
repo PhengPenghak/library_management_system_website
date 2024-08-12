@@ -271,4 +271,32 @@ class SiteController extends Controller
 
         return $this->redirect(Yii::$app->request->referrer);
     }
+
+
+    // public function actionBackup()
+    // {
+    //     $dbName = 'library_management_system';
+    //     $downloadsPath = getenv('HOME') . '/Downloads/backups';
+
+    //     if (!is_dir($downloadsPath)) {
+    //         mkdir($downloadsPath, 0777, true);
+    //     }
+
+    //     $backupFile = $downloadsPath . '/library_management_system_' . date('Ymd_His') . '.sql';
+
+    //     $mysqldumpPath = '/usr/bin/mysqldump';
+
+    //     $command = "$mysqldumpPath -h localhost -u root --routines --triggers --databases $dbName > $backupFile 2>&1";
+    //     exec($command, $output, $returnVar);
+
+    //     if ($returnVar === 0) {
+    //         Yii::info('Backup successfully created: ' . $backupFile, 'backup');
+    //         Yii::$app->session->setFlash('success', 'Backup was successful! Backup file: ' . basename($backupFile));
+    //     } else {
+    //         Yii::error('Failed to create backup with mysqldump. Output: ' . implode("\n", $output), 'backup');
+    //         Yii::$app->session->setFlash('error', 'Backup failed. Please try again.');
+    //     }
+
+    //     return $this->redirect(Yii::$app->request->referrer);
+    // }
 }

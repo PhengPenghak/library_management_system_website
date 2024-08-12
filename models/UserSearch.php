@@ -42,10 +42,8 @@ class UserSearch extends User
    */
   public function search($params)
   {
-    $query = User::find()->andWhere(['role_id' => 1]);
+    $query = User::find()->andWhere(['user_type_id' => 1]);
     $query->joinWith(['profile']);
-
-    // add conditions that should always apply here
 
     $dataProvider = new ActiveDataProvider([
       'query' => $query,
@@ -55,8 +53,6 @@ class UserSearch extends User
     $this->load($params);
 
     if (!$this->validate()) {
-      // uncomment the following line if you do not want to return any records when validation fails
-      // $query->where('0=1');
       return $dataProvider;
     }
 
