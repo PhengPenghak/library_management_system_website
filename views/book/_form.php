@@ -96,8 +96,9 @@ EditorAsset::register($this);
                                 'placeholder' => 'Publishing Date'
                             ])->label() ?>
                         </div>
-
-                        
+                        <div class="col-lg-4">
+                        <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
+                        </div>
                     </div>
                    
                     <div class="row">

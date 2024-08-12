@@ -104,7 +104,7 @@ class BookController extends Controller
                 $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
                 if (!empty($model->imageFile) && $model->upload()) $model->imageFile = null;
 
-                if (!$model->save()) throw new Exception("Failed to Save! Code #001");
+                if (!$model->save()) throw new Exception("code has already been taken.");
 
                 $transaction_exception->commit();
                 Yii::$app->session->setFlash('success', "Book saved successfully");

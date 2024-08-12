@@ -43,6 +43,8 @@ class Book extends \yii\db\ActiveRecord
             [['category_book_id', 'location_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at', 'publishing_date'], 'safe'],
             [['title', 'sponse', 'img_url', 'author', 'publishing'], 'string', 'max' => 255],
+            ['code', 'unique', 'message' => 'This code has already been taken.'],
+
             [
                 ['imageFile'],
                 'image',
@@ -64,6 +66,7 @@ class Book extends \yii\db\ActiveRecord
             'location_id' => 'ទីតាំងដាក់សៀវភៅ',
             'publishing' => 'Publishing',
             'publishing_date' => 'Publishing Date',
+            'code' => 'Code',
             'title' => 'ចំណងជើង',
             'sponse' => 'ប្រភព',
             'img_url' => 'ក្របសៀវភៅ',
