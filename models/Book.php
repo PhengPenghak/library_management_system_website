@@ -10,6 +10,8 @@ use Yii;
  * @property int $id
  * @property int $category_book_id
  * @property string $title
+ * @property string $publishing
+ * @property string $publishing_date
  * @property string|null $sponse
  * @property string|null $img_url
  * @property int|null $quantity
@@ -39,10 +41,11 @@ class Book extends \yii\db\ActiveRecord
         return [
             [['category_book_id', 'location_id', 'title'], 'required'],
             [['category_book_id', 'location_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['title', 'sponse', 'img_url', 'author'], 'string', 'max' => 255],
+            [['created_at', 'updated_at', 'publishing_date'], 'safe'],
+            [['title', 'sponse', 'img_url', 'author', 'publishing'], 'string', 'max' => 255],
             [
-                ['imageFile'], 'image',
+                ['imageFile'],
+                'image',
                 'skipOnEmpty' => true,
                 'extensions' => 'jpg, jpeg, gif, png, webp',
                 'maxSize' => 1024 * 1024 * 2
@@ -59,6 +62,8 @@ class Book extends \yii\db\ActiveRecord
             'id' => 'ID',
             'category_book_id' => 'ប្រភេទសៀវភៅ',
             'location_id' => 'ទីតាំងដាក់សៀវភៅ',
+            'publishing' => 'Publishing',
+            'publishing_date' => 'Publishing Date',
             'title' => 'ចំណងជើង',
             'sponse' => 'ប្រភព',
             'img_url' => 'ក្របសៀវភៅ',

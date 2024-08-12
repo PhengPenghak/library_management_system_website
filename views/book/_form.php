@@ -7,7 +7,10 @@ use app\models\CategoryBook;
 use app\models\LocationBook;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
+use app\assets\DateRangePickerAsset;
 
+
+DateRangePickerAsset::register($this);
 EditorAsset::register($this);
 ?>
 <style>
@@ -49,11 +52,11 @@ EditorAsset::register($this);
                 </div>
                 <div class="col-lg-9">
                     <div class="row">
-                        <div class="col-lg-5">
+                        <div class="col-lg-4">
                             <?= $form->field($model, 'title')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងជើងរឿង'])->label() ?>
 
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-4">
                             <?= $form->field($model, 'category_book_id')->widget(Select2::class, [
                                 'data' => ArrayHelper::map(CategoryBook::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title'),
                                 'options' => ['placeholder' => 'ជ្រើសរើសប្រភេទសៀវភៅ', 'class' => 'custom-select'],
@@ -62,16 +65,15 @@ EditorAsset::register($this);
                                 ],
                             ]); ?>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-4">
                             <?= $form->field($model, 'quantity')->input('number', [
                                 'min' => 1,
-                                'max' => 100000,
-                                'step' => 1,
                                 'class' => 'form-control form-control-lg limitNumber'
                             ])->label('ចំនួនសៀវភៅ') ?>
                         </div>
-                    </div>
-                    <div class="row">
+                        <div class="col-lg-4">
+                            <?= $form->field($model, 'publishing')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'publishing'])->label() ?>
+                        </div>
                         <div class="col-lg-4">
                             <?= $form->field($model, 'author')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងឈ្មោះអ្នកនិពន្ធ'])->label() ?>
                         </div>
@@ -87,7 +89,17 @@ EditorAsset::register($this);
                         <div class="col-lg-4">
                             <?= $form->field($model, 'sponse')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងប្រភពសៀវភៅ'])->label() ?>
                         </div>
+                        <div class="col-lg-4">
+                            <?= $form->field($model, 'publishing')->textInput([
+                                'id' => 'model-date',
+                                'class' => 'form-control form-control-lg',
+                                'placeholder' => 'Publishing Date'
+                            ])->label() ?>
+                        </div>
+
+                        
                     </div>
+                   
                     <div class="row">
                         <div class="col-lg-3">
                             <div class="card">
@@ -152,6 +164,24 @@ $script = <<<JS
             $(this).val(1);
         }
     })
+    $(document).ready(function() {
+        $('#model-date').daterangepicker({
+            singleDatePicker: true,  // Single date selection
+            timePicker: false,       // Disable time picker
+            startDate: moment().startOf('day'), // Default to current day
+            drops: 'up',            // Position the calendar dropdown
+            opens: 'center',        // Position the calendar dropdown
+            locale: {
+                format: 'YYYY-MM-DD', // Date format without time
+                applyLabel: 'Apply',
+                cancelLabel: 'Cancel',
+                customRangeLabel: 'Custom Range'
+            },
+            showDropdowns: true,    // Show month and year dropdowns
+            minYear: 2000,          // Minimum year available
+            maxYear: 2100           // Maximum year available
+        });
+    });
 JS;
 
 $this->registerJs($script);
