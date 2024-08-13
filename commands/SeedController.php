@@ -133,7 +133,7 @@ class SeedController extends Controller
                 [33, 9, 'Update', 'grade', 'update', 1],
                 [34, 9, 'Delete', 'grade', 'delete', 1],
 
-                [35, 10, 'Report', 'report', 'borrower-book,export-excel-member-joined-library,export-pdf-member-joined-library,export-excel-member-joined-librarys,test,export-pdf-borrow-book,export-excel-borrow-book,borrower-book', 1],
+                [35, 10, 'Report', 'report', 'details,library,borrower-book,export-excel-member-joined-library,export-pdf-member-joined-library,export-excel-member-joined-librarys,test,export-pdf-borrow-book,export-excel-borrow-book,borrower-book', 1],
              
             ]
         )->execute();
