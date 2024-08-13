@@ -123,17 +123,15 @@ class SeedController extends Controller
                 [25, 7, 'Update', 'location-book', 'update', 1],
                 [26, 7, 'Delete', 'location-book', 'delete', 1],
 
-                [27, 8, 'View', 'event', 'view,index,events', 1],
-
+                [27, 8, 'Event', 'event', 'view,index,events', 1],
 
                 [31, 9, 'View', 'grade', 'view,index', 1],
                 [32, 9, 'Create', 'grade', 'create', 1],
                 [33, 9, 'Update', 'grade', 'update', 1],
                 [34, 9, 'Delete', 'grade', 'delete', 1],
 
-                [35, 10, 'View', 'report', 'borrower-book,export-excel-member-joined-library,export-pdf-member-joined-library,export-excel-member-joined-librarys,test,export-pdf-borrow-book,export-excel-borrow-book', 1],
-                [36, 10, 'Details', 'report', 'details', 1],
-                [37, 10, 'Member Joined', 'report', 'library', 1],
+                [35, 10, 'Report', 'report', 'borrower-book,export-excel-member-joined-library,export-pdf-member-joined-library,export-excel-member-joined-librarys,test,export-pdf-borrow-book,export-excel-borrow-book,borrower-book', 1],
+             
             ]
         )->execute();
     }
