@@ -124,7 +124,9 @@ class SeedController extends Controller
                 [26, 7, 'Delete', 'location-book', 'delete', 1],
 
                 [27, 8, 'Event', 'event', 'view,index,events', 1],
-
+                [28, 8, 'Event', 'event', 'create', 1],
+                [29, 8, 'Event', 'event', 'update', 1],
+                [30, 8, 'Event', 'event', 'delete', 1],
                 [31, 9, 'View', 'grade', 'view,index', 1],
                 [32, 9, 'Create', 'grade', 'create', 1],
                 [33, 9, 'Update', 'grade', 'update', 1],
