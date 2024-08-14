@@ -39,14 +39,14 @@ $config = [
 
         'backup' => [
             'class' => 'amoracr\backup\Backup',
-            'backupDir' => '/home/hak-coder/Downloads',
+            'backupDir' => 'C:\Downloads',
             'databases' => [
                 [
                     'class' => 'amoracr\backup\components\MySqlBackup',
                     'dsn' => 'mysql:host=localhost;dbname=library_management_system',
                     'username' => 'root',
                     'password' => '',
-                    'backupDir' => '/home/hak-coder/Downloads',
+                    'backupDir' => 'C:\Downloads',
                     'fileName' => 'library_management_system_' . date('Ymd_His') . '.sql',
                     'compression' => 'gzip',
                     'tables' => [],
