@@ -125,6 +125,82 @@ class BorrowerBookController extends \yii\web\Controller
         ]);
     }
 
+    // public function actionCreateBorrowBook($id)
+    // {
+    //     $modelHeader = $this->findModel($id);
+    //     $borrowBooks = BorrowBook::find()->where(['information_borrower_book_id' => $modelHeader->id, 'status' => 1])->all();
+
+    //     if (Yii::$app->request->isPost) {
+    //         $postData = Yii::$app->request->post('BorrowBook', []);
+    //         $transaction = Yii::$app->db->beginTransaction();
+    //         try {
+    //             $modelData = [];
+    //             $currentDateTime = date('Y-m-d H:i:s');
+    //             $currentUser = Yii::$app->user->identity->id;
+
+    //             foreach ($postData['information_borrower_book_id'] as $key => $informationBorrowerBookID) {
+    //                 $modelData[] = [
+    //                     $informationBorrowerBookID,
+    //                     $postData['book_id'][$key],
+    //                     $postData['code'][$key],
+    //                     $postData['quantity'][$key],
+    //                     $postData['start'][$key],
+    //                     $postData['end'][$key],
+    //                     $postData['status'][$key],
+    //                     $currentDateTime, 
+    //                     $currentUser, 
+    //                     $currentDateTime,
+    //                     $currentUser
+    //                 ];
+    //             }
+
+    //             Yii::$app->db->createCommand()->batchInsert(BorrowBook::tableName(), [
+    //                 'information_borrower_book_id',
+    //                 'book_id',
+    //                 'code',
+    //                 'quantity',
+    //                 'start',
+    //                 'end',
+    //                 'status',
+    //                 'created_at',
+    //                 'created_by',
+    //                 'updated_at',
+    //                 'updated_by'
+    //             ], $modelData)->execute();
+
+    //             $transaction->commit();
+    //             Yii::$app->session->setFlash('success', 'Borrowed books created successfully.');
+    //             return $this->redirect(Yii::$app->request->referrer);
+    //         } catch (\Exception $e) {
+    //             $transaction->rollBack();
+    //             Yii::$app->session->setFlash('error', 'Failed to create borrowed books. ' . $e->getMessage());
+    //         }
+    //     }
+    //     if (Yii::$app->request->post('action') == 'inventoryId') {
+    //         $inventoryId = Yii::$app->request->post('inventoryId');
+
+
+    //         $modelItems = BorrowBook::find()
+    //             ->andWhere(['code' => $inventoryId])
+    //             ->one();
+    //         $status = 0;
+    //         if (!empty($modelItems)) {
+    //             $status = 1;
+    //         }
+    //         return json_encode(['status' => $status]);
+    //     }
+
+
+    //     $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title');
+    //     return $this->render('_form_borrow_book', [
+    //         'borrowBook' => [],
+    //         'borrowBooks' => $borrowBooks,
+    //         'socialItems' => $socialItems,
+    //         'modelHeader' => $modelHeader
+    //     ]);
+    // }
+
+
     public function actionCreateBorrowBook($id)
     {
         $modelHeader = $this->findModel($id);
@@ -134,23 +210,30 @@ class BorrowerBookController extends \yii\web\Controller
             $postData = Yii::$app->request->post('BorrowBook', []);
             $transaction = Yii::$app->db->beginTransaction();
             try {
-                $modelData = [];
+                $borrowBookModel = new BorrowBook();
+                $errors = $borrowBookModel->validateBorrowRequests($postData);
+
+                if (!empty($errors)) {
+                    throw new \Exception(implode(' ', $errors));
+                }
+
                 $currentDateTime = date('Y-m-d H:i:s');
-                $currentUser = Yii::$app->user->identity->id;
+                $modelData = [];
 
                 foreach ($postData['information_borrower_book_id'] as $key => $informationBorrowerBookID) {
+                    $bookId = $postData['book_id'][$key];
+                    $requestedQuantity = (int)$postData['quantity'][$key];
+
                     $modelData[] = [
                         $informationBorrowerBookID,
-                        $postData['book_id'][$key],
+                        $bookId,
                         $postData['code'][$key],
-                        $postData['quantity'][$key],
+                        $requestedQuantity,
                         $postData['start'][$key],
                         $postData['end'][$key],
                         $postData['status'][$key],
-                        $currentDateTime, // created_at
-                        $currentUser,     // created_by
-                        $currentDateTime, // updated_at
-                        $currentUser      // updated_by
+                        $currentDateTime,
+                        $currentDateTime
                     ];
                 }
 
@@ -163,22 +246,20 @@ class BorrowerBookController extends \yii\web\Controller
                     'end',
                     'status',
                     'created_at',
-                    'created_by',
-                    'updated_at',
-                    'updated_by'
+                    'updated_at'
                 ], $modelData)->execute();
 
                 $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Borrowed books created successfully.');
+                Yii::$app->session->setFlash('success', 'សៀវភៅដែលបានខ្ចីត្រូវបានបង្កើតដោយជោគជ័យ។');
                 return $this->redirect(Yii::$app->request->referrer);
             } catch (\Exception $e) {
                 $transaction->rollBack();
-                Yii::$app->session->setFlash('error', 'Failed to create borrowed books. ' . $e->getMessage());
+                Yii::$app->session->setFlash('error', 'បរាជ័យក្នុងការបង្កើតសៀវភៅខ្ចី. ' . $e->getMessage());
             }
         }
+
         if (Yii::$app->request->post('action') == 'inventoryId') {
             $inventoryId = Yii::$app->request->post('inventoryId');
-
 
             $modelItems = BorrowBook::find()
                 ->andWhere(['code' => $inventoryId])
@@ -190,7 +271,6 @@ class BorrowerBookController extends \yii\web\Controller
             return json_encode(['status' => $status]);
         }
 
-
         $socialItems = ArrayHelper::map(Book::find()->where(['status' => 1])->orderBy(['title' => SORT_ASC])->all(), 'id', 'title');
         return $this->render('_form_borrow_book', [
             'borrowBook' => [],
@@ -200,7 +280,8 @@ class BorrowerBookController extends \yii\web\Controller
         ]);
     }
 
-
+    
+    
     public function actionUpdateBorrowBook($id)
     {
         $modelHeader = $this->findModel($id);
@@ -228,11 +309,11 @@ class BorrowerBookController extends \yii\web\Controller
                 }
 
                 $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Borrowed books updated successfully.');
+                Yii::$app->session->setFlash('success', 'ការអាប់ដេតសៀវភៅត្រូវបានរក្សាទុកដោយជោគជ័យ');
                 return $this->redirect(Yii::$app->request->referrer);
             } catch (\Exception $e) {
                 $transaction->rollBack();
-                Yii::$app->session->setFlash('error', 'Failed to update borrowed books. ' . $e->getMessage());
+                Yii::$app->session->setFlash('error', 'បរាជ័យក្នុងការធ្វើបច្ចុប្បន្នភាពសៀវភៅដែលខ្ចី. ' . $e->getMessage());
             }
         }
 

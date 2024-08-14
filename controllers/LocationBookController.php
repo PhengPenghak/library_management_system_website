@@ -77,11 +77,11 @@ class LocationBookController extends Controller
             if ($model->load($this->request->post())) {
                 $transaction_exception = Yii::$app->db->beginTransaction();
                 try {
-                    if (!$model->save()) throw new Exception("Failed to Save! Code #001");
+                    if (!$model->save()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក! លេខកូដ 001");
 
 
                     $transaction_exception->commit();
-                    Yii::$app->session->setFlash('success', "Record has been created successfully");
+                    Yii::$app->session->setFlash('success', "ទីតាំងដាក់សៀវភៅត្រូវបានបង្កើតដោយជោគជ័យ");
                     return $this->redirect(['index']);
                 } catch (Exception $ex) {
                     Yii::$app->session->setFlash('warning', $ex->getMessage());
@@ -107,10 +107,10 @@ class LocationBookController extends Controller
             if ($model->load($this->request->post())) {
                 $transaction_exception = Yii::$app->db->beginTransaction();
                 try {
-                    if (!$model->save()) throw new Exception("Failed to Save! Code #001");
+                    if (!$model->save()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក! លេខកូដ 001");
 
                     $transaction_exception->commit();
-                    Yii::$app->session->setFlash('success', "Record has been updated successfully");
+                    Yii::$app->session->setFlash('success', "ទីតាំងដាក់សៀវភៅត្រូវបានអាប់ដេតដោយជោគជ័យ");
                     return $this->redirect(['index']);
                 } catch (Exception $ex) {
                     Yii::$app->session->setFlash('warning', $ex->getMessage());
@@ -141,10 +141,10 @@ class LocationBookController extends Controller
         $transaction_exception = Yii::$app->db->beginTransaction();
 
         try {
-            if (!$model->delete()) throw new Exception("Failed to delete this record!");
+            if (!$model->delete()) throw new Exception("បរាជ័យក្នុងការលុបកំណត់ត្រានេះ!");
 
             $transaction_exception->commit();
-            Yii::$app->session->setFlash('success', "Record deleted successful");
+            Yii::$app->session->setFlash('success', "ទីតាំងដាក់សៀវភៅបានលុបដោយជោគជ័យ");
             return $this->redirect(Yii::$app->request->referrer);
         } catch (Exception $ex) {
             Yii::$app->session->setFlash('warning', $ex->getMessage());

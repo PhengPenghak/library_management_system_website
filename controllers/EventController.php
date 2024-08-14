@@ -81,7 +81,7 @@ class EventController extends Controller
             $model->end = Yii::$app->request->post('end');
 
             if ($model->save()) {
-                Yii::$app->session->setFlash('eventCreated', 'Event has been created successfully.');
+                Yii::$app->session->setFlash('eventCreated', 'ព្រឹត្តិការណ៍ត្រូវបានបង្កើតដោយជោគជ័យ។');
                 return ['status' => 'success'];
             } else {
                 return ['status' => 'error', 'errors' => $model->errors];
@@ -89,7 +89,7 @@ class EventController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('eventCreated', 'Event has been created successfully.');
+            Yii::$app->session->setFlash('eventCreated', 'ព្រឹត្តិការណ៍ត្រូវបានបង្កើតដោយជោគជ័យ។');
             return $this->redirect(['index']);
         }
 
@@ -110,7 +110,7 @@ class EventController extends Controller
             $model->end = Yii::$app->request->post('end');
 
             if ($model->save()) {
-                Yii::$app->session->setFlash('eventUpdated', 'Event has been updated successfully.');
+                Yii::$app->session->setFlash('eventUpdated', 'ព្រឹត្តិការណ៍ត្រូវបានអាប់ដេតដោយជោគជ័យ។');
                 return ['status' => 'success'];
             } else {
                 return ['status' => 'error', 'errors' => $model->errors];
@@ -118,7 +118,7 @@ class EventController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('eventUpdated', 'Event has been updated successfully.');
+            Yii::$app->session->setFlash('eventUpdated', 'ព្រឹត្តិការណ៍ត្រូវបានអាប់ដេតដោយជោគជ័យ។');
             return $this->redirect(['index']);
         }
 

@@ -106,8 +106,14 @@ class SiteController extends Controller
         $dataProviderOver = $searchModelOver->search($this->request->queryParams);
         $dataProviderOver->pagination->pageSize = 10;
         $totalCountOver = $dataProviderOver->getTotalCount();
+        // $QTYBook = Book::find()->sum('quantity');
+        // $availableBooksCount = $QTYBook - $borrowedBooksCount;
+
         $QTYBook = Book::find()->sum('quantity');
+
+        $borrowedBooksCount = BorrowBook::find()->where(['status' => BorrowBook::STATUS_BORROWED])->sum('quantity');
         $availableBooksCount = $QTYBook - $borrowedBooksCount;
+
 
         $memberJoinedLibrary = MemberJoinedLibrary::find()->where(['status' => 1])->sum('total_member');
         return $this->render(

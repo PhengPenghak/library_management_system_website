@@ -94,10 +94,10 @@ class MemberJoinedLibraryController extends Controller
                 $transaction_exception = Yii::$app->db->beginTransaction();
                 try {
 
-                    if (!$model->save()) throw new Exception("Failed to Save! Code #001");
+                    if (!$model->save()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក! លេខកូដ 001");
 
                     $transaction_exception->commit();
-                    Yii::$app->session->setFlash('success', "Record has been created successfully");
+                    Yii::$app->session->setFlash('success', "កត់ត្រាអ្នកចូលត្រូវបានបង្កើតដោយជោគជ័យ");
                     return $this->redirect(Yii::$app->request->referrer);
                 } catch (Exception $ex) {
                     echo "<pre>";

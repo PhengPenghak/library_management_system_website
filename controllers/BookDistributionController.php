@@ -74,10 +74,10 @@ class BookDistributionController extends \yii\web\Controller
 
             try {
 
-                if (!$model->save()) throw new Exception("Failed to Save! Code #001");
+                if (!$model->save()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក! លេខកូដ 001");
 
                 $transaction_exception->commit();
-                Yii::$app->session->setFlash('success', "Data saved successfully");
+                Yii::$app->session->setFlash('success', "ទិន្នន័យត្រូវបានរក្សាទុកដោយជោគជ័យ");
                 return $this->redirect(['detail', 'id' => $model->id]);
             } catch (Exception $ex) {
                 Yii::$app->session->setFlash('warning', $ex->getMessage());
@@ -107,10 +107,10 @@ class BookDistributionController extends \yii\web\Controller
 
             try {
 
-                if (!$model->save()) throw new Exception("Failed to Save! Code #001");
+                if (!$model->save()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក! លេខកូដ 001");
 
                 $transaction_exception->commit();
-                Yii::$app->session->setFlash('success', "Data saved successfully");
+                Yii::$app->session->setFlash('success', "ទិន្នន័យត្រូវបានរក្សាទុកដោយជោគជ័យ");
 
                 return $this->redirect(['detail', 'id' => $model->id]);
             } catch (Exception $ex) {
@@ -181,7 +181,7 @@ class BookDistributionController extends \yii\web\Controller
 
         if (Yii::$app->request->isPost) {
             $postData = Yii::$app->request->post('BookDistributionByGrade', []);
-            Yii::debug($postData, 'postData'); // Debugging post data
+            Yii::debug($postData, 'postData');
 
             $transaction = Yii::$app->db->beginTransaction();
             try {
@@ -196,11 +196,11 @@ class BookDistributionController extends \yii\web\Controller
                 }
 
                 $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Borrowed books updated successfully.');
+                Yii::$app->session->setFlash('success', 'ការអាប់ដេតត្រូវបានរក្សាទុកដោយជោគជ័យ');
                 return $this->redirect(Yii::$app->request->referrer);
             } catch (\Exception $e) {
                 $transaction->rollBack();
-                Yii::$app->session->setFlash('error', 'Failed to update borrowed books. ' . $e->getMessage());
+                Yii::$app->session->setFlash('error', 'បរាជ័យក្នុងការធ្វើបច្ចុប្បន្នភាពសៀវភៅដែលខ្ចី. ' . $e->getMessage());
             }
         }
 

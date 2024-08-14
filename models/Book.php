@@ -142,4 +142,25 @@ class Book extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'created_by']);
     }
+
+    public function canBorrow($requestedQuantity)
+    {
+        return $this->quantity >= $requestedQuantity;
+    }
+
+    /**
+     * Gets the total available quantity for a list of book IDs.
+     *
+     * @param array $bookIds
+     * @return array
+     */
+    public static function getAvailableQuantities($bookIds)
+    {
+        $books = self::find()->where(['id' => $bookIds])->all();
+        $availableQuantities = [];
+        foreach ($books as $book) {
+            $availableQuantities[$book->id] = $book->quantity;
+        }
+        return $availableQuantities;
+    }
 }

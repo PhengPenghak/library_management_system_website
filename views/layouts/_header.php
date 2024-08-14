@@ -108,7 +108,7 @@ $formater = Yii::$app->formater;
                                     <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div>
                                 </div>
                             </div>
-                            <a href="page-messages.html" class="dropdown-footer">All messages <i class="fas fa-fw fa-long-arrow-alt-right"></i></a>
+                            <a href="<?= Url::to(['/borrower-book/index']) ?>" class="dropdown-footer">All messages <i class="fas fa-fw fa-long-arrow-alt-right"></i></a>                        
                         </div>
                     </li>
                 </ul>

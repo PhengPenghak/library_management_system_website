@@ -168,14 +168,4 @@ $script = <<<JS
 JS;
 
 $this->registerJs($script);
-
-$this->registerJs("
-
-  $('#tableItinerary td').click(function (e) {
-      var code = $(this).closest('tr').data('id');
-      if(e.target == this)
-          location.href = '" . Url::to(['itinerary/detail']) . "?code=' + code;
-  });
-
-");
 ?>

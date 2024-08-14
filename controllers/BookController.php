@@ -107,7 +107,7 @@ class BookController extends Controller
                 if (!$model->save()) throw new Exception("code has already been taken.");
 
                 $transaction_exception->commit();
-                Yii::$app->session->setFlash('success', "Book saved successfully");
+                Yii::$app->session->setFlash('success', "សៀវភៅត្រូវបានរក្សាទុកដោយជោគជ័យ");
 
                 return $this->redirect(['index']);
             } catch (Exception $ex) {
@@ -152,10 +152,10 @@ class BookController extends Controller
                     $model->imageFile = null;
                 }
 
-                if (!$model->save()) throw new Exception("Failed to Save! Code #001");
+                if (!$model->save()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក! លេខកូដ 001");
 
                 $transaction_exception->commit();
-                Yii::$app->session->setFlash('success', "Post saved successfully");
+                Yii::$app->session->setFlash('success', "សៀវភៅត្រូវបានកែវប្រែដោយជោគជ័យ");
                 return $this->redirect(['index']);
             } catch (Exception $ex) {
                 Yii::$app->session->setFlash('warning', $ex->getMessage());
@@ -178,7 +178,7 @@ class BookController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-        Yii::$app->session->setFlash('success', "Item deleted successfully");
+        Yii::$app->session->setFlash('success', "សៀវភៅត្រូវបានលុបដោយជោគជ័យ");
         return $this->redirect(Yii::$app->request->referrer);
     }
 
@@ -198,71 +198,4 @@ class BookController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-
-    // public function actionExportExcel()
-    // {
-    //     $books = Book::find()->all();
-
-    //     $spreadsheet = new Spreadsheet();
-    //     $sheet = $spreadsheet->getActiveSheet();
-
-    //     // Set document properties
-    //     $spreadsheet->getProperties()->setCreator('Your Name')
-    //         ->setLastModifiedBy('Your Name')
-    //         ->setTitle('Books List')
-    //         ->setSubject('Books List')
-    //         ->setDescription('List of books exported to Excel.')
-    //         ->setKeywords('books excel')
-    //         ->setCategory('Export');
-
-    //     // Add header row
-    //     $sheet->setCellValue('A1', 'ID')
-    //         ->setCellValue('B1', 'Title')
-    //         ->setCellValue('C1', 'Author')
-    //         ->setCellValue('D1', 'Published Date');
-
-    //     // Add data rows
-    //     $row = 2;
-    //     foreach ($books as $book) {
-    //         $sheet->setCellValue('A' . $row, $book->id)
-    //             ->setCellValue('B' . $row, $book->title);
-
-    //         $row++;
-    //     }
-
-    //     // Rename worksheet
-    //     $sheet->setTitle('Books');
-
-    //     // Set active sheet index to the first sheet
-    //     $spreadsheet->setActiveSheetIndex(0);
-
-    //     // Redirect output to a client’s web browser (Xlsx)
-    //     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    //     header('Content-Disposition: attachment;filename="books.xlsx"');
-    //     header('Cache-Control: max-age=0');
-
-    //     $writer = new Xlsx($spreadsheet);
-    //     $writer->save('php://output');
-    //     Yii::$app->end();
-    // }
-
-    // public function actionExportPdf()
-    // {
-    //     // Fetch data
-    //     $books = Book::find()->all();
-
-    //     // Initialize mPDF
-    //     $mpdf = new Mpdf([
-    //         'default_font' => 'KhmerOS'
-    //     ]);
-
-    //     // Add custom font configuration
-    //     $mpdf->AddFontDirectory('@webroot/fonts');
-    //     $mpdf->AddFont('KhmerOS', '', 'KhmerOS.ttf', true);
-    //     $html = $this->renderPartial('pdf-template', ['books' => $books]);
-
-    //     $mpdf->WriteHTML($html);
-
-    //     $mpdf->Output('Books.pdf', 'D');
-    // }
 }

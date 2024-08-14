@@ -92,13 +92,13 @@ class UserController extends Controller
             ],
             $bulkData
           );
-          if (!$batchInsert->execute()) throw new Exception("Failed to save booking item!");
+          if (!$batchInsert->execute()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក!");
         }
 
-        if (!$model->save()) throw new Exception("Failed to Save! Code #001");
+        if (!$model->save()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក! លេខកូដ 001");
 
         $transaction_exception->commit();
-        Yii::$app->session->setFlash('success', "User saved successfully");
+        Yii::$app->session->setFlash('success', "អ្នកប្រើប្រាស់ត្រូវបានបង្កើតដោយជោគជ័យ");
         return $this->redirect(['role-update', 'id' => $model->id]);
       } catch (Exception $ex) {
         Yii::$app->session->setFlash('warning', $ex->getMessage());
@@ -160,13 +160,13 @@ class UserController extends Controller
             ],
             $bulkData
           );
-          if (!$batchInsert->execute()) throw new Exception("Failed to save booking item!");
+          if (!$batchInsert->execute()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក!");
         }
 
-        if (!$model->save()) throw new Exception("Failed to Save! Code #001");
+        if (!$model->save()) throw new Exception("បរាជ័យក្នុងការរក្សាទុក! លេខកូដ 001");
 
         $transaction_exception->commit();
-        Yii::$app->session->setFlash('success', "User saved successfully");
+        Yii::$app->session->setFlash('success', "អ្នកប្រើប្រាស់ត្រូវបានអាប់ដេតដោយជោគជ័យ");
         return $this->redirect(Yii::$app->request->referrer);
       } catch (Exception $ex) {
         Yii::$app->session->setFlash('warning', $ex->getMessage());
@@ -228,7 +228,7 @@ class UserController extends Controller
       }
 
       if ($model->save()) {
-        Yii::$app->session->setFlash('success', "User saved successfully");
+        Yii::$app->session->setFlash('success', "អ្នកប្រើប្រាស់ត្រូវបានបង្កើតដោយជោគជ័យ");
         return $this->redirect(Yii::$app->request->referrer);
       } else {
         echo "<pre>";
@@ -255,7 +255,7 @@ class UserController extends Controller
       }
 
       if ($model->save()) {
-        Yii::$app->session->setFlash('success', "User saved successfully");
+        Yii::$app->session->setFlash('success', "អ្នកប្រើប្រាស់ត្រូវបានអាប់ដេតដោយជោគជ័យ");
         return $this->redirect(Yii::$app->request->referrer);
       } else {
         echo "<pre>";
