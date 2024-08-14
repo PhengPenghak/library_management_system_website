@@ -16,37 +16,16 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
-        'backup' => [
-            'class' => 'amoracr\backup\Backup',
-            'backupDir' => '@app/backups',
-            'databases' => [
-                [
-                    'class' => 'amoracr\backup\components\MySqlBackup',
-                    'dsn' => 'mysql:host=localhost;dbname=library_management_system',
-                    'username' => 'root',
-                    'password' => '',
-                    'backupDir' => '@app/backups',
-                    'fileName' => 'library_management_system_' . date('Ymd_His') . '.sql',
-                    'compression' => 'gzip',
-                    'tables' => [],
-                ],
-            ],
-            'directories' => [
-                'images' => '@app/web/images',
-                'uploads' => '@app/web/uploads',
-            ],
-        ],
-
         // 'backup' => [
         //     'class' => 'amoracr\backup\Backup',
-        //     'backupDir' => '/home/hak-coder/Downloads',
+        //     'backupDir' => '@app/backups',
         //     'databases' => [
         //         [
         //             'class' => 'amoracr\backup\components\MySqlBackup',
         //             'dsn' => 'mysql:host=localhost;dbname=library_management_system',
         //             'username' => 'root',
         //             'password' => '',
-        //             'backupDir' => '/home/hak-coder/Downloads',
+        //             'backupDir' => '@app/backups',
         //             'fileName' => 'library_management_system_' . date('Ymd_His') . '.sql',
         //             'compression' => 'gzip',
         //             'tables' => [],
@@ -57,6 +36,27 @@ $config = [
         //         'uploads' => '@app/web/uploads',
         //     ],
         // ],
+
+        'backup' => [
+            'class' => 'amoracr\backup\Backup',
+            'backupDir' => '/home/hak-coder/Downloads',
+            'databases' => [
+                [
+                    'class' => 'amoracr\backup\components\MySqlBackup',
+                    'dsn' => 'mysql:host=localhost;dbname=library_management_system',
+                    'username' => 'root',
+                    'password' => '',
+                    'backupDir' => '/home/hak-coder/Downloads',
+                    'fileName' => 'library_management_system_' . date('Ymd_His') . '.sql',
+                    'compression' => 'gzip',
+                    'tables' => [],
+                ],
+            ],
+            'directories' => [
+                'images' => '@app/web/images',
+                'uploads' => '@app/web/uploads',
+            ],
+        ],
 
         'fullcalendar' => [
             'class' => 'philippfrenzel\yii2fullcalendar\Fullcalendar',
