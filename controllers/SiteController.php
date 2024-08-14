@@ -290,14 +290,14 @@ class SiteController extends Controller
 
         $backupFile = $downloadsPath . '/library_management_system_' . date('Ymd_His') . '.sql';
 
-        $mysqldumpPath = '/usr/bin/mysqldump';
+        $mysqldumpPath = 'C:\\laragon\\bin\\mysql\\mysql-8.0.30-winx64\\bin\\mysqldump';
 
         $command = "$mysqldumpPath -h localhost -u root --routines --triggers --databases $dbName > $backupFile 2>&1";
         exec($command, $output, $returnVar);
 
         if ($returnVar === 0) {
             Yii::info('Backup successfully created: ' . $backupFile, 'backup');
-            Yii::$app->session->setFlash('success', 'Backup was successful! Backup file: ' . basename($backupFile));
+            Yii::$app->session->setFlash('success', 'បង្កើតទិន្នន័យបម្រុងដោយជោគជ័យ! ឯកសារបម្រុងទុក: ' . basename($backupFile));
         } else {
             Yii::error('Failed to create backup with mysqldump. Output: ' . implode("\n", $output), 'backup');
             Yii::$app->session->setFlash('error', 'Backup failed. Please try again.');
