@@ -39,7 +39,6 @@ class BookDistributionByGrade extends \yii\db\ActiveRecord
             [['information_distribution_by_grade_id', 'book_id', 'start', 'end'], 'required'],
             [['information_distribution_by_grade_id', 'book_id', 'quantity', 'status', 'created_by', 'updated_by'], 'integer'],
             [['start', 'end', 'created_at', 'updated_at'], 'safe'],
-            [['code'], 'string', 'max' => 255],
 
             [['quantity'], 'number', 'min' => 1, 'max' => 2000, 'tooSmall' => 'Quantity must be at least 1.', 'tooBig' => 'Quantity must not exceed 3.'],
 
@@ -53,7 +52,6 @@ class BookDistributionByGrade extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'code' => 'លេខសារពើភ័ណ្ខ',
             'information_distribution_by_grade_id' => 'Information Distribution By Grade',
             'book_id' => 'Book ID',
             'start' => 'Start',
