@@ -25,8 +25,7 @@ class BorrowBook extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    const STATUS_BORROWED = 1;
-    const STATUS_RETURNED = 0;
+
 
     public static function tableName()
     {
@@ -36,7 +35,6 @@ class BorrowBook extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    
     public function rules()
     {
         return [
@@ -45,11 +43,7 @@ class BorrowBook extends \yii\db\ActiveRecord
             [['start', 'end', 'created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 255],
             [['code'], 'unique'],
-            [['status'], 'in', 'range' => [self::STATUS_BORROWED, self::STATUS_RETURNED]],
             [['quantity'], 'number', 'min' => 1, 'max' => 1, 'tooSmall' => 'Quantity must be at least 1.', 'tooBig' => 'Quantity must not exceed 1.'],
-
-            ['quantity', 'validateQuantity'],
-
         ];
     }
 
@@ -98,61 +92,6 @@ class BorrowBook extends \yii\db\ActiveRecord
         $interval = $currentDate->diff($endDate);
         return $interval->days;
     }
-
-    // public function borrowBook()
-    // {
-    //     $book = Book::findOne($this->book_id);
-    //     if ($book && $book->quantity > 1) {
-    //         $book->updateQuantity(-1); // Decrease quantity by 1
-    //         $this->status = self::STATUS_BORROWED;
-    //         return $this->save();
-    //     }
-    //     return false;
-    // }
-
-    // public function returnBook()
-    // {
-    //     $book = Book::findOne($this->book_id);
-    //     if ($book && $this->status === self::STATUS_BORROWED) {
-    //         $book->updateQuantity(0); 
-    //         $this->status = self::STATUS_RETURNED;
-    //         return $this->save();
-    //     }
-    //     return false;
-    // }
-
-    public function validateBorrowRequests($postData)
-    {
-        $errors = [];
-        $requestedQuantities = [];
-
-        // Aggregate requested quantities
-        foreach ($postData['information_borrower_book_id'] as $key => $informationBorrowerBookID) {
-            $bookId = $postData['book_id'][$key];
-            $requestedQuantity = (int)$postData['quantity'][$key];
-
-            if (!isset($requestedQuantities[$bookId])) {
-                $requestedQuantities[$bookId] = 0;
-            }
-            $requestedQuantities[$bookId] += $requestedQuantity;
-        }
-
-        // Validate against available quantities
-        $availableQuantities = Book::getAvailableQuantities(array_keys($requestedQuantities));
-        foreach ($requestedQuantities as $bookId => $totalRequested) {
-            if (!isset($availableQuantities[$bookId])) {
-                $errors[] = "Book with ID $bookId not found.";
-                continue;
-            }
-
-            if ($totalRequested > $availableQuantities[$bookId]) {
-                $errors[] = "Book with ID $bookId only has {$availableQuantities[$bookId]} copies available.";
-            }
-        }
-
-        return $errors;
-    }
-   
 
     public function beforeSave($insert)
     {

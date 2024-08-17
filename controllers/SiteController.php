@@ -111,7 +111,7 @@ class SiteController extends Controller
 
         $QTYBook = Book::find()->sum('quantity');
 
-        $borrowedBooksCount = BorrowBook::find()->where(['status' => BorrowBook::STATUS_BORROWED])->sum('quantity');
+        $borrowedBooksCount = BorrowBook::find()->where(['status' => 1])->sum('quantity');
         $availableBooksCount = $QTYBook - $borrowedBooksCount;
 
 

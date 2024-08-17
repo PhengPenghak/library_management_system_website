@@ -54,7 +54,6 @@ EditorAsset::register($this);
                     <div class="row">
                         <div class="col-lg-4">
                             <?= $form->field($model, 'title')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងជើងរឿង'])->label() ?>
-
                         </div>
                         <div class="col-lg-4">
                             <?= $form->field($model, 'category_book_id')->widget(Select2::class, [
@@ -72,7 +71,7 @@ EditorAsset::register($this);
                             ])->label('ចំនួនសៀវភៅ') ?>
                         </div>
                         <div class="col-lg-4">
-                            <?= $form->field($model, 'publishing')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'publishing'])->label() ?>
+                            <?= $form->field($model, 'publishing')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'publishing'])->label('គ្រឹះស្ថានបោះពុម្ភផ្សាយ') ?>
                         </div>
                         <div class="col-lg-4">
                             <?= $form->field($model, 'author')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងឈ្មោះអ្នកនិពន្ធ'])->label() ?>
@@ -93,11 +92,11 @@ EditorAsset::register($this);
                             <?= $form->field($model, 'publishing')->textInput([
                                 'id' => 'model-date',
                                 'class' => 'form-control form-control-lg',
-                                'placeholder' => 'Publishing Date'
-                            ])->label() ?>
+                                'placeholder' => 'បញ្ខូលឆ្នាំបោះពុម្ភ'
+                            ])->label('ឆ្នាំបោះពុម្ភ') ?>
                         </div>
                         <div class="col-lg-4">
-                        <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
+                        <?= $form->field($model, 'code')->textInput(['maxlength' => true, 'class' => 'form-control form-control-lg'])->label('កូដសៀវភៅ') ?>
                         </div>
                     </div>
                    
@@ -125,8 +124,6 @@ EditorAsset::register($this);
                             <?= Html::submitButton('<i class="fas fa-save mr-2"></i>រក្សាទុក', ['class' => 'btn btn-lg btn-block btn-primary']) ?>
                         </div>
                     </div>
-
-
                 </div>
 
             </div>
@@ -167,20 +164,20 @@ $script = <<<JS
     })
     $(document).ready(function() {
         $('#model-date').daterangepicker({
-            singleDatePicker: true,  // Single date selection
-            timePicker: false,       // Disable time picker
-            startDate: moment().startOf('day'), // Default to current day
-            drops: 'up',            // Position the calendar dropdown
-            opens: 'center',        // Position the calendar dropdown
+            singleDatePicker: true,  
+            timePicker: false,
+            startDate: moment().startOf('day'),
+            drops: 'up',    
+            opens: 'center', 
             locale: {
-                format: 'YYYY-MM-DD', // Date format without time
+                format: 'YYYY-MM-DD', 
                 applyLabel: 'Apply',
                 cancelLabel: 'Cancel',
                 customRangeLabel: 'Custom Range'
             },
-            showDropdowns: true,    // Show month and year dropdowns
-            minYear: 2000,          // Minimum year available
-            maxYear: 2100           // Maximum year available
+            showDropdowns: true, 
+            minYear: 2000,         
+            maxYear: 2100 
         });
     });
 JS;
