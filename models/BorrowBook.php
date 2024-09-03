@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "borrow_book".
@@ -19,14 +21,13 @@ use Yii;
  * @property string|null $updated_at
  * @property int|null $created_by
  * @property int|null $updated_by
+ * @property int|null $missing_books
  */
-class BorrowBook extends \yii\db\ActiveRecord
+class BorrowBook extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-
-
     public static function tableName()
     {
         return 'borrow_book';
@@ -38,12 +39,13 @@ class BorrowBook extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['book_id', 'information_borrower_book_id', 'code', 'start', 'end',], 'required'],
+            [['book_id', 'information_borrower_book_id', 'code', 'start', 'end'], 'required'],
             [['information_borrower_book_id', 'book_id', 'quantity', 'status', 'missing_books', 'created_by', 'updated_by'], 'integer'],
             [['start', 'end', 'created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 255],
             [['code'], 'unique'],
             [['quantity'], 'number', 'min' => 1, 'max' => 1, 'tooSmall' => 'Quantity must be at least 1.', 'tooBig' => 'Quantity must not exceed 1.'],
+            ['book_id', 'validateBookQuantity'],
         ];
     }
 
@@ -69,22 +71,45 @@ class BorrowBook extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * Validates the book quantity to ensure that the requested quantity does not exceed the available stock.
+     */
+    public function validateBookQuantity($attribute, $params)
+    {
+        $book = Book::findOne($this->book_id);
+        if ($book && $book->quantity < $this->quantity) {
+            $this->addError($attribute, 'The requested quantity exceeds the available stock.');
+        }
+    }
+
+    /**
+     * Get the related Grade model through the InfomationBorrowerBook model.
+     */
     public function getGrade()
     {
         return $this->hasOne(InfomationBorrowerBook::class, ['grade_id' => 'id'])
             ->via('informationBorrowerBook');
     }
 
+    /**
+     * Get the related Book model.
+     */
     public function getBook()
     {
         return $this->hasOne(Book::class, ['id' => 'book_id']);
     }
 
+    /**
+     * Get the related InfomationBorrowerBook model.
+     */
     public function getInformationBorrowerBook()
     {
         return $this->hasOne(InfomationBorrowerBook::class, ['id' => 'information_borrower_book_id']);
     }
 
+    /**
+     * Get the number of days since the book was borrowed.
+     */
     public function getDaysAgo()
     {
         $endDate = new \DateTime($this->end);
@@ -93,30 +118,44 @@ class BorrowBook extends \yii\db\ActiveRecord
         return $interval->days;
     }
 
+    /**
+     * Before save event handler to set timestamps and decrease the quantity of the book in stock.
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $currentDateTime = date('Y-m-d H:i:s');
+            $currentUser = Yii::$app->user->identity->id;
+
             if ($this->isNewRecord) {
-                $this->created_at = date('Y-m-d H:i:s');
-                $this->created_by = Yii::$app->user->identity->id;
+                $this->created_at = $currentDateTime;
+                $this->created_by = $currentUser;
+
+                $book = Book::findOne($this->book_id);
+                if ($book) {
+                    $book->quantity -= $this->quantity;
+                    $book->save(false);
+                }
             } else {
-                $this->updated_at = date('Y-m-d H:i:s');
-                $this->updated_by = Yii::$app->user->identity->id;
+                $this->updated_at = $currentDateTime;
+                $this->updated_by = $currentUser;
             }
+
             return true;
         } else {
             return false;
         }
     }
 
-
-
+    /**
+     * Get the status label for display.
+     */
     public function getStatusTemp()
     {
         if ($this->status == 1) {
             return '<span class="badge badge-subtle badge-danger">មិនទាន់សង</span>';
         } else {
-            return '<span class="badge badge-subtle badge-success">សង់រួចរាល់</span>';
+            return '<span class="badge badge-subtle badge-success">សងរួចរាល់</span>';
         }
     }
 }
