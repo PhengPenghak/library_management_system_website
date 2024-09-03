@@ -136,25 +136,70 @@ class BookDistributionController extends \yii\web\Controller
             $transaction = Yii::$app->db->beginTransaction();
             try {
                 $modelData = [];
+                $bookUpdates = [];
+                $errors = []; // To store errors
+
+                // Step 1: Prepare data and check available quantities
                 foreach ($postData['information_distribution_by_grade_id'] as $key => $informationBorrowerBookID) {
+                    $bookId = $postData['book_id'][$key];
+                    $quantity = $postData['quantity'][$key];
+
+                    // Check the available quantity for the book
+                    $book = Book::findOne($bookId);
+                    if (!$book) {
+                        $errors[] = "Book with ID {$bookId} not found.";
+                        continue; // Skip this iteration if the book is not found
+                    }
+
+                    if ($quantity > $book->quantity) {
+                        $errors[] = "សំណើរចំនួន {$quantity} ចំនួនសរុបមានត្រឹមតែ {$book->quantity}.";
+                        continue; // Skip this iteration if the quantity exceeds available stock
+                    }
+
+                    // Prepare data for batch insert
                     $modelData[] = [
                         $informationBorrowerBookID,
-                        $postData['book_id'][$key],
-                        $postData['quantity'][$key],
+                        $bookId,
+                        $quantity,
                         $postData['start'][$key],
                         $postData['end'][$key],
                         $postData['status'][$key],
                     ];
+
+                    // Prepare data for updating book quantities
+                    if (isset($bookUpdates[$bookId])) {
+                        $bookUpdates[$bookId] += $quantity; // Aggregate quantities for the same book
+                    } else {
+                        $bookUpdates[$bookId] = $quantity;
+                    }
                 }
 
-                Yii::$app->db->createCommand()->batchInsert(BookDistributionByGrade::tableName(), [
-                    'information_distribution_by_grade_id',
-                    'book_id',
-                    'quantity',
-                    'start',
-                    'end',
-                    'status'
-                ], $modelData)->execute();
+                // Step 2: Check if there are any errors before proceeding
+                if (!empty($errors)) {
+                    // Handle errors (e.g., log them and return a response)
+                    Yii::$app->session->setFlash('error', implode('<br>', $errors));
+                    return $this->redirect(Yii::$app->request->referrer); // Redirect back with error messages
+                }
+
+                // Step 3: Perform batch insert if no errors
+                if (!empty($modelData)) {
+                    Yii::$app->db->createCommand()->batchInsert(BookDistributionByGrade::tableName(), [
+                        'information_distribution_by_grade_id',
+                        'book_id',
+                        'quantity',
+                        'start',
+                        'end',
+                        'status'
+                    ], $modelData)->execute();
+                }
+
+                // Step 4: Update book quantities
+                foreach ($bookUpdates as $bookId => $totalQuantity) {
+                    Yii::$app->db->createCommand()->update('book', [
+                        'quantity' => new \yii\db\Expression('quantity - :quantity', [':quantity' => $totalQuantity])
+                    ], ['id' => $bookId])->execute();
+                }
+
 
                 $transaction->commit();
                 Yii::$app->session->setFlash('success', 'Borrowed books created successfully.');
@@ -185,9 +230,34 @@ class BookDistributionController extends \yii\web\Controller
 
             $transaction = Yii::$app->db->beginTransaction();
             try {
+                $updateQuantities = []; // Prepare to collect quantities to update
+
                 foreach ($BookDistributionByGrades as $key => $borrowBook) {
                     if (isset($postData[$key])) {
                         $borrowBook->attributes = $postData[$key];
+
+
+                        $quantityToAdd = $borrowBook->quantity;
+                        $bookId = $borrowBook->book_id;
+
+                        // Update the book quantity
+                        $book = Book::findOne($bookId);
+
+                        if ($book) {
+                            // echo "<pre>";
+                            // print_r($book);
+                            // exit;
+                            $book->quantity += $quantityToAdd; // Increase quantity of the book
+                            if (!$book->save()) {
+                                Yii::error($book->getErrors(), 'bookErrors'); // Log errors
+                                throw new Exception("Failed to update book ID {$bookId}: " . json_encode($book->getErrors()));
+                            }
+                        } else {
+                            throw new Exception("Book not found for ID {$bookId}");
+                        }
+
+
+                        // Save the borrow book record
                         if (!$borrowBook->save()) {
                             Yii::error($borrowBook->getErrors(), 'borrowBookErrors'); // Log errors
                             throw new Exception("Update failed for record ID {$borrowBook->id}: " . json_encode($borrowBook->getErrors()));
