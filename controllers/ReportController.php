@@ -332,7 +332,7 @@ class ReportController extends Controller
     public function actionExportExcelMemberJoinedLibrary()
     {
 
-        $file_name = 'hak';
+        $file_name = 'member-joind-library';
         return $this->renderPartial('member-joind-library/_excel_template', [
             'file_name' => $file_name
         ]);
