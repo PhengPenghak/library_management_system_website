@@ -45,6 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'grade_title',
+                        'format' => 'raw',
                         'label' => 'Grade Title', // Adjust label if needed
                         'value' => function ($model) {
                             return Html::encode($model['grade_title']); // Use Html::encode for security
