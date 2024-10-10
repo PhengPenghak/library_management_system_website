@@ -20,20 +20,21 @@ $formater = Yii::$app->formater;
 ]); ?>
 
 <style>
-    .active {
-        border-color: #346cb0 !important;
-    }
+.active {
+    border-color: #346cb0 !important;
+}
 
-    .badge-secondary-color {
-        background-color: #346cb0;
-    }
+.badge-secondary-color {
+    background-color: #346cb0;
+}
 </style>
 <nav class="page-navs mb-5 px-0" style="background: none;">
     <!-- .nav-scroller -->
     <div class="nav-scroller">
         <!-- .nav -->
         <div class="nav nav-tabs">
-            <a class="nav-link active" href="<?= Url::to(['borrower-book/index']) ?>">ខ្ចី័ និង​ សង<span class="badge badge-pill ml-2 badge-secondary-color text-light"><?= !empty($totalCount) ? $totalCount : '' ?></span></a>
+            <a class="nav-link active" href="<?= Url::to(['borrower-book/index']) ?>">ខ្ចី័ និង​ សង<span
+                    class="badge badge-pill ml-2 badge-secondary-color text-light"><?= !empty($totalCount) ? $totalCount : '' ?></span></a>
             <a class="nav-link" href="<?= Url::to(['book-distribution/index']) ?>">ចែកសៀវទៅតាមថ្នាក់</a>
         </div><!-- /.nav -->
     </div><!-- /.nav-scroller -->
@@ -79,7 +80,13 @@ $formater = Yii::$app->formater;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     'username',
-                    'gender',
+                    [
+                        'attribute' => 'gender',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            return $model->gender === 'male' ? 'ប្រុស' : 'ស្រី';
+                        },
+                    ],
                     [
                         'attribute' => 'grade_id',
                         'value' => function ($model) {

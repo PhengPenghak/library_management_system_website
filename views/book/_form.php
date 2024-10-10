@@ -71,10 +71,10 @@ EditorAsset::register($this);
                             ])->label('ចំនួនសៀវភៅ') ?>
                         </div>
                         <div class="col-lg-4">
-                            <?= $form->field($model, 'publishing')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'publishing'])->label('គ្រឹះស្ថានបោះពុម្ភផ្សាយ') ?>
+                            <?= $form->field($model, 'publishing')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'គ្រឹះស្ថានបោះពុម្ភផ្សាយ'])->label('គ្រឹះស្ថានបោះពុម្ភផ្សាយ') ?>
                         </div>
                         <div class="col-lg-4">
-                            <?= $form->field($model, 'author')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងឈ្មោះអ្នកនិពន្ធ'])->label() ?>
+                            <?= $form->field($model, 'author')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលឈ្មោះអ្នកនិពន្ធ'])->label() ?>
                         </div>
                         <div class="col-lg-4">
                             <?= $form->field($model, 'location_id',)->widget(Select2::class, [
@@ -86,7 +86,7 @@ EditorAsset::register($this);
                             ]); ?>
                         </div>
                         <div class="col-lg-4">
-                            <?= $form->field($model, 'sponse')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលចំណងប្រភពសៀវភៅ'])->label() ?>
+                            <?= $form->field($model, 'sponse')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលប្រភពសៀវភៅ'])->label() ?>
                         </div>
                         <div class="col-lg-4">
                             <?= $form->field($model, 'publishing')->textInput([
@@ -96,10 +96,10 @@ EditorAsset::register($this);
                             ])->label('ឆ្នាំបោះពុម្ភ') ?>
                         </div>
                         <div class="col-lg-4">
-                        <?= $form->field($model, 'code')->textInput(['maxlength' => true, 'class' => 'form-control form-control-lg'])->label('កូដសៀវភៅ') ?>
+                            <?= $form->field($model, 'code')->textInput(['maxlength' => true, 'class' => 'form-control form-control-lg'])->label('កូដសៀវភៅ') ?>
                         </div>
                     </div>
-                   
+
                     <div class="row">
                         <div class="col-lg-3">
                             <div class="card">
@@ -108,7 +108,8 @@ EditorAsset::register($this);
                                         <span class="font-weight-bold">ស្ថានភាព</span>
                                         <?= $form->field($model, 'status')->hiddenInput(['value' => !empty($model->status) ? $model->status : 0])->label(false); ?>
                                         <label class="switcher-control switcher-control-danger switcher-control-lg">
-                                            <input type="checkbox" value="<?= $model->status ?>" id="book" class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
+                                            <input type="checkbox" value="<?= $model->status ?>" id="book"
+                                                class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
                                             <span class="switcher-indicator"></span>
                                             <span class="switcher-label-on"><i class="fas fa-check"></i></span>
                                             <span class="switcher-label-off"><i class="fas fa-times"></i></span>

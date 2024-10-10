@@ -77,7 +77,7 @@ class Grade extends \yii\db\ActiveRecord
         if ($this->status == 1) {
             return '<span class="badge badge-subtle badge-success">មានសិស្សរៀន</span>';
         } else {
-            return '<span class="badge badge-subtle badge-danger">មិនមិនសិស្សរៀន</span>';
+            return '<span class="badge badge-subtle badge-danger">មិនមានសិស្សរៀន</span>';
         }
     }
     public function getCreatedBy()
