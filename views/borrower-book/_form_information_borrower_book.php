@@ -27,19 +27,19 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
 ]); ?>
 <hr class="pb-1 border-0">
 <style>
-    .select2-selection--multiple .select2-selection__rendered {
-        max-height: unset !important;
-        overflow: hidden !important;
-        height: auto !important;
-    }
+.select2-selection--multiple .select2-selection__rendered {
+    max-height: unset !important;
+    overflow: hidden !important;
+    height: auto !important;
+}
 
-    input#pi9 {
-        top: 0 !important;
-    }
+input#pi9 {
+    top: 0 !important;
+}
 
-    .strikethrough {
-        text-decoration: line-through;
-    }
+.strikethrough {
+    text-decoration: line-through;
+}
 </style>
 <div class="<?= $model->formName(); ?>">
 
@@ -93,7 +93,8 @@ $model->status = $model->isNewRecord ? 1 : $model->status;
                                         <span class="font-weight-bold">ស្ថានភាព</span>
                                         <?= $form->field($model, 'status')->hiddenInput(['value' => !empty($model->status) ? $model->status : 0])->label(false); ?>
                                         <label class="switcher-control switcher-control-danger switcher-control-lg">
-                                            <input type="checkbox" value="<?= $model->status ?>" id="book" class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
+                                            <input type="checkbox" value="<?= $model->status ?>" id="book"
+                                                class="switcher-input" <?= $model->status == 1 ? 'checked' : '' ?>>
                                             <span class="switcher-indicator"></span>
                                             <span class="switcher-label-on"><i class="fas fa-check"></i></span>
                                             <span class="switcher-label-off"><i class="fas fa-times"></i></span>

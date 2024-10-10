@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     [
                         'attribute' => 'grade_id',
-                        'label' => 'Grade ID', // Adjust label if needed
+                        'label' => 'ID ថ្នាក់', // Adjust label if needed
                         'value' => function ($model) {
                             return Html::encode($model['grade_id']); // Use Html::encode for security
                         },
@@ -46,21 +46,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'grade_title',
                         'format' => 'raw',
-                        'label' => 'Grade Title', // Adjust label if needed
+                        'label' => 'ឈ្មោះថ្នាក់', // Adjust label if needed
                         'value' => function ($model) {
                             return Html::encode($model['grade_title']); // Use Html::encode for security
                         },
                     ],
                     [
                         'attribute' => 'total_books',
-                        'label' => 'Total Books',
+                        'label' => 'ចំនួនសៀវភៅសរុប',
                         'value' => function ($model) {
                             return Html::encode($model['total_books']); // Use Html::encode for security
                         },
                     ],
                     [
                         'attribute' => 'total_quantity',
-                        'label' => 'Total Quantity',
+                        'label' => 'ចំនួយសៀវភៅ',
                         'value' => function ($model) {
                             return Html::encode($model['total_quantity']); // Use Html::encode for security
                         },
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'header' => Yii::t('app', 'Actions'),
+                        'header' => Yii::t('app', 'សកម្មភាព'),
                         'headerOptions' => ['class' => 'text-center'],
                         'contentOptions' => ['class' => 'text-center'],
                         'template' => '{view}',
