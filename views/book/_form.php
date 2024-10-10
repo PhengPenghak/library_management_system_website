@@ -71,7 +71,7 @@ EditorAsset::register($this);
                             ])->label('ចំនួនសៀវភៅ') ?>
                         </div>
                         <div class="col-lg-4">
-                            <?= $form->field($model, 'publishing')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'គ្រឹះស្ថានបោះពុម្ភផ្សាយ'])->label('គ្រឹះស្ថានបោះពុម្ភផ្សាយ') ?>
+                            <?= $form->field($model, 'publishing')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'គ្រឹះស្ថានបោះពុម្ភផ្សាយ', 'id' => 'new-public', 'type' => 'text'])->label('គ្រឹះស្ថានបោះពុម្ភផ្សាយ') ?>
                         </div>
                         <div class="col-lg-4">
                             <?= $form->field($model, 'author')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលឈ្មោះអ្នកនិពន្ធ'])->label() ?>
@@ -89,7 +89,7 @@ EditorAsset::register($this);
                             <?= $form->field($model, 'sponse')->textInput(['class' => 'form-control form-control-lg', 'autofocus' => true, 'placeholder' => 'បញ្ចូលប្រភពសៀវភៅ'])->label() ?>
                         </div>
                         <div class="col-lg-4">
-                            <?= $form->field($model, 'publishing')->textInput([
+                            <?= $form->field($model, 'publishing_date')->textInput([
                                 'id' => 'model-date',
                                 'class' => 'form-control form-control-lg',
                                 'placeholder' => 'បញ្ខូលឆ្នាំបោះពុម្ភ'
