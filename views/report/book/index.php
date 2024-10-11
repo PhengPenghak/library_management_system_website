@@ -5,7 +5,7 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Url;
 
-$this->title = 'របាយការណ៍ខ្ចីសៀវភៅតាមថ្នាក់';
+$this->title = 'របាយការណ៍សៀវភៅ';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div>
