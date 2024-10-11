@@ -201,7 +201,7 @@ class ReportController extends Controller
                 $book['publishing'],
                 $book['code'],
                 $book['sponse'],
-                $book['quantity'],
+                $book['quantity'] . " ក្បាល",
             ];
         }
         $sheet->fromArray($dataRows, NULL, 'A3');

@@ -45,32 +45,32 @@
             </thead>
             <tbody>
                 <?php foreach ($reportBook as $key => $book) { ?>
-                <tr style="background-color: <?= $key % 2 == 0 ? '#f2f2f2' : 'transparent'; ?>">
-                    <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
-                        <?= $book->id ?>
-                    </td>
-                    <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
-                        <?= Yii::$app->formatter->asDate($book->publishing_date, 'php:d.m.y'); ?>
-                    </td>
-                    <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
-                        <?= $book->author ?>
-                    </td>
-                    <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
-                        <?= $book->title ?>
-                    </td>
-                    <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
-                        <?= $book->publishing ?>
-                    </td>
-                    <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
-                        <?= $book->code ?>
-                    </td>
-                    <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
-                        <?= $book->sponse ?>
-                    </td>
-                    <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
-                        <?= $book->quantity . " ក្បាល់" ?>
-                    </td>
-                </tr>
+                    <tr style="background-color: <?= $key % 2 == 0 ? '#f2f2f2' : 'transparent'; ?>">
+                        <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
+                            <?= $book->id ?>
+                        </td>
+                        <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
+                            <?= Yii::$app->formatter->asDate($book->publishing_date, 'php:d.m.y'); ?>
+                        </td>
+                        <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
+                            <?= $book->author ?>
+                        </td>
+                        <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
+                            <?= $book->title ?>
+                        </td>
+                        <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
+                            <?= $book->publishing ?>
+                        </td>
+                        <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
+                            <?= $book->code ?>
+                        </td>
+                        <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
+                            <?= $book->sponse ?>
+                        </td>
+                        <td style="padding: 0.75rem; vertical-align: top; border: 1px solid #dee2e6; text-align: center;">
+                            <?= $book->quantity . " ក្បាល" ?>
+                        </td>
+                    </tr>
                 <?php } ?>
             </tbody>
         </table>
