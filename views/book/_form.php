@@ -14,19 +14,19 @@ DateRangePickerAsset::register($this);
 EditorAsset::register($this);
 ?>
 <style>
-    textarea {
-        resize: none;
-    }
+textarea {
+    resize: none;
+}
 
-    .form-group.note-form-group.note-group-select-from-files {
-        display: none;
-    }
+.form-group.note-form-group.note-group-select-from-files {
+    display: none;
+}
 
-    .img-thumbnail-banner {
-        width: 200px !important;
-        height: 200px !important;
-        object-fit: cover;
-    }
+.img-thumbnail-banner {
+    width: 200px !important;
+    height: 200px !important;
+    object-fit: cover;
+}
 </style>
 <div class="blog-form pt-5">
 
