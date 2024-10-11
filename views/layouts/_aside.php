@@ -227,6 +227,11 @@ $permissionsReport = User::getUserPermission("report");
                             </span> <span class="menu-text"><?= Yii::t('app', 'របាយការណ៍') ?></span>
                         </a>
                         <ul class="menu">
+                            <li class="menu-item <?= $module_controller == 'book' ? 'has-active' : ''; ?> py-1">
+                                <a href="<?= Yii::getAlias("@web/report/book") ?>" class="menu-link">
+                                    <span class="menu-text">របាយការណ៏សៀបភៅ</span>
+                                </a>
+                            </li>
                             <li
                                 class="menu-item <?= $module_controller == 'borrower-book' ? 'has-active' : ''; ?> py-1">
                                 <a href="<?= Yii::getAlias("@web/report/borrower-book") ?>" class="menu-link">

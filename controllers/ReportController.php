@@ -2,7 +2,8 @@
 
 namespace app\controllers;
 
-
+use app\models\Book;
+use app\models\BookSearch;
 use app\models\BorrowBookSearch;
 use app\models\Grade;
 use app\models\GradeSearch;
@@ -96,7 +97,140 @@ class ReportController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+    public function actionBook()
+    {
+        $searchModel = new BookSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+
+        // Render the view
+        return $this->render('book/index', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
+    }
+    public function actionExportPdfBook()
+    {
+
+        $reportBook = Book::find()->all();
+        $mpdf = new Mpdf([
+            'orientation' => 'L',
+            'format' => 'A4',
+            'default_font' => 'khmerOS',
+            'fontDir' => array_merge((new ConfigVariables())->getDefaults()['fontDir'], [
+                Yii::getAlias('@webroot') . '/fonts',
+            ]),
+            'fontdata' => array_merge((new FontVariables())->getDefaults()['fontdata'], [
+                'khmerOS' => [
+                    'R' => 'khmerOS.ttf',
+                    'B' => 'khmerOS.ttf',
+                ],
+            ]),
+        ]);
+
+        $html = $this->renderPartial('book/pdf-template', [
+            'reportBook' => $reportBook,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output('របាយការណ៏អ្នកខ្ចីសៀបភៅ.pdf', \Mpdf\Output\Destination::INLINE);
+    }
+    public function actionExportExcelBook()
+    {
+
+        $reportBook = Book::find()->all();
+
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $title = 'បញ្ញីខ្ចីសារពើភ័ណ្ឌសៀវភៅ';
+        $sheet->setCellValue('A1', $title);
+        $sheet->mergeCells('A1:I1');
+        $titleStyleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 16,
+                'name' => 'KhmerOS',
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('A1')->applyFromArray($titleStyleArray);
+        $sheet->getRowDimension('1')->setRowHeight(40);
+        $header = [
+            'លេខសារពើភ័ណ្ឌ',
+            'ថ្ងៃខែឆ្នាំចូល',
+            'ឈ្មោះអ្នកនិពន្ធ',
+            'ចំណងជើងសៀវភៅ',
+            'គ្រឹះស្ថានបោះពុម្ភ',
+            'លេខកូដសៀវភៅ',
+            'ប្រភពផ្ដល់',
+            'សរុប',
+        ];
+        $sheet->fromArray([$header], NULL, 'A2');
+
+        // Apply header styles
+        $headerStyleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+
+        ];
+        $sheet->getStyle('A2:I2')->applyFromArray($headerStyleArray);
+        $sheet->getRowDimension('2')->setRowHeight(30);
+
+        $dataRows = [];
+        foreach ($reportBook as $book) {
+            $dataRows[] = [
+                $book['id'],
+                Yii::$app->formatter->asDate($book['publishing_date'], 'php:d.m.y'),
+                $book['author'],
+                $book['title'],
+                $book['publishing'],
+                $book['code'],
+                $book['sponse'],
+                $book['quantity'],
+            ];
+        }
+        $sheet->fromArray($dataRows, NULL, 'A3');
+
+        $dataStyleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('A3:I' . (count($dataRows) + 2))->applyFromArray($dataStyleArray);
+
+        foreach (range('A', 'I') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'របាយការណ៏អ្នកខ្ចីសៀវភៅ.xlsx';
+        $writer->save($filename);
+        Yii::$app->response->sendFile($filename, $filename, [
+            'mimeType' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'inline' => false,
+        ])->send();
+        unlink($filename);
+    }
 
 
     public function actionDetails($id)
@@ -117,7 +251,7 @@ class ReportController extends Controller
         $params = Yii::$app->request->queryParams;
         $from_date = isset($params['BorrowBookSearch']['from_date']) ? $params['BorrowBookSearch']['from_date'] : null;
         $to_date = isset($params['BorrowBookSearch']['to_date']) ? $params['BorrowBookSearch']['to_date'] : null;
-        
+
         $query = "SELECT
                     borrow_book.id AS ID,
                     borrow_book.code,
@@ -135,19 +269,19 @@ class ReportController extends Controller
                     INNER JOIN book ON book.id = borrow_book.book_id
                 WHERE
                     infomation_borrower_book.grade_id = :gradeId
-                    AND borrow_book.status = 1";  
+                    AND borrow_book.status = 1";
         if ($from_date && $to_date) {
             $query .= " AND DATE(borrow_book.created_at) BETWEEN :from_date AND :to_date";
         }
-        
+
         $command = Yii::$app->db->createCommand($query);
         $command->bindParam(':gradeId', $id);
-        
+
         if ($from_date && $to_date) {
             $command->bindValue(':from_date', $from_date);
             $command->bindValue(':to_date', $to_date);
         }
-        
+
         $reportBorrowerBook = $command->queryAll();
 
         $mpdf = new Mpdf([
@@ -195,9 +329,9 @@ class ReportController extends Controller
                 infomation_borrower_book.grade_id = :gradeId
                 AND borrow_book.status = 1 
         ")
-        ->bindParam(':gradeId', $id)
-        ->queryAll();   
-    
+            ->bindParam(':gradeId', $id)
+            ->queryAll();
+
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
